@@ -1,0 +1,60 @@
+/* Settings specific*/
+ion-list {
+  padding: 16px 0;
+}
+
+ion-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 16px;
+  margin: 8px 0;
+}
+
+ion-icon {
+  color: var(--ion-color-primary);
+  margin-right: 16px;
+  font-size: 1.2em;
+}
+
+ion-card {
+  margin: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+ion-card-header {
+  padding: 16px;
+}
+
+ion-card-content {
+  padding: 0;
+}
+
+ion-toggle {
+  --background: var(--ion-color-light);
+  --background-checked: var(--ion-color-primary);
+  --handle-background: var(--ion-color-medium);
+  --handle-background-checked: var(--ion-color-light);
+}
+
+ion-select {
+  max-width: 100%;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.settings-actions {
+  padding: 16px;
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  ion-card {
+    margin: 8px;
+  }
+
+  ion-item {
+    --padding-start: 12px;
+    --padding-end: 12px;
+  }
+} 

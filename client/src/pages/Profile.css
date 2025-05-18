@@ -1,0 +1,78 @@
+/* Profile specific */
+.profile-header {
+  text-align: center;
+  padding: 20px 0;
+  background: var(--ion-color-light);
+  margin: -16px -16px 16px -16px;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 16px;
+  border: 3px solid var(--ion-color-primary);
+}
+
+.profile-name {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--ion-color-dark);
+}
+
+.profile-role {
+  color: var(--ion-color-medium);
+  margin: 4px 0 0;
+}
+
+ion-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+ion-card {
+  margin: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: calc(100% - 32px);
+}
+
+ion-card-content {
+  padding: 16px;
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin: 8px 0;
+}
+
+ion-icon {
+  color: var(--ion-color-primary);
+  margin-right: 16px;
+  font-size: 1.2em;
+}
+
+.profile-actions {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .profile-header {
+    padding: 16px 0;
+  }
+
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-name {
+    font-size: 20px;
+  }
+} 
