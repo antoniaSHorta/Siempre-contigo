@@ -1,0 +1,49 @@
+ion-tab-bar {
+  --background: var(--ion-color-light);
+  padding: 5px 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+ion-tab-button {
+  --color: var(--ion-color-medium);
+  --color-selected: var(--ion-color-primary);
+  --padding-top: 0px;
+  --padding-bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 100px;
+  height: 100%;
+  padding: 5px 0;
+}
+
+ion-tab-button ion-icon {
+  font-size: 24px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding-bottom: 2px;
+  display: block;
+}
+
+ion-tab-button ion-label {
+  font-size: 12px;
+  font-weight: 500;
+  display: block;
+  text-align: center;
+  width: 100%;
+  margin-top: 2px;
+  padding-top: 0px;
+}
+
+ion-tab-button.tab-selected {
+    color: var(--ion-color-primary);
+}
+
+ion-tab-button.tab-selected ion-icon,
+ion-tab-button.tab-selected ion-label {
+    color: var(--ion-color-primary) !important;
+} 
