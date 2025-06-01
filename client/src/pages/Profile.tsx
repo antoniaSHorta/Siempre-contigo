@@ -2,6 +2,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardC
 import { person, mail, call, location, notificationsOutline, languageOutline, moonOutline, shieldCheckmarkOutline, helpCircleOutline, informationCircleOutline } from 'ionicons/icons';
 import { useAuth } from '../contexts/AuthContext';
 import './Profile.css';
+import logo from '../assets/logo.png';
 
 const Profile: React.FC = () => {
   const { logout, user } = useAuth();
@@ -13,10 +14,13 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <IonPage>
-      <IonHeader>
+    <IonPage className="profile-page">
+      <IonHeader className="ion-no-border">
         <IonToolbar>
-          <IonTitle>Perfil</IonTitle>
+          <div className="header-content">
+            <img src={logo} alt="Logo" className="header-logo" />
+            <IonTitle>Perfil</IonTitle>
+          </div>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
