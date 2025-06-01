@@ -13,7 +13,7 @@
 .agenda-page ion-header ion-toolbar {
   --background: var(--background-color);
   --color: var(--header-text-color);
-  --min-height: 79px;
+  --min-height: 90px;
   padding: 0 16px;
   position: relative;
 }
@@ -38,7 +38,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 30px;
-  line-height: 100%;
+  line-height: 130%;
   letter-spacing: 0%;
   text-transform: capitalize;
   color: var(--header-text-color);
@@ -55,8 +55,8 @@
   --background: white;
   --padding-start: 0;
   --padding-end: 0;
-  --padding-top: 0; /* Adjust as needed */
-  --padding-bottom: 0; /* Adjust as needed */
+  --padding-top: 0;
+  --padding-bottom: 0; 
 }
 
 .agenda-page ion-segment {
@@ -85,7 +85,7 @@
 
 @media (max-width: 768px) {
   .agenda-page ion-header ion-toolbar {
-    --min-height: 60px;
+    --min-height: 65px;
     padding: 0 12px;
   }
 
@@ -108,7 +108,7 @@
 
 @media (max-width: 480px) {
   .agenda-page ion-header ion-toolbar {
-    --min-height: 50px;
+    --min-height: 55px;
     padding: 0 8px;
   }
 
@@ -128,3 +128,208 @@
     transform: translateX(-50%);
   }
 }
+
+.daily-view {
+  margin: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.daily-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--background-color);
+  color: var(--header-text-color);
+  font-weight: bold;
+}
+
+.daily-header ion-button {
+  --color: var(--header-text-color);
+}
+
+.daily-time-slot {
+  display: flex;
+  border-bottom: 1px solid #eee;
+}
+
+.daily-time-label {
+  padding: 8px;
+  font-weight: bold;
+  text-align: right;
+  width: 80px;
+  flex-shrink: 0;
+  border-right: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.daily-activities-for-time {
+  flex-grow: 1;
+  padding: 8px;
+}
+
+.weekly-view {
+  margin: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.weekly-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--background-color);
+  color: var(--header-text-color);
+  font-weight: bold;
+}
+
+.weekly-header ion-button {
+  --color: var(--header-text-color);
+}
+
+.weekly-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  border-top: 1px solid #ccc;
+}
+
+.time-column,
+.day-label,
+.time-slot-label,
+.activity-cell {
+  border: 1px solid #eee;
+  padding: 8px;
+  text-align: center;
+}
+
+.time-column {
+  border-left: none;
+  border-bottom: none;
+  font-weight: bold;
+  background-color: #f8f8f8;
+  border-top: none;
+}
+
+.day-label {
+  font-weight: bold;
+  background-color: #f8f8f8;
+  border-top: none;
+}
+
+.time-slot-label {
+  font-weight: bold;
+  text-align: right;
+  padding-right: 16px;
+  border-left: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.activity-cell {
+  min-height: 60px; 
+  position: relative; 
+}
+
+.monthly-view {
+  margin: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.monthly-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--background-color);
+  color: var(--header-text-color);
+  font-weight: bold;
+}
+
+.monthly-header ion-button {
+  --color: var(--header-text-color);
+}
+
+.monthly-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); 
+  border-top: 1px solid #ccc;
+}
+
+.monthly-grid-header {
+    display: contents;
+}
+
+.monthly-week-row {
+    display: contents;
+}
+
+.monthly-day-label,
+.hour-cell,
+.monthly-day-cell {
+  border: 1px solid #eee;
+  padding: 8px;
+  text-align: center;
+  min-height: 80px; 
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center;
+}
+
+.monthly-day-label {
+  font-weight: bold;
+  background-color: #f8f8f8;
+  border-top: none;
+}
+
+.monthly-day-cell {
+  border-bottom: none;
+  position: relative;
+}
+
+.day-number {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: var(--primary-color);
+}
+
+.activities {
+    width: 100%;
+    text-align: left;
+}
+
+.activity-block {
+    background-color: #cce5ff; 
+    border-left: 4px solid #007bff;
+    padding: 4px;
+    font-size: 0.8em;
+    text-align: left;
+    border-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #333;
+}
+
+.outside-month {
+    color: #ccc;
+}
+
+.today {
+    background-color: #fffacd; 
+}
+
+
