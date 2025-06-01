@@ -6,6 +6,7 @@ import { useIonRouter } from '@ionic/react';
 import { endpoints } from '../config/api';
 import axios from 'axios';
 import './Login.css';
+import logo from '../assets/logo.png';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -45,10 +46,11 @@ const Login: React.FC = () => {
 
   return (
     <IonPage>
-      <IonContent className="ion-padding">
+      <IonContent>
         <div className="login-container">
           <IonCard>
             <IonCardHeader>
+              <img src={logo} alt="Logo de la aplicación" className="app-logo" />
               <IonCardTitle className="ion-text-center">Iniciar Sesión</IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
