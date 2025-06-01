@@ -82,10 +82,7 @@ const Profile: React.FC = () => {
               <IonItem>
                 <IonIcon icon={languageOutline} slot="start" />
                 <IonLabel>Idioma</IonLabel>
-                <IonSelect value="es" slot="end">
-                  <IonSelectOption value="es">Español</IonSelectOption>
-                  <IonSelectOption value="en">English</IonSelectOption>
-                </IonSelect>
+                <IonLabel slot="end">Español</IonLabel>
               </IonItem>
               <IonItem>
                 <IonIcon icon={moonOutline} slot="start" />
@@ -95,7 +92,7 @@ const Profile: React.FC = () => {
               <IonItem>
                 <IonIcon icon={shieldCheckmarkOutline} slot="start" />
                 <IonLabel>Cambiar Contraseña</IonLabel>
-                <IonButton fill="clear" slot="end">
+                <IonButton fill="clear" slot="end" className='profile-password-button'>
                   Cambiar
                 </IonButton>
               </IonItem>
@@ -122,7 +119,7 @@ const Profile: React.FC = () => {
         </IonCard>
 
         <div className="profile-actions">
-          <IonButton expand="block" color="primary">
+          <IonButton expand="block" className="profile-actions-button">
             Editar Perfil
           </IonButton>
           <IonButton expand="block" fill="outline" color="medium" onClick={handleLogout}>
