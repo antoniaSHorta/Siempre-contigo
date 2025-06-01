@@ -8,6 +8,23 @@
   --ion-color-secondary: var(--secondary-color);
   --ion-color-dark: var(--primary-color);
   --ion-color-medium: var(--primary-color);
+  --ion-color-step-150: #e0e5eb; 
+  --ion-color-step-200: #d1d7e0; 
+  --ion-color-step-750: var(--primary-color);
+  --ion-color-step-800: var(--primary-color); 
+  --ion-color-step-850: var(--primary-color); 
+  --ion-highlight-color-focused: var(--primary-color);
+
+  --ion-color-primary-tint: var(--primary-color); 
+  --ion-color-step-150: var(--primary-color); 
+  --ion-color-step-200: var(--primary-color); 
+  --ion-color-step-750: var(--primary-color);
+  --ion-color-step-800: var(--primary-color);
+  --ion-color-step-850: var(--primary-color);
+  --ion-item-background-activated: rgba(7, 64, 123, 0.2); 
+  --ion-item-background-focused: rgba(7, 64, 123, 0.2); 
+  --ion-item-color-activated: var(--header-text-color); 
+  --ion-item-color-focused: var(--header-text-color); 
 }
 
 .agenda-page ion-header ion-toolbar {
@@ -56,7 +73,7 @@
   --padding-start: 0;
   --padding-end: 0;
   --padding-top: 0;
-  --padding-bottom: 0; 
+  --padding-bottom: 0;
 }
 
 .agenda-page ion-segment {
@@ -73,14 +90,6 @@
   --border-color: var(--primary-color);
   --border-width: 1px;
   --border-style: solid;
-}
-
-.create-activity-button {
-  --background: var(--secondary-color);
-  --color: var(--primary-color);
-  --border-radius: 8px;
-  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 16px;
 }
 
 @media (max-width: 768px) {
@@ -127,6 +136,121 @@
     left: 50%;
     transform: translateX(-50%);
   }
+}
+
+.agenda-filters {
+  display: flex;
+  overflow-x: auto;
+  padding: 0 16px;
+  margin-bottom: 16px;
+  gap: 12px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.agenda-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.agenda-filters ion-item {
+  --background: white;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  --highlight-color-focused: var(--primary-color);
+  --color: var(--primary-color);
+  --border-color-focused: var(--primary-color);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --inner-padding-end: 0;
+  --inner-border-width: 0;
+  align-items: flex-start;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  flex-grow: 1;
+  --min-height: 40px;
+}
+
+.agenda-filters ion-item ion-label {
+  margin-bottom: 4px;
+}
+
+.agenda-filters ion-input,
+.agenda-filters ion-select {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --padding-start: 0;
+  --padding-end: 0;
+  color: var(--primary-color);
+  --placeholder-color: var(--primary-color);
+  --highlight-color-focused: var(--primary-color);
+  --caret-color-focused: var(--primary-color);
+  font-size: 1rem;
+  width: 100%; 
+}
+
+.agenda-filters .date-filter-display {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 0; 
+  padding-right: 0;
+  color: var(--primary-color);
+  font-size: 1rem;
+  width: 100%;
+  background: transparent; 
+  border: none;
+  box-shadow: none;
+  cursor: pointer; 
+}
+
+.agenda-filters ion-item ion-datetime-button {
+    font-size: 1rem;
+    color: var(--primary-color);
+    --color: var(--primary-color);
+    width: 100%;
+}
+
+.agenda-filters ion-item ion-datetime-button::part(native) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  justify-content: flex-start;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  width: 100%;
+}
+
+.agenda-filters ion-select::part(icon) {
+    color: var(--primary-color);
+    opacity: 1;
+}
+
+.agenda-filters ion-item.item-has-focus,
+.agenda-filters ion-item:active {
+  --background: #f8f8f8;
+}
+
+@media (max-width: 600px) {
+  .agenda-filters {
+    padding: 0 8px;
+    gap: 8px;
+  }
+
+  .agenda-filters ion-item {
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+}
+
+.create-activity-button {
+  --background: var(--secondary-color);
+  --color: var(--primary-color);
+  --border-radius: 8px;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 16px;
 }
 
 .daily-view {
@@ -235,8 +359,8 @@
 }
 
 .activity-cell {
-  min-height: 60px; 
-  position: relative; 
+  min-height: 60px;
+  position: relative;
 }
 
 .monthly-view {
@@ -263,7 +387,7 @@
 
 .monthly-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); 
+  grid-template-columns: repeat(7, 1fr);
   border-top: 1px solid #ccc;
 }
 
@@ -281,9 +405,9 @@
   border: 1px solid #eee;
   padding: 8px;
   text-align: center;
-  min-height: 80px; 
+  min-height: 80px;
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
@@ -312,7 +436,7 @@
 }
 
 .activity-block {
-    background-color: #cce5ff; 
+    background-color: #cce5ff;
     border-left: 4px solid #007bff;
     padding: 4px;
     font-size: 0.8em;
@@ -329,7 +453,40 @@
 }
 
 .today {
-    background-color: #fffacd; 
+    background-color: #fffacd;
+}
+
+.date-picker-modal {
+  --width: 300px; 
+  --height: 350px;
+  --border-radius: 8px; 
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+}
+
+.date-picker-modal .datetime-content {
+    padding: 16px; 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day)::after { 
+  background: var(--primary-color) !important;
+  color: white !important; 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day):hover { 
+    background: rgba(7, 64, 123, 0.1);
+    color: var(--primary-color); 
+}
+
+.date-picker-modal ion-datetime::part(day-button-text) {
+    color: var(--header-text-color); 
+}
+
+.date-picker-modal ion-datetime::part(day-button-text).calendar-day-today { 
+    color: var(--secondary-color); 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day-active) .day-button-text { 
+  color: white !important;
 }
 
 

@@ -1,9 +1,9 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon, IonButton, IonSegment, IonSegmentButton, IonLabel } from '@ionic/react';
-import {  add, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon, IonButton, IonSegment, IonSegmentButton, IonLabel, IonItem, IonInput, IonSelect, IonSelectOption, IonDatetime, IonDatetimeButton, IonModal } from '@ionic/react';
+import { add, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import './Agenda.css';
 import logo from '../assets/logo.png';
 import { useState, useMemo } from 'react';
-import { format, startOfMonth, endOfMonth, isSameMonth, isToday, addDays } from 'date-fns';
+import { format, startOfMonth, endOfMonth, isSameMonth, isToday, addDays, parseISO } from 'date-fns';
 import { eachDayOfInterval } from 'date-fns/eachDayOfInterval';
 import { es } from 'date-fns/locale';
 
@@ -12,6 +12,13 @@ const Agenda: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [currentDay, setCurrentDay] = useState(new Date());
+
+  const [filterDate, setFilterDate] = useState<string | undefined>(undefined);
+  const [filterType, setFilterType] = useState<string>('all');
+  const [filterLocation, setFilterLocation] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
+
+  const [isDateModalOpen, setIsDateModalOpen] = useState(false);
 
   const handleViewChange = (view: 'daily' | 'weekly' | 'monthly') => {
     setCurrentView(view);
@@ -77,31 +84,56 @@ const Agenda: React.FC = () => {
     return weeksArray;
   }, [daysInMonth]);
 
-  const placeholderActivities = [
+  const placeholderActivities = useMemo(() => [
     { date: new Date(2025, 3, 1, 11, 0), title: 'Cita Oftalmólogo', type: 'Cita', resident: 'Joaquin', location: 'Hospital', status: 'Completo' },
     { date: new Date(2025, 3, 1, 12, 0), title: 'Almuerzo con familiares', type: 'Almuerzo', resident: 'Joaquin', location: 'Interno', status: 'Incompleto' },
-     { date: new Date(2025, 3, 4, 14, 0), title: 'Visita Familiares', type: 'Visita', resident: 'Joaquin', location: 'Interno', status: 'Incompleto' },
-     { date: new Date(2025, 3, 4, 15, 0), title: 'Paseo', type: 'Paseo', resident: 'Joaquin', location: 'Exterior', status: 'Completo' },
+    { date: new Date(2025, 3, 4, 14, 0), title: 'Visita Familiares', type: 'Visita', resident: 'Joaquin', location: 'Interno', status: 'Incompleto' },
+    { date: new Date(2025, 3, 4, 15, 0), title: 'Paseo', type: 'Paseo', resident: 'Joaquin', location: 'Exterior', status: 'Completo' },
     { date: new Date(2025, 3, 8, 10, 0), title: 'Terapia física', type: 'Terapia', resident: 'Joaquin', location: 'Gimnasio', status: 'Completo' },
     { date: new Date(2025, 3, 8, 14, 30), title: 'Reunión de cuidadores', type: 'Reunión', resident: '-', location: 'Sala de estar', status: 'Incompleto' },
-  ];
+  ], []);
+
+  const filterActivities = (activities: any[]) => {
+    return activities.filter(activity => {
+      const activityDate = new Date(activity.date);
+      const filterD = filterDate ? parseISO(filterDate) : null;
+
+      const dateMatch = filterD ?
+        activityDate.getFullYear() === filterD.getFullYear() &&
+        activityDate.getMonth() === filterD.getMonth() &&
+        activityDate.getDate() === filterD.getDate()
+        : true;
+
+      const typeMatch = filterType === 'all' || activity.type === filterType;
+      const locationMatch = filterLocation === 'all' || activity.location === filterLocation;
+      const statusMatch = filterStatus === 'all' || activity.status === filterStatus;
+
+      return dateMatch && typeMatch && locationMatch && statusMatch;
+    });
+  };
 
   const getActivitiesForDay = (day: Date) => { 
-    return placeholderActivities.filter(activity =>
+    const activitiesOnDay = placeholderActivities.filter(activity =>
       isSameMonth(activity.date, day) &&
       format(activity.date, 'dd/MM/yyyy') === format(day, 'dd/MM/yyyy')
     );
+    return filterActivities(activitiesOnDay);
   };
 
   const getActivitiesForTimeSlot = (day: Date, time: string) => { 
     const [hour, minute] = time.split(':').map(Number);
-    return placeholderActivities.filter(activity =>
+    const activitiesAtTime = placeholderActivities.filter(activity =>
       isSameMonth(activity.date, day) &&
       activity.date.getHours() === hour &&
       activity.date.getMinutes() === minute
     );
+    return filterActivities(activitiesAtTime);
   };
 
+  // Dummy filter options (replace with actual data)
+  const activityTypes = ['all', 'Cita', 'Almuerzo', 'Visita', 'Paseo', 'Terapia', 'Reunión'];
+  const locations = ['all', 'Hospital', 'Interno', 'Exterior', 'Gimnasio', 'Sala de estar'];
+  const statuses = ['all', 'Completo', 'Incompleto'];
 
   return (
     <IonPage className="agenda-page">
@@ -126,11 +158,75 @@ const Agenda: React.FC = () => {
           </IonSegmentButton>
         </IonSegment>
 
-       
         <IonButton expand="block" className="create-activity-button" onClick={() => setIsCreateModalOpen(true)}>
            <IonIcon icon={add} slot="start" />
            Crear Actividad
         </IonButton>
+
+        <div className="agenda-filters">
+          <IonItem>
+            <IonLabel position="stacked">Fecha:</IonLabel>
+            <div
+              className="date-filter-display"
+              onClick={() => setIsDateModalOpen(true)}
+            >
+              {filterDate ? format(parseISO(filterDate), 'dd MMM yyyy') : 'Seleccionar fecha'}
+            </div>
+            <IonModal isOpen={isDateModalOpen} onDidDismiss={() => setIsDateModalOpen(false)} keepContentsMounted={true} className="date-picker-modal">
+              <IonDatetime
+                id="filter-date-datetime"
+                presentation="date"
+                onIonChange={e => setFilterDate(e.detail.value ? format(parseISO(e.detail.value as string), 'yyyy-MM-dd') : undefined)}
+              ></IonDatetime>
+            </IonModal>
+          </IonItem>
+
+           <IonItem>
+            <IonLabel position="stacked">Tipo de Actividad:</IonLabel>
+            <IonSelect
+              value={filterType}
+              onIonChange={(e) => setFilterType(e.detail.value)}
+              interface="popover"
+            >
+              {activityTypes.map(type => (
+                <IonSelectOption key={type} value={type}>
+                  {type === 'all' ? 'Todos' : type}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+          </IonItem>
+
+          <IonItem>
+            <IonLabel position="stacked">Lugar:</IonLabel>
+            <IonSelect
+              value={filterLocation}
+              onIonChange={(e) => setFilterLocation(e.detail.value)}
+              interface="popover"
+            >
+               {locations.map(location => (
+                <IonSelectOption key={location} value={location}>
+                  {location === 'all' ? 'Todos' : location}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+          </IonItem>
+
+           <IonItem>
+            <IonLabel position="stacked">Estado:</IonLabel>
+            <IonSelect
+              value={filterStatus}
+              onIonChange={(e) => setFilterStatus(e.detail.value)}
+              interface="popover"
+            >
+               {statuses.map(status => (
+                <IonSelectOption key={status} value={status}>
+                  {status === 'all' ? 'Todos' : status}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+          </IonItem>
+
+        </div>
 
         <div className="agenda-activities">
           {currentView === 'daily' && (
@@ -150,7 +246,7 @@ const Agenda: React.FC = () => {
                   <div key={timeIndex} className="daily-time-slot">
                     <div className="daily-time-label">{time}</div>
                     <div className="daily-activities-for-time">
-                      {getActivitiesForTimeSlot(currentDay, time).map((activity, activityIndex) => (
+                      {filterActivities(getActivitiesForTimeSlot(currentDay, time)).map((activity, activityIndex) => (
                          <div key={activityIndex} className="activity-block">
                            {activity.title} ({activity.type})
                          </div>
@@ -215,7 +311,7 @@ const Agenda: React.FC = () => {
                       <div key={`${weekIndex}-${dayIndex}`} className={`monthly-day-cell ${!isSameMonth(day, currentMonth) ? 'outside-month' : ''} ${isToday(day) ? 'today' : ''}`}>
                         <div className="day-number">{format(day, 'd')}</div>
                         <div className="activities">
-                          {getActivitiesForDay(day).map((activity, activityIndex) => (
+                          {filterActivities(getActivitiesForDay(day)).map((activity, activityIndex) => (
                             <div key={activityIndex} className="activity-block">
                               {activity.title}
                             </div>
@@ -229,7 +325,6 @@ const Agenda: React.FC = () => {
             </div>
           )}
         </div>
-
 
       </IonContent>
     </IonPage>
