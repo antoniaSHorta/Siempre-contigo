@@ -1,0 +1,130 @@
+.agenda-page {
+  --primary-color: #07407B;
+  --secondary-color: #F7931E;
+  --background-color: #D9D9D9;
+  --header-text-color: #0E0F3B;
+
+  --ion-color-primary: var(--primary-color);
+  --ion-color-secondary: var(--secondary-color);
+  --ion-color-dark: var(--primary-color);
+  --ion-color-medium: var(--primary-color);
+}
+
+.agenda-page ion-header ion-toolbar {
+  --background: var(--background-color);
+  --color: var(--header-text-color);
+  --min-height: 79px;
+  padding: 0 16px;
+  position: relative;
+}
+
+.agenda-page .header-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+
+.agenda-page .header-logo {
+  width: auto;
+  height: 80px;
+  min-width: 100px;
+  max-width: 180px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.agenda-page ion-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-transform: capitalize;
+  color: var(--header-text-color);
+  padding: 0;
+  margin: 0;
+  height: auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  flex: none;
+}
+
+.agenda-page ion-content {
+  --background: white;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0; /* Adjust as needed */
+  --padding-bottom: 0; /* Adjust as needed */
+}
+
+.agenda-page ion-segment {
+  margin: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.agenda-page ion-segment-button {
+  --color: var(--primary-color);
+  --color-checked: white;
+  --background: white;
+  --background-checked: var(--primary-color);
+  --border-color: var(--primary-color);
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+.create-activity-button {
+  --background: var(--secondary-color);
+  --color: var(--primary-color);
+  --border-radius: 8px;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 16px;
+}
+
+@media (max-width: 768px) {
+  .agenda-page ion-header ion-toolbar {
+    --min-height: 60px;
+    padding: 0 12px;
+  }
+
+  .agenda-page .header-content {
+    gap: 12px;
+  }
+
+  .agenda-page .header-logo {
+    height: 25px;
+    min-width: 90px;
+    max-width: 140px;
+  }
+
+  .agenda-page ion-title {
+    font-size: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 480px) {
+  .agenda-page ion-header ion-toolbar {
+    --min-height: 50px;
+    padding: 0 8px;
+  }
+
+  .agenda-page .header-content {
+    gap: 8px;
+  }
+
+  .agenda-page .header-logo {
+    height: 20px;
+    min-width: 70px;
+    max-width: 120px;
+  }
+
+  .agenda-page ion-title {
+    font-size: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
