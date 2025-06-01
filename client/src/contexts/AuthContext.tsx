@@ -10,6 +10,8 @@ interface AuthContextType {
   lastRoute: string;
   setLastRoute: (route: string) => void;
   isLoading: boolean;
+  updateProfile: (profileData: { name: string; email: string; phone?: string; location?: string }) => Promise<void>;
+  updatePassword: (passwordData: { currentPassword: string; newPassword: string; confirmPassword: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -58,7 +60,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       }
     } catch (error) {
-      // Silently handle logout errors
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -68,8 +69,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateProfile = async (profileData: { name: string; email: string; phone?: string; location?: string }) => {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error("No se encontró el token de autenticación");
+
+    try {
+      const response = await axios.put(
+        endpoints.users.update(user.id),
+        profileData,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      if (response.data.success) {
+        const updatedUser = { ...user, ...profileData };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      } else {
+        throw new Error(response.data.message || 'Error al actualizar el perfil');
+      }
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Error al actualizar el perfil');
+    }
+  };
+
+  const updatePassword = async (passwordData: { currentPassword: string; newPassword: string; confirmPassword: string }) => {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error("No se encontró el token de autenticación");
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      throw new Error('Las contraseñas no coinciden');
+    }
+
+    try {
+      const response = await axios.put(
+        `${endpoints.users.update(user.id)}/password`,
+        {
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      if (!response.data.success) {
+        throw new Error(response.data.message || 'Error al actualizar la contraseña');
+      }
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Error al actualizar la contraseña');
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, lastRoute, setLastRoute, isLoading }}>
+    <AuthContext.Provider value={{ 
+      isAuthenticated, 
+      user, 
+      login, 
+      logout, 
+      lastRoute, 
+      setLastRoute, 
+      isLoading,
+      updateProfile,
+      updatePassword
+    }}>
       {children}
     </AuthContext.Provider>
   );
@@ -78,7 +142,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth debe ser usado dentro de un AuthProvider");
   }
   return context;
 }; 
