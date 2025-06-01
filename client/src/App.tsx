@@ -1,7 +1,7 @@
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { home, person } from 'ionicons/icons';
+import { home, person, calendar } from 'ionicons/icons';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -9,6 +9,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
+import Agenda from './pages/Agenda';
 
 /* Styles */
 import './theme/variables.css';
@@ -45,6 +46,7 @@ const App: React.FC = () => (
               <IonRouterOutlet>
                 <ProtectedRoute exact path="/app/home" component={Home} />
                 <ProtectedRoute exact path="/app/profile" component={Profile} />
+                <ProtectedRoute exact path="/app/agenda" component={Agenda} />
                 <Route exact path="/app">
                   <Redirect to="/app/home" />
                 </Route>
@@ -53,6 +55,10 @@ const App: React.FC = () => (
                 <IonTabButton tab="home" href="/app/home">
                   <IonIcon icon={home} />
                   <IonLabel>Inicio</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="agenda" href="/app/agenda">
+                  <IonIcon icon={calendar} />
+                  <IonLabel>Agenda</IonLabel>
                 </IonTabButton>
                 <IonTabButton tab="profile" href="/app/profile">
                   <IonIcon icon={person} />
