@@ -41,6 +41,18 @@ export class User extends Model {
   })
   role!: string;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  phone?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  location?: string;
+
   @BeforeCreate
   static async hashPasswordBeforeCreate(instance: User) {
     if (instance.changed('password')) {

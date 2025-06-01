@@ -1,16 +1,68 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonItem, IonLabel, IonAvatar, IonButton, IonIcon, useIonRouter, IonList, IonToggle, IonSelect, IonSelectOption } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonItem, IonLabel, IonAvatar, IonButton, IonIcon, useIonRouter, IonList, IonToggle, IonSelect, IonSelectOption, useIonToast } from '@ionic/react';
 import { person, mail, call, location, notificationsOutline, languageOutline, moonOutline, shieldCheckmarkOutline, helpCircleOutline, informationCircleOutline } from 'ionicons/icons';
 import { useAuth } from '../contexts/AuthContext';
+import { useState } from 'react';
+import EditProfileModal, { ProfileData } from '../components/EditProfileModal';
+import ChangePasswordModal, { PasswordData } from '../components/ChangePasswordModal';
 import './Profile.css';
 import logo from '../assets/logo.png';
 
 const Profile: React.FC = () => {
-  const { logout, user } = useAuth();
+  const { logout, user, updateProfile, updatePassword } = useAuth();
   const router = useIonRouter();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [presentToast] = useIonToast();
 
   const handleLogout = async () => {
     await logout();
     router.push('/login', 'root', 'replace');
+  };
+
+  const initialProfileData: ProfileData = {
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    location: user?.location || ''
+  };
+
+  const handleSaveProfile = async (profileData: ProfileData) => {
+    try {
+      await updateProfile(profileData);
+      presentToast({
+        message: 'Perfil actualizado exitosamente',
+        duration: 2000,
+        position: 'top',
+        color: 'success'
+      });
+    } catch (error) {
+      presentToast({
+        message: error instanceof Error ? error.message : 'Error al actualizar el perfil',
+        duration: 3000,
+        position: 'top',
+        color: 'danger'
+      });
+    }
+  };
+
+  const handleSavePassword = async (passwordData: PasswordData) => {
+    try {
+      await updatePassword(passwordData);
+      presentToast({
+        message: 'Contraseña actualizada exitosamente',
+        duration: 2000,
+        position: 'top',
+        color: 'success'
+      });
+    } catch (error) {
+      presentToast({
+        message: error instanceof Error ? error.message : 'Error al actualizar la contraseña',
+        duration: 3000,
+        position: 'top',
+        color: 'danger'
+      });
+      throw error; 
+    }
   };
 
   return (
@@ -55,14 +107,14 @@ const Profile: React.FC = () => {
               <IonIcon icon={call} slot="start" />
               <IonLabel>
                 <h2>Teléfono</h2>
-                <p>+56 9 90878856</p>
+                <p>{user?.phone || 'No disponible'}</p>
               </IonLabel>
             </IonItem>
             <IonItem>
               <IonIcon icon={location} slot="start" />
               <IonLabel>
                 <h2>Ubicación</h2>
-                <p>Chile</p>
+                <p>{user?.location || 'No disponible'}</p>
               </IonLabel>
             </IonItem>
           </IonCardContent>
@@ -92,7 +144,7 @@ const Profile: React.FC = () => {
               <IonItem>
                 <IonIcon icon={shieldCheckmarkOutline} slot="start" />
                 <IonLabel>Cambiar Contraseña</IonLabel>
-                <IonButton fill="clear" slot="end" className='profile-password-button'>
+                <IonButton fill="clear" slot="end" className='profile-password-button' onClick={() => setIsPasswordModalOpen(true)}>
                   Cambiar
                 </IonButton>
               </IonItem>
@@ -119,13 +171,26 @@ const Profile: React.FC = () => {
         </IonCard>
 
         <div className="profile-actions">
-          <IonButton expand="block" className="profile-actions-button">
+          <IonButton expand="block" className="profile-actions-button" onClick={() => setIsEditModalOpen(true)}>
             Editar Perfil
           </IonButton>
           <IonButton expand="block" fill="outline" color="medium" onClick={handleLogout}>
             Cerrar Sesión
           </IonButton>
         </div>
+
+        <EditProfileModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSave={handleSaveProfile}
+          initialData={initialProfileData}
+        />
+
+        <ChangePasswordModal
+          isOpen={isPasswordModalOpen}
+          onClose={() => setIsPasswordModalOpen(false)}
+          onSave={handleSavePassword}
+        />
       </IonContent>
     </IonPage>
   );
