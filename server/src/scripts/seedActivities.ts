@@ -2,8 +2,6 @@ import sequelize from '../config/database';
 import { Activity } from '../models/Activity';
 import { User } from '../models/User';
 import { Resident } from '../models/Resident';
-import { Alimentacion } from '../models/Alimentacion';
-import { Medicacion } from '../models/Medicacion';
 import { addDays, setHours, setMinutes, addWeeks } from 'date-fns';
 
 async function seedActivities() {
@@ -98,8 +96,6 @@ async function seedActivities() {
 
     const today = new Date();
     const activities = [];
-    const alimentacionRecords = [];
-    const medicacionRecords = [];
 
     const createActivity = (
       titulo: string,
@@ -155,101 +151,73 @@ async function seedActivities() {
       )
     );
 
-    // Actividades de alimentación
-    const desayunoFecha = setHours(setMinutes(addDays(today, 1), 0), 8);
+    // Actividades de alimentación (se crearán automáticamente los registros correspondientes)
     activities.push(
       createActivity(
         'Desayuno',
         'Avena con frutas y leche',
-        desayunoFecha,
+        setHours(setMinutes(addDays(today, 1), 0), 8),
         'Alimentacion',
         residentes[0].id,
         'Comedor',
         'Pendiente',
         cuidadores[0].id
-      )
-    );
-
-    alimentacionRecords.push({
-      tipo: 'Desayuno',
-      descripcion: 'Avena con frutas y leche',
-      hora: desayunoFecha.toTimeString().slice(0, 8),
-      fecha_hora: desayunoFecha,
-      residente_id: residentes[0].id,
-      cuidador_id: cuidadores[0].id
-    });
-
-    const almuerzoFecha = setHours(setMinutes(addDays(today, 1), 0), 12);
-    activities.push(
+      ),
       createActivity(
         'Almuerzo',
         'Pollo con verduras',
-        almuerzoFecha,
+        setHours(setMinutes(addDays(today, 1), 0), 12),
         'Alimentacion',
         residentes[1].id,
         'Comedor',
         'Pendiente',
         cuidadores[1].id
+      ),
+      createActivity(
+        'Cena',
+        'Sopa de verduras con pan integral',
+        setHours(setMinutes(addDays(today, 1), 0), 19),
+        'Alimentacion',
+        residentes[2].id,
+        'Comedor',
+        'Pendiente',
+        cuidadores[2].id
       )
     );
 
-    alimentacionRecords.push({
-      tipo: 'Almuerzo',
-      descripcion: 'Pollo con verduras',
-      hora: almuerzoFecha.toTimeString().slice(0, 8),
-      fecha_hora: almuerzoFecha,
-      residente_id: residentes[1].id,
-      cuidador_id: cuidadores[1].id
-    });
-
-    // Actividades de medicación
-    const aspirina1Fecha = setHours(setMinutes(addDays(today, 1), 0), 9);
+    // Actividades de medicación (se crearán automáticamente los registros correspondientes)
     activities.push(
       createActivity(
         'Aspirina Matutina',
         '100mg después del desayuno',
-        aspirina1Fecha,
+        setHours(setMinutes(addDays(today, 1), 0), 9),
         'Medicamento',
         residentes[0].id,
         'Habitación',
         'Pendiente',
         cuidadores[0].id
-      )
-    );
-
-    medicacionRecords.push({
-      nombre: 'Aspirina Matutina',
-      dosis: '100mg después del desayuno',
-      horario: aspirina1Fecha.toTimeString().slice(0, 8),
-      fecha_hora: aspirina1Fecha,
-      residente_id: residentes[0].id,
-      cuidador_id: cuidadores[0].id,
-      estado: 'Pendiente'
-    });
-
-    const vitamina1Fecha = setHours(setMinutes(addDays(today, 1), 0), 14);
-    activities.push(
+      ),
       createActivity(
         'Vitaminas',
         'Complejo B después del almuerzo',
-        vitamina1Fecha,
+        setHours(setMinutes(addDays(today, 1), 0), 14),
         'Medicamento',
         residentes[1].id,
         'Habitación',
         'Pendiente',
         cuidadores[1].id
+      ),
+      createActivity(
+        'Medicación Nocturna',
+        'Pastilla para dormir - 5mg',
+        setHours(setMinutes(addDays(today, 1), 0), 21),
+        'Medicamento',
+        residentes[2].id,
+        'Habitación',
+        'Pendiente',
+        cuidadores[0].id
       )
     );
-
-    medicacionRecords.push({
-      nombre: 'Vitaminas',
-      dosis: 'Complejo B después del almuerzo',
-      horario: vitamina1Fecha.toTimeString().slice(0, 8),
-      fecha_hora: vitamina1Fecha,
-      residente_id: residentes[1].id,
-      cuidador_id: cuidadores[1].id,
-      estado: 'Pendiente'
-    });
 
     // Más actividades regulares
     activities.push(
@@ -387,33 +355,36 @@ async function seedActivities() {
         cuidadores[1].id
       ),
       createActivity(
-        'Visita Familiar',
-        'Visita de hijos',
-        setHours(setMinutes(addDays(today, -3), 0), 15),
-        'Recreacional',
-        residentes[2].id,
-        'Interno',
+        'Desayuno Ayer',
+        'Cereales con leche',
+        setHours(setMinutes(addDays(today, -1), 0), 8),
+        'Alimentacion',
+        residentes[0].id,
+        'Comedor',
         'Completado',
-        cuidadores[2].id
+        cuidadores[0].id
+      ),
+      createActivity(
+        'Medicamento Ayer',
+        'Aspirina matutina',
+        setHours(setMinutes(addDays(today, -1), 0), 9),
+        'Medicamento',
+        residentes[1].id,
+        'Habitación',
+        'Completado',
+        cuidadores[1].id
       )
     );
 
     // Crear todas las actividades
     await Activity.bulkCreate(activities);
 
-    // Crear registros de alimentación
-    await Alimentacion.bulkCreate(alimentacionRecords);
-
-    // Crear registros de medicación
-    await Medicacion.bulkCreate(medicacionRecords);
-
-    console.log('Seeder ejecutado exitosamente');
+    console.log('Seeder ejecutado exitosamente con sincronización automática');
     console.log(`Creado 1 administrador`);
     console.log(`Creados ${cuidadores.length} cuidadores`);
     console.log(`Creados ${residentes.length} residentes`);
     console.log(`Creadas ${activities.length} actividades`);
-    console.log(`Creados ${alimentacionRecords.length} registros de alimentación`);
-    console.log(`Creados ${medicacionRecords.length} registros de medicación`);
+    console.log('📌 Los registros de alimentación y medicación se crean automáticamente por sincronización');
 
     process.exit(0);
   } catch (error) {
