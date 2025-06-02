@@ -216,6 +216,87 @@ const Alimentacion:React.FC = () =>{
         // TODO llamada API para borrar en la base de datos
     }
 
+    const handleAddEntry = () => {
+        const now = new Date();
+        const currentHour = String(now.getHours()).padStart(2, '0');
+        const currentMinute = String(now.getMinutes()).padStart(2, '0');
+        const defaultTime = `${currentHour}:${currentMinute}`;
+
+        presentAlert({
+            header: 'Agregar Nueva Entrada de Alimentación',
+            inputs: [
+                {
+                    name: 'tipo',
+                    type: 'text',
+                    placeholder: 'Tipo (Ej: Desayuno, Almuerzo)',
+                    value: '',
+                    attributes: { required: true }
+                },
+                {
+                    name: 'descripcion',
+                    type: 'textarea',
+                    placeholder: 'Descripción de la comida',
+                    value: '',
+                    attributes: { required: true }
+                },
+                {
+                    name: 'hora',
+                    type: 'time',
+                    value: defaultTime,
+                    attributes: { required: true }
+                }
+            ],
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    role: 'cancel',
+                    handler: () => {
+                        console.log('Adición cancelada.');
+                    },
+                },
+                {
+                    text: 'Guardar',
+                    handler: (data) => {
+                        if (!data.tipo || !data.descripcion || !data.hora) {
+                            presentToast({
+                                message: 'Todos los campos son obligatorios.',
+                                duration: 2000,
+                                color: 'danger',
+                                position: 'top',
+                            });
+                            return false;
+                        }
+
+                        const [newHour, newMinute] = data.hora.split(':').map(Number);
+                        const newHora = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate(), newHour, newMinute, 0);
+                        
+                        const newId = listaAlimentacion.length > 0
+                            ? Math.max(...listaAlimentacion.map(item => item.id)) + 1
+                            : 1;
+
+                        const newEntry: AlimentacionInterface = {
+                            id: newId,
+                            tipo: data.tipo,
+                            descripcion: data.descripcion,
+                            hora: newHora,
+                        };
+
+                        setListaAlimentacion(prevList => [...prevList, newEntry]);
+
+                        // TODO: Llamada API para guardar en la base de datos
+
+                        presentToast({
+                            message: 'Nueva entrada agregada con éxito.',
+                            duration: 1500,
+                            color: 'success',
+                            position: 'top',
+                        });
+                    },
+                },
+            ],
+        });
+    };
+
     return(
         <>
             <IonPage className='alimentacion-page'>
@@ -256,13 +337,13 @@ const Alimentacion:React.FC = () =>{
                                         />
                                     ))
                                 }
-                            <IonItem className="alimentacion-card-item">
-                                <IonButton fill="clear" className="add-button-content"
-                                onClick={() =>{}}                                >
-                                    <IonIcon icon={addCircle} slot="start" className="add-icon" />
-                                    <IonLabel className="add-label">Agregar Nueva Entrada</IonLabel>
-                                </IonButton>
-                            </IonItem>
+                                <IonItem className="alimentacion-card-item">
+                                    <IonButton fill="clear" className="add-button-content"
+                                    onClick={handleAddEntry}                                >
+                                        <IonIcon icon={addCircle} slot="start" className="add-icon" />
+                                        <IonLabel className="add-label">Agregar Nueva Entrada</IonLabel>
+                                    </IonButton>
+                                </IonItem>
                             </IonList>
                         ) : (
                             <IonList className='alimentacion-lista-entradas'>
@@ -270,14 +351,16 @@ const Alimentacion:React.FC = () =>{
                                     No hay registros de alimentación para hoy.
                                 </IonText>
                             <IonItem className="alimentacion-card-item">
-
-                            </IonItem>
+                                    <IonButton fill="clear" className="add-button-content"
+                                    onClick={handleAddEntry}                                >
+                                        <IonIcon icon={addCircle} slot="start" className="add-icon" />
+                                        <IonLabel className="add-label">Agregar Nueva Entrada</IonLabel>
+                                    </IonButton>
+                                </IonItem>
                             </IonList>
                         )}
-                        
                     </div>
                 </IonContent>
-                
             </IonPage>
         </>
     );
