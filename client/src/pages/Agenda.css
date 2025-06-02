@@ -659,6 +659,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   border-top: 1px solid #ccc;
+  overflow-x: auto;
 }
 
 .monthly-grid-header {
@@ -680,6 +681,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  min-width: 120px;
 }
 
 .monthly-day-label {
@@ -727,6 +729,88 @@
   height: 24px;
   width: 24px;
   margin: 0;
+}
+
+/* Responsive design for monthly view */
+@media (max-width: 768px) {
+  .monthly-view {
+    margin: 12px;
+  }
+  
+  .monthly-grid {
+    font-size: 0.9em;
+  }
+  
+  .monthly-day-label,
+  .monthly-day-cell {
+    padding: 6px 4px;
+    min-height: 70px;
+    min-width: 100px;
+  }
+  
+  .day-number {
+    font-size: 1.1em;
+    margin-bottom: 3px;
+  }
+  
+  .activity-block {
+    font-size: 0.7em;
+    padding: 3px;
+    margin-bottom: 2px;
+  }
+  
+  .activity-time {
+    font-size: 0.65em;
+  }
+  
+  .activity-type {
+    font-size: 0.65em;
+  }
+}
+
+@media (max-width: 480px) {
+  .monthly-view {
+    margin: 8px;
+  }
+  
+  .monthly-grid {
+    font-size: 0.8em;
+    grid-template-columns: repeat(7, minmax(80px, 1fr));
+  }
+  
+  .monthly-day-label,
+  .monthly-day-cell {
+    padding: 4px 2px;
+    min-height: 60px;
+    min-width: 80px;
+  }
+  
+  .monthly-day-label {
+    font-size: 0.8em;
+  }
+  
+  .day-number {
+    font-size: 1em;
+    margin-bottom: 2px;
+  }
+  
+  .activity-block {
+    font-size: 0.65em;
+    padding: 2px;
+    margin-bottom: 1px;
+  }
+  
+  .activity-time {
+    font-size: 0.6em;
+  }
+  
+  .activity-type {
+    font-size: 0.6em;
+  }
+  
+  .activity-title {
+    font-size: 0.65em;
+  }
 }
 
 
