@@ -13,6 +13,7 @@ const Alimentacion:React.FC = () =>{
     const [fechaActual, setFechaActual] = useState(new Date());
     const [listaAlimentacion, setListaAlimentacion] = useState(new Array<AlimentacionInterface>())
     const [presentAlert] = useIonAlert(); 
+    const [presentToast] = useIonToast();
     const {user} = useAuth()
 
     const opcionesFechaDisplay: Intl.DateTimeFormatOptions = {
@@ -99,11 +100,93 @@ const Alimentacion:React.FC = () =>{
     }
 
     const handleEditClick = (entry:AlimentacionInterface) =>{
+        // Formatear la hora actual a HH:mm para el input del alert
+        const currentHour = String(entry.hora.getHours()).padStart(2, '0');
+        const currentMinute = String(entry.hora.getMinutes()).padStart(2, '0');
+        const formattedTime = `${currentHour}:${currentMinute}`;
 
+        presentAlert({
+            header: 'Editar Entrada de Alimentación',
+            inputs: [
+                {
+                    name: 'tipo',
+                    type: 'text',
+                    placeholder: 'Tipo (Ej: Desayuno, Almuerzo)',
+                    value: entry.tipo,
+                    attributes: {
+                        required: true,
+                    }
+                },
+                {
+                    name: 'descripcion',
+                    type: 'textarea',
+                    placeholder: 'Descripción de la comida',
+                    value: entry.descripcion,
+                    attributes: {
+                        required: true,
+                    }
+                },
+                {
+                    name: 'hora',
+                    type: 'time',
+                    value: formattedTime,
+                    attributes: {
+                        required: true,
+                    }
+                }
+            ],
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    role: 'cancel',
+                    handler: () => {
+                        console.log('Edición cancelada.');
+                    },
+                },
+                {
+                    text: 'Guardar',
+                    handler: (data) => {
+                        if (!data.tipo || !data.descripcion || !data.hora) {
+                            presentToast({
+                                message: 'Todos los campos son obligatorios.',
+                                duration: 2000,
+                                color: 'danger',
+                                position: 'top',
+                            });
+                            return false;
+                        }
+
+                        const [newHour, newMinute] = data.hora.split(':').map(Number);
+                        const newHora = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate(), newHour, newMinute, 0);
+
+                        const updatedEntry: AlimentacionInterface = {
+                            ...entry,
+                            tipo: data.tipo,
+                            descripcion: data.descripcion,
+                            hora: newHora,
+                        };
+
+                        setListaAlimentacion(prevList =>
+                            prevList.map(item => (item.id === updatedEntry.id ? updatedEntry : item))
+                        );
+                         
+                        // TODO llamada API para actualizar en la base de datos
+
+                        presentToast({
+                            message: 'Entrada actualizada con éxito.',
+                            duration: 1500,
+                            color: 'success',
+                            position: 'top',
+                        });
+                        console.log('Entrada actualizada:', updatedEntry);
+                    },
+                },
+            ],
+        });
     }
 
     const handleDeleteClick = (id:number) =>{
-
+        
     }
 
     return(
