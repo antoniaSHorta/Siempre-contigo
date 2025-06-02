@@ -2,7 +2,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon, IonButto
 import { add, chevronBackOutline, chevronForwardOutline, close } from 'ionicons/icons';
 import './Agenda.css';
 import logo from '../assets/logo.png';
-import { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, isSameMonth, isToday, addDays, parseISO, startOfWeek, endOfWeek, isSameDay, setHours, setMinutes, addMinutes } from 'date-fns';
 import { eachDayOfInterval } from 'date-fns/eachDayOfInterval';
 import { es } from 'date-fns/locale';
@@ -506,28 +506,37 @@ const Agenda: React.FC = () => {
               </div>
 
               <div className="weekly-grid">
-                <div className="time-column">
-                  {timeSlots.map(time => (
-                    <div key={time} className="time-slot-label">{time}</div>
-                  ))}
-                </div>
-                {daysOfWeek.map((_, dayIndex) => {
+                <div className="weekly-time-header">Horas</div>
+                {daysOfWeek.map((dayName, dayIndex) => {
                   const currentDate = addDays(startOfWeek(currentDay), dayIndex);
                   return (
-                    <div key={dayIndex} className="day-column">
-                      <div className="day-label">
-                        {format(currentDate, 'EEE dd', { locale: es })}
-                      </div>
-                      {timeSlots.map(time => (
-                        <div key={time} className="activity-cell">
-                          {getActivitiesForTimeSlot(currentDate, time).map(activity =>
-                            renderActivityBlock(activity)
-                          )}
-                        </div>
-                      ))}
+                    <div key={dayIndex} className="weekly-day-header">
+                      <div className="day-name">{dayName}</div>
+                      <div className="day-date">{format(currentDate, 'dd', { locale: es })}</div>
                     </div>
                   );
                 })}
+                
+                {timeSlots.map((time, timeIndex) => (
+                  <React.Fragment key={timeIndex}>
+                    <div className="weekly-time-slot">
+                      {time}
+                    </div>
+                    {daysOfWeek.map((_, dayIndex) => {
+                      const currentDate = addDays(startOfWeek(currentDay), dayIndex);
+                      const activitiesForSlot = getActivitiesForTimeSlot(currentDate, time);
+                      return (
+                        <div key={`${timeIndex}-${dayIndex}`} className="weekly-activity-cell">
+                          <div className="weekly-activities-container">
+                            {activitiesForSlot.map(activity =>
+                              renderActivityBlock(activity)
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
               </div>
             </div>
           )}
