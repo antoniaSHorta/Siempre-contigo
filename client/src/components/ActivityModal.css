@@ -1,0 +1,190 @@
+.activity-modal {
+  --background: white;
+  --width: 95%;
+  --max-width: 600px;
+}
+
+.activity-modal ion-header ion-toolbar {
+  --background: white;
+  --color: #07407B;
+  --min-height: 60px;
+  box-shadow: none;
+}
+
+.activity-modal ion-header {
+  box-shadow: none;
+}
+
+.modal-toolbar {
+  --border-width: 0;
+}
+
+.modal-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.modal-title {
+  color: #07407B;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.activity-modal ion-content {
+  --background: white;
+}
+
+.activity-item {
+  --background: white;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  --highlight-color-focused: #07407B;
+  --color: #07407B;
+  --border-color-focused: #07407B;
+}
+
+.form-field-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  color: #07407B;
+  font-size: 1.05rem !important;
+  font-weight: 400 !important;
+  display: block;
+}
+
+.activity-item ion-input,
+.activity-item ion-textarea,
+.activity-item ion-select {
+  --padding-start: 0;
+  --color: #07407B;
+  --placeholder-color: #07407B;
+  --highlight-color-focused: #07407B;
+  --caret-color-focused: #07407B;
+  font-size: 1rem;
+}
+
+.activity-item ion-datetime {
+  --color: #07407B;
+  --highlight-color-focused: #07407B;
+  font-size: 1rem;
+}
+
+.readonly-section {
+  margin-bottom: 20px;
+}
+
+.readonly-section h4 {
+  margin: 0 0 8px 0;
+  color: #07407B;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.readonly-section p {
+  margin: 0;
+  font-size: 16px;
+  color: #07407B;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 12px 16px;
+  border: 1px solid #e9ecef;
+  min-height: 20px;
+}
+
+.activity-actions {
+  margin-top: 40px;
+  padding: 0 16px;
+}
+
+.activity-actions ion-button {
+  margin-bottom: 12px;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.activity-actions .save-button,
+.activity-actions .edit-button {
+  --background: #F7931E;
+  --color: white;
+  --background-hover: #F7931E;
+  --background-activated: #F7931E;
+  --background-focused: #F7931E;
+}
+
+.activity-actions ion-button[fill="outline"] {
+  --border-color: #07407B;
+  --color: #07407B;
+  --background: white;
+  --background-hover: #f2f2f2;
+  --background-activated: #e6e6e6;
+}
+
+.activity-actions ion-button[color="danger"] {
+  --border-color: #d32f2f;
+  --color: #d32f2f;
+}
+
+.activity-modal ion-button[fill="clear"] {
+  --color: #07407B;
+}
+
+.activity-modal ion-button[fill="clear"] ion-icon {
+  font-size: 24px;
+}
+
+.close-button {
+  --color: #07407B !important;
+  --color-hover: #07407B !important;
+  --color-activated: #07407B !important;
+  --color-focused: #07407B !important;
+  --border-color: #07407B !important;
+  --border-width: 2px !important;
+  --border-style: solid !important;
+  --border-radius: 50% !important;
+  --padding-start: 8px !important;
+  --padding-end: 8px !important;
+  --padding-top: 8px !important;
+  --padding-bottom: 8px !important;
+  --background: white !important;
+  --background-hover: white !important;
+  --background-activated: white !important;
+  --background-focused: white !important;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.close-button ion-icon {
+  color: #07407B !important;
+  font-size: 20px;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  border: 1px solid #ef9a9a;
+}
+
+@media (max-width: 480px) {
+  .activity-modal {
+    --width: 100%;
+    --max-width: 100%;
+    --height: 100%;
+    --max-height: 100%;
+    --border-radius: 0;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
+  }
+} 
