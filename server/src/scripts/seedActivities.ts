@@ -2,6 +2,8 @@ import sequelize from '../config/database';
 import { Activity } from '../models/Activity';
 import { User } from '../models/User';
 import { Resident } from '../models/Resident';
+import { Alimentacion } from '../models/Alimentacion';
+import { Medicacion } from '../models/Medicacion';
 import { addDays, setHours, setMinutes, addWeeks } from 'date-fns';
 
 async function seedActivities() {
@@ -13,7 +15,17 @@ async function seedActivities() {
 
     await sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
 
-    // Crear usuarios de prueba
+    // Crear usuario administrador
+    const admin = await User.create({
+      name: 'Admin',
+      email: 'admin@example.com',
+      password: 'admin123',
+      role: 'admin',
+      phone: '123-456-7890',
+      location: 'Oficina Principal'
+    });
+
+    // Crear usuarios de prueba (cuidadores)
     const cuidadores = await User.bulkCreate([
       {
         name: 'Juan Pérez',
@@ -86,6 +98,8 @@ async function seedActivities() {
 
     const today = new Date();
     const activities = [];
+    const alimentacionRecords = [];
+    const medicacionRecords = [];
 
     const createActivity = (
       titulo: string,
@@ -107,6 +121,7 @@ async function seedActivities() {
       cuidador_id
     });
 
+    // Actividades regulares
     activities.push(
       createActivity(
         'Cita Oftalmológica',
@@ -115,7 +130,7 @@ async function seedActivities() {
         'Cita',
         residentes[0].id,
         'Hospital',
-        'Incompleto',
+        'Pendiente',
         cuidadores[0].id
       ),
       createActivity(
@@ -125,7 +140,7 @@ async function seedActivities() {
         'Recreacional',
         residentes[0].id,
         'Interno',
-        'Incompleto',
+        'Pendiente',
         cuidadores[0].id
       ),
       createActivity(
@@ -135,11 +150,108 @@ async function seedActivities() {
         'Paseo',
         residentes[0].id,
         'Exterior',
-        'Incompleto',
+        'Pendiente',
         cuidadores[1].id
       )
     );
 
+    // Actividades de alimentación
+    const desayunoFecha = setHours(setMinutes(addDays(today, 1), 0), 8);
+    activities.push(
+      createActivity(
+        'Desayuno',
+        'Avena con frutas y leche',
+        desayunoFecha,
+        'Alimentacion',
+        residentes[0].id,
+        'Comedor',
+        'Pendiente',
+        cuidadores[0].id
+      )
+    );
+
+    alimentacionRecords.push({
+      tipo: 'Desayuno',
+      descripcion: 'Avena con frutas y leche',
+      hora: desayunoFecha.toTimeString().slice(0, 8),
+      fecha_hora: desayunoFecha,
+      residente_id: residentes[0].id,
+      cuidador_id: cuidadores[0].id
+    });
+
+    const almuerzoFecha = setHours(setMinutes(addDays(today, 1), 0), 12);
+    activities.push(
+      createActivity(
+        'Almuerzo',
+        'Pollo con verduras',
+        almuerzoFecha,
+        'Alimentacion',
+        residentes[1].id,
+        'Comedor',
+        'Pendiente',
+        cuidadores[1].id
+      )
+    );
+
+    alimentacionRecords.push({
+      tipo: 'Almuerzo',
+      descripcion: 'Pollo con verduras',
+      hora: almuerzoFecha.toTimeString().slice(0, 8),
+      fecha_hora: almuerzoFecha,
+      residente_id: residentes[1].id,
+      cuidador_id: cuidadores[1].id
+    });
+
+    // Actividades de medicación
+    const aspirina1Fecha = setHours(setMinutes(addDays(today, 1), 0), 9);
+    activities.push(
+      createActivity(
+        'Aspirina Matutina',
+        '100mg después del desayuno',
+        aspirina1Fecha,
+        'Medicamento',
+        residentes[0].id,
+        'Habitación',
+        'Pendiente',
+        cuidadores[0].id
+      )
+    );
+
+    medicacionRecords.push({
+      nombre: 'Aspirina Matutina',
+      dosis: '100mg después del desayuno',
+      horario: aspirina1Fecha.toTimeString().slice(0, 8),
+      fecha_hora: aspirina1Fecha,
+      residente_id: residentes[0].id,
+      cuidador_id: cuidadores[0].id,
+      estado: 'Pendiente'
+    });
+
+    const vitamina1Fecha = setHours(setMinutes(addDays(today, 1), 0), 14);
+    activities.push(
+      createActivity(
+        'Vitaminas',
+        'Complejo B después del almuerzo',
+        vitamina1Fecha,
+        'Medicamento',
+        residentes[1].id,
+        'Habitación',
+        'Pendiente',
+        cuidadores[1].id
+      )
+    );
+
+    medicacionRecords.push({
+      nombre: 'Vitaminas',
+      dosis: 'Complejo B después del almuerzo',
+      horario: vitamina1Fecha.toTimeString().slice(0, 8),
+      fecha_hora: vitamina1Fecha,
+      residente_id: residentes[1].id,
+      cuidador_id: cuidadores[1].id,
+      estado: 'Pendiente'
+    });
+
+    // Más actividades regulares
     activities.push(
       createActivity(
         'Terapia Física',
@@ -148,7 +260,7 @@ async function seedActivities() {
         'Terapia',
         residentes[1].id,
         'Gimnasio',
-        'Incompleto',
+        'Pendiente',
         cuidadores[1].id
       ),
       createActivity(
@@ -158,7 +270,7 @@ async function seedActivities() {
         'Cita',
         residentes[1].id,
         'Interno',
-        'Incompleto',
+        'Pendiente',
         cuidadores[0].id
       ),
       createActivity(
@@ -168,7 +280,7 @@ async function seedActivities() {
         'Recreacional',
         residentes[1].id,
         'Sala de estar',
-        'Incompleto',
+        'Pendiente',
         cuidadores[2].id
       )
     );
@@ -181,18 +293,8 @@ async function seedActivities() {
         'Recreacional',
         residentes[2].id,
         'Interno',
-        'Incompleto',
+        'Pendiente',
         cuidadores[0].id
-      ),
-      createActivity(
-        'Reunión de Cuidadores',
-        'Planificación semanal',
-        setHours(setMinutes(addDays(today, 4), 0), 9),
-        'Recreacional',
-        residentes[2].id,
-        'Sala de estar',
-        'Incompleto',
-        cuidadores[1].id
       ),
       createActivity(
         'Paseo Terapéutico',
@@ -201,7 +303,7 @@ async function seedActivities() {
         'Paseo',
         residentes[2].id,
         'Exterior',
-        'Incompleto',
+        'Pendiente',
         cuidadores[2].id
       )
     );
@@ -214,18 +316,8 @@ async function seedActivities() {
         'Terapia',
         residentes[3].id,
         'Gimnasio',
-        'Incompleto',
+        'Pendiente',
         cuidadores[1].id
-      ),
-      createActivity(
-        'Almuerzo Grupal',
-        'Actividad social',
-        setHours(setMinutes(addDays(today, 3), 0), 13),
-        'Recreacional',
-        residentes[3].id,
-        'Interno',
-        'Incompleto',
-        cuidadores[2].id
       ),
       createActivity(
         'Cita Médica',
@@ -234,7 +326,7 @@ async function seedActivities() {
         'Cita',
         residentes[3].id,
         'Interno',
-        'Incompleto',
+        'Pendiente',
         cuidadores[0].id
       )
     );
@@ -247,7 +339,7 @@ async function seedActivities() {
         'Recreacional',
         residentes[4].id,
         'Interno',
-        'Incompleto',
+        'Pendiente',
         cuidadores[2].id
       ),
       createActivity(
@@ -257,7 +349,7 @@ async function seedActivities() {
         'Paseo',
         residentes[4].id,
         'Exterior',
-        'Incompleto',
+        'Pendiente',
         cuidadores[0].id
       ),
       createActivity(
@@ -267,48 +359,12 @@ async function seedActivities() {
         'Recreacional',
         residentes[4].id,
         'Sala de estar',
-        'Incompleto',
+        'Pendiente',
         cuidadores[1].id
       )
     );
 
-    const nextWeek = addWeeks(today, 1);
-
-    residentes.forEach((residente, index) => {
-      activities.push(
-        createActivity(
-          'Control Médico Semanal',
-          'Revisión general de salud',
-          setHours(setMinutes(addDays(nextWeek, 1), 0), 9),
-          'Cita',
-          residente.id,
-          'Interno',
-          'Incompleto',
-          cuidadores[index % cuidadores.length].id
-        ),
-        createActivity(
-          'Actividad Grupal',
-          'Juegos y socialización',
-          setHours(setMinutes(addDays(nextWeek, 3), 0), 15),
-          'Recreacional',
-          residente.id,
-          'Sala de estar',
-          'Incompleto',
-          cuidadores[(index + 1) % cuidadores.length].id
-        ),
-        createActivity(
-          'Paseo Semanal',
-          'Actividad física y recreativa',
-          setHours(setMinutes(addDays(nextWeek, 5), 0), 16),
-          'Paseo',
-          residente.id,
-          'Exterior',
-          'Incompleto',
-          cuidadores[(index + 2) % cuidadores.length].id
-        )
-      );
-    });
-
+    // Actividades completadas (pasadas)
     activities.push(
       createActivity(
         'Control Médico',
@@ -339,35 +395,25 @@ async function seedActivities() {
         'Interno',
         'Completado',
         cuidadores[2].id
-      ),
-      createActivity(
-        'Almuerzo Grupal',
-        'Actividad social',
-        setHours(setMinutes(addDays(today, -4), 0), 13),
-        'Recreacional',
-        residentes[3].id,
-        'Interno',
-        'Completado',
-        cuidadores[0].id
-      ),
-      createActivity(
-        'Reunión de Cuidadores',
-        'Planificación semanal',
-        setHours(setMinutes(addDays(today, -5), 0), 10),
-        'Recreacional',
-        residentes[4].id,
-        'Sala de estar',
-        'Completado',
-        cuidadores[1].id
       )
     );
 
+    // Crear todas las actividades
     await Activity.bulkCreate(activities);
 
+    // Crear registros de alimentación
+    await Alimentacion.bulkCreate(alimentacionRecords);
+
+    // Crear registros de medicación
+    await Medicacion.bulkCreate(medicacionRecords);
+
     console.log('Seeder ejecutado exitosamente');
+    console.log(`Creado 1 administrador`);
     console.log(`Creados ${cuidadores.length} cuidadores`);
     console.log(`Creados ${residentes.length} residentes`);
     console.log(`Creadas ${activities.length} actividades`);
+    console.log(`Creados ${alimentacionRecords.length} registros de alimentación`);
+    console.log(`Creados ${medicacionRecords.length} registros de medicación`);
 
     process.exit(0);
   } catch (error) {
