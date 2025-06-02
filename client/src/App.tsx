@@ -1,12 +1,9 @@
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuButton, IonMenuToggle, IonRouterOutlet, IonTab, IonTabBar, IonTabButton, IonTabs, IonTitle, IonToolbar, setupIonicReact} from '@ionic/react';
+import { IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { home, person, calendar, chatbubble } from 'ionicons/icons';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
-
-/*Componets*/
-import SideMenu from './components/SideMenu'
 
 /* Pages */
 import Home from './pages/Home';
@@ -19,9 +16,6 @@ import ChatList from './pages/ChatList';
 import './theme/variables.css';
 import './theme/global.css';
 import './theme/custom.css';
-
-/*Core Ionic Controllers*/
-import { menuController } from '@ionic/core';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -45,16 +39,12 @@ setupIonicReact();
 const App: React.FC = () => (
   <IonApp>
     <AuthProvider>
-     <IonReactRouter>
-
-        <SideMenu />
-
-        <IonRouterOutlet id="main-content" aria-hidden="false">
+      <IonReactRouter>
+        <IonRouterOutlet>
           <Route exact path="/login" component={Login} />
-
+          
           <Route path="/app">
             <IonTabs>
-
               <IonRouterOutlet>
                 <ProtectedRoute exact path="/app/home" component={Home} />
                 <ProtectedRoute exact path="/app/profile" component={Profile} />
@@ -64,19 +54,11 @@ const App: React.FC = () => (
                 <Route exact path="/app">
                   <Redirect to="/app/home" />
                 </Route>
-
               </IonRouterOutlet>
-
               <IonTabBar slot="bottom">
-                
-                <IonTabButton tab="agenda" href="/app/profile">
-                  <IonIcon icon={book}/>
-                  <IonLabel>Agenda</IonLabel>
-                </IonTabButton>
-
                 <IonTabButton tab="home" href="/app/home">
-                  <IonIcon icon={home}/>
-                  <IonLabel>Home</IonLabel>
+                  <IonIcon icon={home} />
+                  <IonLabel>Inicio</IonLabel>
                 </IonTabButton>
                 <IonTabButton tab="agenda" href="/app/agenda">
                   <IonIcon icon={calendar} />
@@ -96,7 +78,7 @@ const App: React.FC = () => (
           </Route>
 
           <Route exact path="/">
-            <Redirect to="/app/home"/>
+            <Redirect to="/app/home" />
           </Route>
         </IonRouterOutlet>
       </IonReactRouter>
