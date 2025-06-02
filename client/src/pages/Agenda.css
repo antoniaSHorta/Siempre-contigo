@@ -395,6 +395,31 @@
     border-left-color: #607D8B;
 }
 
+.activity-block.alimentacion {
+    background-color: #fff8e1;
+    border-left-color: #FFC107;
+}
+
+.activity-block.videollamada {
+    background-color: #f1f8e9;
+    border-left-color: #8BC34A;
+}
+
+.activity-block.medicamento {
+    background-color: #fce4ec;
+    border-left-color: #E91E63;
+}
+
+.activity-block.ejercicio {
+    background-color: #e8eaf6;
+    border-left-color: #3F51B5;
+}
+
+.activity-block.recreacional {
+    background-color: #e0f2f1;
+    border-left-color: #009688;
+}
+
 .activity-time {
     font-size: 0.75em;
     color: #666;

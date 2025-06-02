@@ -14,13 +14,12 @@ export interface Activity {
   };
   cuidador?: {
     id: number;
-    nombre: string;
-    apellido: string;
+    name: string;
   };
 }
 
 export type ActivityInput = Omit<Activity, 'id' | 'cuidador' | 'residente'>;
 
-export const ACTIVITY_TYPES = ['Medicamento', 'Terapia', 'Recreacional', 'Paseo', 'Ejercicio', 'Cita'] as const;
+export const ACTIVITY_TYPES = ['Medicamento', 'Terapia', 'Recreacional', 'Paseo', 'Ejercicio', 'Cita', 'Alimentacion', 'Videollamada'] as const;
 export const ACTIVITY_LOCATIONS = ['Hospital', 'Interno', 'Exterior', 'Gimnasio', 'Sala de estar'] as const;
 export const ACTIVITY_STATUSES = ['Pendiente', 'En Progreso', 'Completado', 'Incompleto'] as const; 

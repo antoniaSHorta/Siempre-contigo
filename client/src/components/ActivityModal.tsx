@@ -1,4 +1,4 @@
-import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput, IonButton, IonIcon, IonButtons, IonSelect, IonSelectOption, IonTextarea, IonDatetime, IonDatetimeButton, IonModal as IonDatetimeModal } from '@ionic/react';
+import { IonModal, IonHeader, IonToolbar, IonContent, IonItem, IonLabel, IonInput, IonButton, IonIcon, IonSelect, IonSelectOption, IonTextarea,  IonModal as IonDatetimeModal } from '@ionic/react';
 import { close, trash, save, create } from 'ionicons/icons';
 import React, { useState, useEffect } from 'react';
 import './ActivityModal.css';
@@ -33,7 +33,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
     tipo: '',
     residente_id: 0,
     lugar: '',
-    estado: 'Incompleto',
+    estado: 'Pendiente',
     fecha: new Date(),
     cuidador_id: 0
   });
@@ -67,7 +67,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
         tipo: '',
         residente_id: 0,
         lugar: '',
-        estado: 'Incompleto',
+        estado: 'Pendiente',
         fecha: new Date(),
         cuidador_id: 0
       });
@@ -149,7 +149,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
       tipo: '',
       residente_id: 0,
       lugar: '',
-      estado: 'Incompleto',
+      estado: 'Pendiente',
       fecha: new Date(),
       cuidador_id: 0
     });

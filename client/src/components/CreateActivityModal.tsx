@@ -18,7 +18,7 @@ const CreateActivityModal: React.FC<CreateActivityModalProps> = ({ isOpen, onClo
     tipo: '',
     residente_id: 0,
     lugar: '',
-    estado: 'Incompleto'
+    estado: 'Pendiente'
   });
   const [activityDate, setActivityDate] = useState<string>('');
   const [activityTime, setActivityTime] = useState<string>('');
@@ -33,7 +33,7 @@ const CreateActivityModal: React.FC<CreateActivityModalProps> = ({ isOpen, onClo
       tipo: '',
       residente_id: 0,
       lugar: '',
-      estado: 'Incompleto'
+      estado: 'Pendiente'
     });
     setActivityDate('');
     setActivityTime('');

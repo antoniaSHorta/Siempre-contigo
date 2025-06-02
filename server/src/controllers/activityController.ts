@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { Activity } from '../models/Activity';
 import { User } from '../models/User';
+import { Resident } from '../models/Resident';
+import { Alimentacion } from '../models/Alimentacion';
 import { AppError } from '../utils/errorHandler';
-import { Op } from 'sequelize';
 
 export const createActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -20,9 +21,22 @@ export const createActivity = async (req: Request, res: Response, next: NextFunc
       tipo,
       residente_id,
       lugar,
-      estado: estado || 'Incompleto',
+      estado: estado || 'Pendiente',
       cuidador_id: requestWithUser.user.id
     });
+
+    // Si es una actividad de alimentación, crear también el registro en la tabla alimentacion
+    if (tipo === 'Alimentacion') {
+      const fechaActividad = new Date(fecha);
+      await Alimentacion.create({
+        tipo: titulo || 'Alimentación programada',
+        descripcion: descripcion || '',
+        hora: fechaActividad.toTimeString().slice(0, 8), // HH:MM:SS
+        fecha_hora: fechaActividad,
+        residente_id,
+        cuidador_id: requestWithUser.user.id
+      });
+    }
 
     res.status(201).json({
       success: true,
@@ -40,7 +54,12 @@ export const getActivities = async (req: Request, res: Response, next: NextFunct
         {
           model: User,
           as: 'cuidador',
-          attributes: ['id', 'name', 'role']
+          attributes: ['id', 'name']
+        },
+        {
+          model: Resident,
+          as: 'residente',
+          attributes: ['id', 'nombre']
         }
       ],
       order: [['fecha', 'ASC']]
@@ -62,7 +81,12 @@ export const getActivityById = async (req: Request, res: Response, next: NextFun
         {
           model: User,
           as: 'cuidador',
-          attributes: ['id', 'name', 'role']
+          attributes: ['id', 'name']
+        },
+        {
+          model: Resident,
+          as: 'residente',
+          attributes: ['id', 'nombre']
         }
       ]
     });
@@ -94,7 +118,6 @@ export const updateActivity = async (req: Request, res: Response, next: NextFunc
     if (!activity) {
       return next(new AppError('Actividad no encontrada', 404));
     }
-
 
     await activity.update({
       fecha: fecha ? new Date(fecha) : activity.fecha,

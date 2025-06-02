@@ -41,12 +41,12 @@ export class Activity extends Model {
   @Column({
     type: DataType.ENUM('Pendiente', 'En Progreso', 'Completado', 'Incompleto'),
     allowNull: false,
-    defaultValue: 'Incompleto',
+    defaultValue: 'Pendiente',
   })
   estado!: string;
 
   @Column({
-    type: DataType.ENUM('Medicamento', 'Terapia', 'Recreacional', 'Paseo', 'Ejercicio', 'Cita'),
+    type: DataType.ENUM('Medicamento', 'Terapia', 'Recreacional', 'Paseo', 'Ejercicio', 'Cita', 'Alimentacion', 'Videollamada'),
     allowNull: false,
   })
   tipo!: string;

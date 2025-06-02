@@ -6,6 +6,7 @@ import {
   updateAlimentacion,
   deleteAlimentacion,
   getAlimentacionesByTipo,
+  getAlimentacionesByResidente,
 } from '../controllers/alimentacionController';
 import { protect } from '../middleware/auth';
 
@@ -20,5 +21,6 @@ router.put('/:id', updateAlimentacion);
 router.delete('/:id', deleteAlimentacion);            
 
 router.get('/tipo/:tipo', getAlimentacionesByTipo);     
+router.get('/residente/:residente_id', getAlimentacionesByResidente);
 
 export default router; 
