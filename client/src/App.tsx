@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Alimentacion from './pages/Alimentacion';
+import Agenda from './pages/Agenda';
 
 /* Styles */
 import './theme/variables.css';
@@ -61,6 +62,7 @@ const App: React.FC = () => (
                 <ProtectedRoute exact path="/app/alimentacion" component={Alimentacion}/>
                 <ProtectedRoute exact path="/app/chat" component={Profile}/> 
 
+                <ProtectedRoute exact path="/app/agenda" component={Agenda} />
                 <Route exact path="/app">
                   <Redirect to="/app/home" />
                 </Route>
@@ -77,6 +79,10 @@ const App: React.FC = () => (
                 <IonTabButton tab="home" href="/app/home">
                   <IonIcon icon={home}/>
                   <IonLabel>Home</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="agenda" href="/app/agenda">
+                  <IonIcon icon={calendar} />
+                  <IonLabel>Agenda</IonLabel>
                 </IonTabButton>
 
                 <IonTabButton tab="profile" href="/app/profile">

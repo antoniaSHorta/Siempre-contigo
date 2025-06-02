@@ -1,0 +1,816 @@
+.agenda-page {
+  --primary-color: #07407B;
+  --secondary-color: #F7931E;
+  --background-color: #D9D9D9;
+  --header-text-color: #0E0F3B;
+
+  --ion-color-primary: var(--primary-color);
+  --ion-color-secondary: var(--secondary-color);
+  --ion-color-dark: var(--primary-color);
+  --ion-color-medium: var(--primary-color);
+  --ion-color-step-150: #e0e5eb; 
+  --ion-color-step-200: #d1d7e0; 
+  --ion-color-step-750: var(--primary-color);
+  --ion-color-step-800: var(--primary-color); 
+  --ion-color-step-850: var(--primary-color); 
+  --ion-highlight-color-focused: var(--primary-color);
+
+  --ion-color-primary-tint: var(--primary-color); 
+  --ion-color-step-150: var(--primary-color); 
+  --ion-color-step-200: var(--primary-color); 
+  --ion-color-step-750: var(--primary-color);
+  --ion-color-step-800: var(--primary-color);
+  --ion-color-step-850: var(--primary-color);
+  --ion-item-background-activated: rgba(7, 64, 123, 0.2); 
+  --ion-item-background-focused: rgba(7, 64, 123, 0.2); 
+  --ion-item-color-activated: var(--header-text-color); 
+  --ion-item-color-focused: var(--header-text-color); 
+}
+
+.agenda-page ion-header ion-toolbar {
+  --background: var(--background-color);
+  --color: var(--header-text-color);
+  --min-height: 90px;
+  padding: 0 16px;
+  position: relative;
+}
+
+.agenda-page .header-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+
+.agenda-page .header-logo {
+  width: auto;
+  height: 80px;
+  min-width: 100px;
+  max-width: 180px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.agenda-page ion-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 130%;
+  letter-spacing: 0%;
+  text-transform: capitalize;
+  color: var(--header-text-color);
+  padding: 0;
+  margin: 0;
+  height: auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  flex: none;
+}
+
+.agenda-page ion-content {
+  --background: white;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+.agenda-page ion-segment {
+  margin: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.agenda-page ion-segment-button {
+  --color: var(--primary-color);
+  --color-checked: white;
+  --background: white;
+  --background-checked: var(--primary-color);
+  --border-color: var(--primary-color);
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+@media (max-width: 768px) {
+  .agenda-page ion-header ion-toolbar {
+    --min-height: 65px;
+    padding: 0 12px;
+  }
+
+  .agenda-page .header-content {
+    gap: 12px;
+  }
+
+  .agenda-page .header-logo {
+    height: 25px;
+    min-width: 90px;
+    max-width: 140px;
+  }
+
+  .agenda-page ion-title {
+    font-size: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 480px) {
+  .agenda-page ion-header ion-toolbar {
+    --min-height: 55px;
+    padding: 0 8px;
+  }
+
+  .agenda-page .header-content {
+    gap: 8px;
+  }
+
+  .agenda-page .header-logo {
+    height: 20px;
+    min-width: 70px;
+    max-width: 120px;
+  }
+
+  .agenda-page ion-title {
+    font-size: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.agenda-filters {
+  display: flex;
+  overflow-x: auto;
+  padding: 0 16px;
+  margin-bottom: 16px;
+  gap: 12px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.agenda-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.agenda-filters ion-item {
+  --background: white;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  --highlight-color-focused: var(--primary-color);
+  --color: var(--primary-color);
+  --border-color-focused: var(--primary-color);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --inner-padding-end: 0;
+  --inner-border-width: 0;
+  align-items: flex-start;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  flex-grow: 1;
+  --min-height: 40px;
+}
+
+.agenda-filters ion-item ion-label {
+  margin-bottom: 4px;
+}
+
+.agenda-filters ion-input,
+.agenda-filters ion-select {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --padding-start: 0;
+  --padding-end: 0;
+  color: var(--primary-color);
+  --placeholder-color: var(--primary-color);
+  --highlight-color-focused: var(--primary-color);
+  --caret-color-focused: var(--primary-color);
+  font-size: 1rem;
+  width: 100%; 
+}
+
+.agenda-filters .date-filter-display {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 0; 
+  padding-right: 0;
+  color: var(--primary-color);
+  font-size: 1rem;
+  width: 100%;
+  background: transparent; 
+  border: none;
+  box-shadow: none;
+  cursor: pointer; 
+}
+
+.agenda-filters ion-item ion-datetime-button {
+    font-size: 1rem;
+    color: var(--primary-color);
+    --color: var(--primary-color);
+    width: 100%;
+}
+
+.agenda-filters ion-item ion-datetime-button::part(native) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  justify-content: flex-start;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  width: 100%;
+}
+
+.agenda-filters ion-select::part(icon) {
+    color: var(--primary-color);
+    opacity: 1;
+}
+
+.agenda-filters ion-item.item-has-focus,
+.agenda-filters ion-item:active {
+  --background: #f8f8f8;
+}
+
+@media (max-width: 600px) {
+  .agenda-filters {
+    padding: 0 8px;
+    gap: 8px;
+  }
+
+  .agenda-filters ion-item {
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+}
+
+.create-activity-button {
+  --background: var(--secondary-color);
+  --color: var(--primary-color);
+  --border-radius: 8px;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 16px;
+}
+
+.daily-view {
+  margin: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.daily-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--background-color);
+  color: var(--header-text-color);
+  font-weight: bold;
+}
+
+.daily-header ion-button {
+  --color: var(--header-text-color);
+}
+
+.daily-time-slot {
+  display: flex;
+  border-bottom: 1px solid #eee;
+}
+
+.daily-time-label {
+  padding: 8px;
+  font-weight: bold;
+  text-align: right;
+  width: 80px;
+  flex-shrink: 0;
+  border-right: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.daily-activities-for-time {
+  flex-grow: 1;
+  padding: 8px;
+}
+
+.weekly-view {
+  margin: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.weekly-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--background-color);
+  color: var(--header-text-color);
+  font-weight: bold;
+}
+
+.weekly-header ion-button {
+  --color: var(--header-text-color);
+}
+
+.weekly-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  overflow-x: auto;
+  border: 1px solid #eee;
+}
+
+.weekly-time-header {
+  background-color: #f8f8f8;
+  border-right: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.0em;
+  color: black;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+}
+
+.weekly-day-header {
+  background-color: #f8f8f8;
+  border-right: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  text-align: center;
+  font-weight: bold;
+  min-width: 120px;
+  color: #333;
+}
+
+.day-name {
+  font-size: 1.0em;
+  color: black;
+  margin-bottom: 2px;
+}
+
+.day-date {
+  font-size: 1.0em;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.weekly-time-slot {
+  background-color: #f8f8f8;
+  border-right: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.0em;
+  color: black;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
+.weekly-activity-cell {
+  border-right: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 4px;
+  min-height: 60px;
+  background: white;
+  min-width: 120px;
+}
+
+.weekly-activities-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 100%;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .weekly-grid {
+    grid-template-columns: 60px repeat(7, minmax(100px, 1fr));
+    font-size: 0.9em;
+  }
+  
+  .weekly-time-header,
+  .weekly-time-slot {
+    padding: 6px 4px;
+    font-size: 0.75em;
+  }
+  
+  .weekly-day-header {
+    padding: 6px 4px;
+    min-width: 100px;
+  }
+  
+  .day-name {
+    font-size: 0.75em;
+  }
+  
+  .day-date {
+    font-size: 1em;
+  }
+  
+  .weekly-activity-cell {
+    padding: 3px;
+    min-height: 50px;
+    min-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .weekly-view {
+    margin: 8px;
+  }
+  
+  .weekly-grid {
+    grid-template-columns: 50px repeat(7, minmax(80px, 1fr));
+    font-size: 0.8em;
+  }
+  
+  .weekly-time-header,
+  .weekly-time-slot {
+    padding: 4px 2px;
+    font-size: 0.7em;
+  }
+  
+  .weekly-day-header {
+    padding: 4px 2px;
+    min-width: 80px;
+  }
+  
+  .day-name {
+    font-size: 0.7em;
+  }
+  
+  .day-date {
+    font-size: 0.9em;
+  }
+  
+  .weekly-activity-cell {
+    padding: 2px;
+    min-height: 40px;
+    min-width: 80px;
+  }
+  
+  .activity-block {
+    font-size: 0.7em;
+    padding: 2px;
+  }
+  
+  .activity-time {
+    font-size: 0.65em;
+  }
+  
+  .activity-type {
+    font-size: 0.65em;
+  }
+}
+
+/* Remove old styles that are no longer needed */
+.time-column {
+  background-color: #f8f8f8;
+  border-right: 1px solid #eee;
+}
+
+.day-label {
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.time-slot-label {
+  padding: 8px;
+  text-align: right;
+  border-bottom: 1px solid #eee;
+  font-weight: bold;
+}
+
+.activity-cell {
+  border-right: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 4px;
+  min-height: 40px;
+}
+
+.activity-block {
+    background-color: #cce5ff;
+    border-left: 4px solid #007bff;
+    padding: 4px;
+    font-size: 0.8em;
+    text-align: left;
+    border-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.activity-block.cita {
+    background-color: #e8f5e9;
+    border-left-color: #4CAF50;
+}
+
+.activity-block.almuerzo {
+    background-color: #fff3e0;
+    border-left-color: #FF9800;
+}
+
+.activity-block.visita {
+    background-color: #e3f2fd;
+    border-left-color: #2196F3;
+}
+
+.activity-block.paseo {
+    background-color: #f3e5f5;
+    border-left-color: #9C27B0;
+}
+
+.activity-block.terapia {
+    background-color: #ffebee;
+    border-left-color: #F44336;
+}
+
+.activity-block.reunión {
+    background-color: #eceff1;
+    border-left-color: #607D8B;
+}
+
+.activity-block.alimentacion {
+    background-color: #fff8e1;
+    border-left-color: #FFC107;
+}
+
+.activity-block.videollamada {
+    background-color: #f1f8e9;
+    border-left-color: #8BC34A;
+}
+
+.activity-block.medicamento {
+    background-color: #fce4ec;
+    border-left-color: #E91E63;
+}
+
+.activity-block.ejercicio {
+    background-color: #e8eaf6;
+    border-left-color: #3F51B5;
+}
+
+.activity-block.recreacional {
+    background-color: #e0f2f1;
+    border-left-color: #009688;
+}
+
+.activity-time {
+    font-size: 0.75em;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.activity-title {
+    font-weight: 500;
+}
+
+.activity-type {
+    font-size: 0.75em;
+    color: #666;
+    margin-top: 2px;
+}
+
+.outside-month {
+    color: #ccc;
+}
+
+.today {
+    background-color: #fffacd;
+}
+
+.date-picker-modal {
+  --width: 300px; 
+  --height: 350px;
+  --border-radius: 8px; 
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+}
+
+.date-picker-modal .datetime-content {
+    padding: 16px; 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day)::after { 
+  background: var(--primary-color) !important;
+  color: white !important; 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day):hover { 
+    background: rgba(7, 64, 123, 0.1);
+    color: var(--primary-color); 
+}
+
+.date-picker-modal ion-datetime::part(day-button-text) {
+    color: var(--header-text-color); 
+}
+
+.date-picker-modal ion-datetime::part(day-button-text).calendar-day-today { 
+    color: var(--secondary-color); 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day-active) .day-button-text { 
+  color: white !important;
+}
+
+.monthly-view {
+  margin: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.monthly-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--background-color);
+  color: var(--header-text-color);
+  font-weight: bold;
+}
+
+.monthly-header ion-button {
+  --color: var(--header-text-color);
+}
+
+.monthly-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-top: 1px solid #ccc;
+  overflow-x: auto;
+}
+
+.monthly-grid-header {
+    display: contents;
+}
+
+.monthly-week-row {
+    display: contents;
+}
+
+.monthly-day-label,
+.hour-cell,
+.monthly-day-cell {
+  border: 1px solid #eee;
+  padding: 8px;
+  text-align: center;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-width: 120px;
+}
+
+.monthly-day-label {
+  font-weight: bold;
+  background-color: #f8f8f8;
+  border-top: none;
+}
+
+.monthly-day-cell {
+  border-bottom: none;
+  position: relative;
+}
+
+.day-number {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: var(--primary-color);
+}
+
+.activities {
+    width: 100%;
+    text-align: left;
+}
+
+.date-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.date-filter-container .date-filter-display {
+  flex: 1;
+}
+
+.clear-date-filter-btn {
+  --background: transparent;
+  --color: var(--primary-color);
+  --border-radius: 50%;
+  --padding-start: 4px;
+  --padding-end: 4px;
+  --padding-top: 4px;
+  --padding-bottom: 4px;
+  height: 24px;
+  width: 24px;
+  margin: 0;
+}
+
+/* Responsive design for monthly view */
+@media (max-width: 768px) {
+  .monthly-view {
+    margin: 12px;
+  }
+  
+  .monthly-grid {
+    font-size: 0.9em;
+  }
+  
+  .monthly-day-label,
+  .monthly-day-cell {
+    padding: 6px 4px;
+    min-height: 70px;
+    min-width: 100px;
+  }
+  
+  .day-number {
+    font-size: 1.1em;
+    margin-bottom: 3px;
+  }
+  
+  .activity-block {
+    font-size: 0.7em;
+    padding: 3px;
+    margin-bottom: 2px;
+  }
+  
+  .activity-time {
+    font-size: 0.65em;
+  }
+  
+  .activity-type {
+    font-size: 0.65em;
+  }
+}
+
+@media (max-width: 480px) {
+  .monthly-view {
+    margin: 8px;
+  }
+  
+  .monthly-grid {
+    font-size: 0.8em;
+    grid-template-columns: repeat(7, minmax(80px, 1fr));
+  }
+  
+  .monthly-day-label,
+  .monthly-day-cell {
+    padding: 4px 2px;
+    min-height: 60px;
+    min-width: 80px;
+  }
+  
+  .monthly-day-label {
+    font-size: 0.8em;
+  }
+  
+  .day-number {
+    font-size: 1em;
+    margin-bottom: 2px;
+  }
+  
+  .activity-block {
+    font-size: 0.65em;
+    padding: 2px;
+    margin-bottom: 1px;
+  }
+  
+  .activity-time {
+    font-size: 0.6em;
+  }
+  
+  .activity-type {
+    font-size: 0.6em;
+  }
+  
+  .activity-title {
+    font-size: 0.65em;
+  }
+}
+
+
