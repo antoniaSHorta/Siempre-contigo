@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Alimentacion } from '../models/Alimentacion';
+import { Activity } from '../models/Activity';
 import { Resident } from '../models/Resident';
 import { User } from '../models/User';
 import { AppError } from '../utils/errorHandler';
@@ -17,10 +18,32 @@ export const createAlimentacion = async (req: Request, res: Response, next: Next
       cuidador_id,
     });
 
+    const existingActivity = await Activity.findOne({
+      where: {
+        tipo: 'Alimentacion',
+        fecha: fecha_hora,
+        residente_id,
+        cuidador_id
+      }
+    });
+
+    if (!existingActivity && fecha_hora && residente_id && cuidador_id) {
+      await Activity.create({
+        titulo: tipo || 'Alimentación programada',
+        descripcion: descripcion || '',
+        fecha: new Date(fecha_hora),
+        tipo: 'Alimentacion',
+        residente_id,
+        cuidador_id,
+        lugar: 'Comedor',
+        estado: 'Pendiente'
+      });
+    }
+
     res.status(201).json({
       success: true,
       data: alimentacion,
-      message: 'Alimentación creada exitosamente',
+      message: 'Alimentación creada exitosamente (sincronizada con agenda)',
     });
   } catch (error) {
     next(error);
@@ -94,6 +117,12 @@ export const updateAlimentacion = async (req: Request, res: Response, next: Next
       return next(new AppError('Alimentación no encontrada', 404));
     }
 
+    const oldData = {
+      fecha_hora: alimentacion.fecha_hora,
+      residente_id: alimentacion.residente_id,
+      cuidador_id: alimentacion.cuidador_id
+    };
+
     await alimentacion.update({
       tipo: tipo !== undefined ? tipo : alimentacion.tipo,
       descripcion: descripcion !== undefined ? descripcion : alimentacion.descripcion,
@@ -103,10 +132,31 @@ export const updateAlimentacion = async (req: Request, res: Response, next: Next
       cuidador_id: cuidador_id !== undefined ? cuidador_id : alimentacion.cuidador_id,
     });
 
+    if (oldData.fecha_hora && oldData.residente_id && oldData.cuidador_id) {
+      const correspondingActivity = await Activity.findOne({
+        where: {
+          tipo: 'Alimentacion',
+          fecha: oldData.fecha_hora,
+          residente_id: oldData.residente_id,
+          cuidador_id: oldData.cuidador_id
+        }
+      });
+
+      if (correspondingActivity) {
+        await correspondingActivity.update({
+          titulo: alimentacion.tipo || 'Alimentación programada',
+          descripcion: alimentacion.descripcion || '',
+          fecha: alimentacion.fecha_hora || correspondingActivity.fecha,
+          residente_id: alimentacion.residente_id || correspondingActivity.residente_id,
+          cuidador_id: alimentacion.cuidador_id || correspondingActivity.cuidador_id
+        });
+      }
+    }
+
     res.status(200).json({
       success: true,
       data: alimentacion,
-      message: 'Alimentación actualizada exitosamente',
+      message: 'Alimentación actualizada exitosamente (sincronizada con agenda)',
     });
   } catch (error) {
     next(error);
@@ -123,11 +173,23 @@ export const deleteAlimentacion = async (req: Request, res: Response, next: Next
       return next(new AppError('Alimentación no encontrada', 404));
     }
 
+    // Buscar y eliminar la actividad correspondiente
+    if (alimentacion.fecha_hora && alimentacion.residente_id && alimentacion.cuidador_id) {
+      await Activity.destroy({
+        where: {
+          tipo: 'Alimentacion',
+          fecha: alimentacion.fecha_hora,
+          residente_id: alimentacion.residente_id,
+          cuidador_id: alimentacion.cuidador_id
+        }
+      });
+    }
+
     await alimentacion.destroy();
 
     res.status(200).json({
       success: true,
-      message: 'Alimentación eliminada exitosamente',
+      message: 'Alimentación eliminada exitosamente (sincronizada con agenda)',
     });
   } catch (error) {
     next(error);

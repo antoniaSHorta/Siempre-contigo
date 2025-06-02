@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Medicacion } from '../models/Medicacion';
+import { Activity } from '../models/Activity';
 import { User } from '../models/User';
 import { Resident } from '../models/Resident';
 import { AppError } from '../utils/errorHandler';
@@ -32,10 +33,32 @@ export const createMedicacion = async (req: Request, res: Response, next: NextFu
       estado: estado || 'pendiente'
     });
 
+    const existingActivity = await Activity.findOne({
+      where: {
+        tipo: 'Medicamento',
+        fecha: fecha_hora,
+        residente_id,
+        cuidador_id
+      }
+    });
+
+    if (!existingActivity && fecha_hora && residente_id && cuidador_id) {
+      await Activity.create({
+        titulo: nombre || 'Medicamento programado',
+        descripcion: dosis || '',
+        fecha: new Date(fecha_hora),
+        tipo: 'Medicamento',
+        residente_id,
+        cuidador_id,
+        lugar: 'Habitación',
+        estado: 'Pendiente'
+      });
+    }
+
     res.status(201).json({
       success: true,
       data: medicacion,
-      message: 'Medicación creada exitosamente'
+      message: 'Medicación creada exitosamente (sincronizada con agenda)'
     });
   } catch (error) {
     next(error);
@@ -144,6 +167,12 @@ export const updateMedicacion = async (req: Request, res: Response, next: NextFu
       }
     }
 
+    const oldData = {
+      fecha_hora: medicacion.fecha_hora,
+      residente_id: medicacion.residente_id,
+      cuidador_id: medicacion.cuidador_id
+    };
+
     await medicacion.update({
       nombre: nombre || medicacion.nombre,
       dosis: dosis || medicacion.dosis,
@@ -153,6 +182,27 @@ export const updateMedicacion = async (req: Request, res: Response, next: NextFu
       residente_id: residente_id !== undefined ? residente_id : medicacion.residente_id,
       estado: estado || medicacion.estado
     });
+
+    if (oldData.fecha_hora && oldData.residente_id && oldData.cuidador_id) {
+      const correspondingActivity = await Activity.findOne({
+        where: {
+          tipo: 'Medicamento',
+          fecha: oldData.fecha_hora,
+          residente_id: oldData.residente_id,
+          cuidador_id: oldData.cuidador_id
+        }
+      });
+
+      if (correspondingActivity) {
+        await correspondingActivity.update({
+          titulo: medicacion.nombre || 'Medicamento programado',
+          descripcion: medicacion.dosis || '',
+          fecha: medicacion.fecha_hora || correspondingActivity.fecha,
+          residente_id: medicacion.residente_id || correspondingActivity.residente_id,
+          cuidador_id: medicacion.cuidador_id || correspondingActivity.cuidador_id
+        });
+      }
+    }
 
     const medicacionActualizada = await Medicacion.findByPk(id, {
       include: [
@@ -172,7 +222,7 @@ export const updateMedicacion = async (req: Request, res: Response, next: NextFu
     res.status(200).json({
       success: true,
       data: medicacionActualizada,
-      message: 'Medicación actualizada exitosamente'
+      message: 'Medicación actualizada exitosamente (sincronizada con agenda)'
     });
   } catch (error) {
     next(error);
@@ -189,11 +239,22 @@ export const deleteMedicacion = async (req: Request, res: Response, next: NextFu
       return next(new AppError('Medicación no encontrada', 404));
     }
 
+    if (medicacion.fecha_hora && medicacion.residente_id && medicacion.cuidador_id) {
+      await Activity.destroy({
+        where: {
+          tipo: 'Medicamento',
+          fecha: medicacion.fecha_hora,
+          residente_id: medicacion.residente_id,
+          cuidador_id: medicacion.cuidador_id
+        }
+      });
+    }
+
     await medicacion.destroy();
 
     res.status(200).json({
       success: true,
-      message: 'Medicación eliminada exitosamente'
+      message: 'Medicación eliminada exitosamente (sincronizada con agenda)'
     });
   } catch (error) {
     next(error);
