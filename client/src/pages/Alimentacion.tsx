@@ -186,7 +186,34 @@ const Alimentacion:React.FC = () =>{
     }
 
     const handleDeleteClick = (id:number) =>{
-        
+        presentAlert({
+            header: 'Confirmar Eliminación',
+            message: '¿Estás seguro de que quieres eliminar esta entrada?',
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    role: 'cancel',
+                    handler: () => {
+                        console.log('Eliminación cancelada');
+                    },
+                },
+                {
+                    text: 'Eliminar',
+                    role: 'destructive',
+                    handler: () => {
+                        setListaAlimentacion(prev => prev.filter(item => item.id !== id));
+                        presentToast({
+                            message: 'Entrada eliminada con éxito.',
+                            duration: 1500,
+                            color: 'danger',
+                            position: 'top',
+                        });
+                        console.log(`Eliminado ID: ${id}`);
+                    },
+                },
+            ],
+        });
+        // TODO llamada API para borrar en la base de datos
     }
 
     return(
