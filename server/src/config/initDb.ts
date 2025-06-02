@@ -2,6 +2,7 @@ import sequelize from './database';
 import { User } from '../models/User';
 import { Activity } from '../models/Activity';
 import { Resident } from '../models/Resident';
+import { Alimentacion } from '../models/Alimentacion';
 
 export const initDatabase = async () => {
   try {
@@ -30,7 +31,6 @@ export const initDatabase = async () => {
       });
       console.log('Admin user created successfully.');
     }
-
   } catch (error) {
     console.error('Unable to initialize database:', error);
     throw error;
