@@ -12,7 +12,8 @@ import SideMenu from './components/SideMenu'
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
-import Alimentacion from './pages/Alimentacion';
+import Agenda from './pages/Agenda';
+//import Alimentacion from './pages/Alimentacion';
 
 /* Styles */
 import './theme/variables.css';
@@ -56,7 +57,7 @@ const App: React.FC = () => (
               <IonRouterOutlet>
                 <ProtectedRoute exact path="/app/home" component={Home} />
                 <ProtectedRoute exact path="/app/profile" component={Profile}/>
-                <ProtectedRoute exact path="/app/agenda" component={Profile}/>
+                <ProtectedRoute exact path="/app/agenda" component={Agenda}/>
                 <ProtectedRoute exact path="/app/medicamentos" component={Profile}/>
                 {/*<ProtectedRoute exact path="/app/alimentacion" component={Alimentacion}/>*/}
                 <ProtectedRoute exact path="/app/chat" component={Profile}/> 
@@ -69,7 +70,7 @@ const App: React.FC = () => (
 
               <IonTabBar slot="bottom">
                 
-                <IonTabButton tab="agenda" href="/app/profile">
+                <IonTabButton tab="agenda" href="/app/agenda">
                   <IonIcon icon={book}/>
                   <IonLabel>Agenda</IonLabel>
                 </IonTabButton>
