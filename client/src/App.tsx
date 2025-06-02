@@ -57,11 +57,9 @@ const App: React.FC = () => (
               <IonRouterOutlet>
                 <ProtectedRoute exact path="/app/home" component={Home} />
                 <ProtectedRoute exact path="/app/profile" component={Profile}/>
-                <ProtectedRoute exact path="/app/agenda" component={Profile}/>
                 <ProtectedRoute exact path="/app/medicamentos" component={Profile}/>
                 <ProtectedRoute exact path="/app/alimentacion" component={Alimentacion}/>
                 <ProtectedRoute exact path="/app/chat" component={Profile}/> 
-
                 <ProtectedRoute exact path="/app/agenda" component={Agenda} />
                 <Route exact path="/app">
                   <Redirect to="/app/home" />
@@ -71,20 +69,19 @@ const App: React.FC = () => (
 
               <IonTabBar slot="bottom">
                 
-                <IonTabButton tab="agenda" href="/app/profile">
+                <IonTabButton tab="agenda" href="/app/agenda">
                   <IonIcon icon={book}/>
                   <IonLabel>Agenda</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="alimentacion" href="/app/alimentacion">
+                  <IonIcon icon={restaurant}/>
+                  <IonLabel>Alimentacion</IonLabel>
                 </IonTabButton>
 
                 <IonTabButton tab="home" href="/app/home">
                   <IonIcon icon={home}/>
                   <IonLabel>Home</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="agenda" href="/app/agenda">
-                  <IonIcon icon={calendar} />
-                  <IonLabel>Agenda</IonLabel>
-                </IonTabButton>
-
                 <IonTabButton tab="profile" href="/app/profile">
                   <IonIcon icon={person} />
                   <IonLabel>Perfil</IonLabel>
