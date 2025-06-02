@@ -71,7 +71,12 @@ CREATE TABLE alimentacion (
   id INT AUTO_INCREMENT PRIMARY KEY,
   tipo VARCHAR(100),
   descripcion TEXT,
-  hora TIME
+  hora TIME,
+  fecha_hora DATETIME,
+  residente_id INT,
+  cuidador_id INT,
+  FOREIGN KEY (residente_id) REFERENCES residentes(id),
+  FOREIGN KEY (cuidador_id) REFERENCES usuarios(id)
 );
 
 CREATE TABLE videollamadas (
@@ -87,10 +92,10 @@ CREATE TABLE actividad (
   id INT AUTO_INCREMENT PRIMARY KEY,
   titulo VARCHAR(100) NOT NULL,
   descripcion TEXT,
-  fecha DATE NOT NULL,
+  fecha DATETIME NOT NULL,
   lugar VARCHAR(100),
-  estado VARCHAR(50),
-  tipo ENUM('alimentacion', 'medicacion', 'videollamada'),
+  estado ENUM('Pendiente', 'En Progreso', 'Completado', 'Incompleto') DEFAULT 'Pendiente',
+  tipo ENUM('Medicamento', 'Terapia', 'Recreacional', 'Paseo', 'Ejercicio', 'Cita', 'Alimentacion', 'Videollamada'),
   residente_id INT NOT NULL,
   cuidador_id INT NOT NULL,
   FOREIGN KEY (residente_id) REFERENCES residentes(id),
