@@ -1,24 +1,31 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon, IonButton, IonSegment, IonSegmentButton, IonLabel, IonItem, IonInput, IonSelect, IonSelectOption, IonDatetime, IonDatetimeButton, IonModal } from '@ionic/react';
-import { add, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon, IonButton, IonSegment, IonSegmentButton, IonLabel, IonItem, IonSelect, IonSelectOption, IonDatetime, IonModal } from '@ionic/react';
+import { add, chevronBackOutline, chevronForwardOutline, close } from 'ionicons/icons';
 import './Agenda.css';
 import logo from '../assets/logo.png';
-import { useState, useMemo } from 'react';
-import { format, startOfMonth, endOfMonth, isSameMonth, isToday, addDays, parseISO } from 'date-fns';
+import { useState, useMemo, useEffect } from 'react';
+import { format, startOfMonth, endOfMonth, isSameMonth, isToday, addDays, parseISO, startOfWeek, endOfWeek, isSameDay, setHours, setMinutes, addMinutes } from 'date-fns';
 import { eachDayOfInterval } from 'date-fns/eachDayOfInterval';
 import { es } from 'date-fns/locale';
+import CreateActivityModal from '../components/CreateActivityModal';
+import ActivityModal from '../components/ActivityModal';
+import { Activity, ActivityInput, ACTIVITY_TYPES, ACTIVITY_LOCATIONS, ACTIVITY_STATUSES } from '../types/activity';
 
 const Agenda: React.FC = () => {
   const [currentView, setCurrentView] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [currentDay, setCurrentDay] = useState(new Date());
-
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [filterDate, setFilterDate] = useState<string | undefined>(undefined);
   const [filterType, setFilterType] = useState<string>('all');
   const [filterLocation, setFilterLocation] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
-
+  const [filterResident, setFilterResident] = useState<number | 'all'>('all');
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
+  const [residents, setResidents] = useState<Array<{ id: number; nombre: string }>>([]);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleViewChange = (view: 'daily' | 'weekly' | 'monthly') => {
     setCurrentView(view);
@@ -38,6 +45,18 @@ const Agenda: React.FC = () => {
 
   const handleNextDay = () => {
     setCurrentDay(prevDay => addDays(prevDay, 1));
+  };
+
+  const handlePreviousWeek = () => {
+    setCurrentDay(prevDay => addDays(prevDay, -7));
+  };
+
+  const handleNextWeek = () => {
+    setCurrentDay(prevDay => addDays(prevDay, 7));
+  };
+
+  const clearDateFilter = () => {
+    setFilterDate(undefined);
   };
 
   const daysOfWeek = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
@@ -84,18 +103,102 @@ const Agenda: React.FC = () => {
     return weeksArray;
   }, [daysInMonth]);
 
-  const placeholderActivities = useMemo(() => [
-    { date: new Date(2025, 3, 1, 11, 0), title: 'Cita Oftalmólogo', type: 'Cita', resident: 'Joaquin', location: 'Hospital', status: 'Completo' },
-    { date: new Date(2025, 3, 1, 12, 0), title: 'Almuerzo con familiares', type: 'Almuerzo', resident: 'Joaquin', location: 'Interno', status: 'Incompleto' },
-    { date: new Date(2025, 3, 4, 14, 0), title: 'Visita Familiares', type: 'Visita', resident: 'Joaquin', location: 'Interno', status: 'Incompleto' },
-    { date: new Date(2025, 3, 4, 15, 0), title: 'Paseo', type: 'Paseo', resident: 'Joaquin', location: 'Exterior', status: 'Completo' },
-    { date: new Date(2025, 3, 8, 10, 0), title: 'Terapia física', type: 'Terapia', resident: 'Joaquin', location: 'Gimnasio', status: 'Completo' },
-    { date: new Date(2025, 3, 8, 14, 30), title: 'Reunión de cuidadores', type: 'Reunión', resident: '-', location: 'Sala de estar', status: 'Incompleto' },
-  ], []);
+  const fetchActivities = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No hay sesión activa');
+        return;
+      }
 
-  const filterActivities = (activities: any[]) => {
+      const response = await fetch('/api/activities/', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al cargar las actividades');
+      }
+
+      const data = await response.json();
+      setActivities(data.data.map((activity: any) => ({
+        ...activity,
+        fecha: new Date(activity.fecha)
+      })));
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchActivities();
+  }, []);
+
+  useEffect(() => {
+    const fetchResidents = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No hay sesión activa');
+          return;
+        }
+
+        const response = await fetch('/api/residents/', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al cargar los residentes');
+        }
+
+        const data = await response.json();
+        setResidents(data.data.map((resident: any) => ({
+          id: resident.id,
+          nombre: resident.nombre
+        })));
+      } catch (error) {
+        console.error('Error fetching residents:', error);
+      }
+    };
+
+    fetchResidents();
+  }, []);
+
+  const handleCreateActivity = async (activityData: ActivityInput) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No hay sesión activa');
+      }
+
+      const response = await fetch('/api/activities/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(activityData),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Error al crear la actividad');
+      }
+
+      await fetchActivities();
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      console.error('Error creating activity:', error);
+      throw error;
+    }
+  };
+
+  const filterActivities = (activities: Activity[]) => {
     return activities.filter(activity => {
-      const activityDate = new Date(activity.date);
+      const activityDate = new Date(activity.fecha);
       const filterD = filterDate ? parseISO(filterDate) : null;
 
       const dateMatch = filterD ?
@@ -104,36 +207,138 @@ const Agenda: React.FC = () => {
         activityDate.getDate() === filterD.getDate()
         : true;
 
-      const typeMatch = filterType === 'all' || activity.type === filterType;
-      const locationMatch = filterLocation === 'all' || activity.location === filterLocation;
-      const statusMatch = filterStatus === 'all' || activity.status === filterStatus;
+      const typeMatch = filterType === 'all' || activity.tipo === filterType;
+      const locationMatch = filterLocation === 'all' || activity.lugar === filterLocation;
+      const statusMatch = filterStatus === 'all' || activity.estado === filterStatus;
+      const residentMatch = filterResident === 'all' || activity.residente_id === filterResident;
 
-      return dateMatch && typeMatch && locationMatch && statusMatch;
+      return dateMatch && typeMatch && locationMatch && statusMatch && residentMatch;
     });
   };
 
-  const getActivitiesForDay = (day: Date) => { 
-    const activitiesOnDay = placeholderActivities.filter(activity =>
-      isSameMonth(activity.date, day) &&
-      format(activity.date, 'dd/MM/yyyy') === format(day, 'dd/MM/yyyy')
+  const getActivitiesForDay = (date: Date) => {
+    const filteredActivities = filterActivities(activities);
+    return filteredActivities.filter(activity => 
+      isSameDay(new Date(activity.fecha), date)
     );
-    return filterActivities(activitiesOnDay);
   };
 
-  const getActivitiesForTimeSlot = (day: Date, time: string) => { 
-    const [hour, minute] = time.split(':').map(Number);
-    const activitiesAtTime = placeholderActivities.filter(activity =>
-      isSameMonth(activity.date, day) &&
-      activity.date.getHours() === hour &&
-      activity.date.getMinutes() === minute
-    );
-    return filterActivities(activitiesAtTime);
+  const getActivitiesForTimeSlot = (date: Date, timeSlot: string) => {
+    const [hours, minutes] = timeSlot.split(':').map(Number);
+    const slotStart = setHours(setMinutes(date, minutes), hours);
+    const slotEnd = addMinutes(slotStart, 30);
+
+    const filteredActivities = filterActivities(activities);
+    return filteredActivities.filter(activity => {
+      const activityDate = new Date(activity.fecha);
+      return isSameDay(activityDate, date) && 
+             activityDate >= slotStart && 
+             activityDate < slotEnd;
+    });
   };
 
-  // Dummy filter options (replace with actual data)
-  const activityTypes = ['all', 'Cita', 'Almuerzo', 'Visita', 'Paseo', 'Terapia', 'Reunión'];
-  const locations = ['all', 'Hospital', 'Interno', 'Exterior', 'Gimnasio', 'Sala de estar'];
-  const statuses = ['all', 'Completo', 'Incompleto'];
+  const getActivitiesForWeek = (weekStart: Date) => {
+    const weekEnd = addDays(weekStart, 6);
+    const filteredActivities = filterActivities(activities);
+    return filteredActivities.filter(activity => {
+      const activityDate = new Date(activity.fecha);
+      return activityDate >= weekStart && activityDate <= weekEnd;
+    });
+  };
+
+  const handleActivityClick = (activity: Activity) => {
+    setSelectedActivity(activity);
+    setIsActivityModalOpen(true);
+  };
+
+  const handleActivitySave = async (activityData: ActivityInput) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No hay sesión activa');
+      }
+
+      const method = selectedActivity?.id ? 'PUT' : 'POST';
+      const url = selectedActivity?.id 
+        ? `/api/activities/${selectedActivity.id}`
+        : '/api/activities/';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(activityData),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Error al guardar la actividad');
+      }
+
+      await fetchActivities();
+    } catch (error) {
+      console.error('Error saving activity:', error);
+      throw error;
+    }
+  };
+
+  const handleActivityDelete = async (activityId: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No hay sesión activa');
+      }
+
+      const response = await fetch(`/api/activities/${activityId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Error al eliminar la actividad');
+      }
+
+      await fetchActivities();
+    } catch (error) {
+      console.error('Error deleting activity:', error);
+      throw error;
+    }
+  };
+
+  const renderActivityBlock = (activity: Activity) => (
+    <div 
+      key={activity.id} 
+      className={`activity-block ${activity.tipo.toLowerCase()}`}
+      onClick={() => handleActivityClick(activity)}
+    >
+      <div className="activity-time">
+        {format(new Date(activity.fecha), 'HH:mm')}
+      </div>
+      <div className="activity-title">{activity.titulo}</div>
+      <div className="activity-type">{activity.tipo}</div>
+    </div>
+  );
+
+  const getActivityTypeColor = (type: string): string => {
+    const colors: { [key: string]: string } = {
+      'Cita': '#4CAF50',
+      'Almuerzo': '#FF9800',
+      'Visita': '#2196F3',
+      'Paseo': '#9C27B0',
+      'Terapia': '#F44336',
+      'Reunión': '#607D8B'
+    };
+    return colors[type] || '#757575';
+  };
+
+  const activityTypes = ['all', ...ACTIVITY_TYPES];
+  const locations = ['all', ...ACTIVITY_LOCATIONS];
+  const statuses = ['all', ...ACTIVITY_STATUSES];
 
   return (
     <IonPage className="agenda-page">
@@ -166,11 +371,23 @@ const Agenda: React.FC = () => {
         <div className="agenda-filters">
           <IonItem>
             <IonLabel position="stacked">Fecha:</IonLabel>
-            <div
-              className="date-filter-display"
-              onClick={() => setIsDateModalOpen(true)}
-            >
-              {filterDate ? format(parseISO(filterDate), 'dd MMM yyyy') : 'Seleccionar fecha'}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
+              <div
+                className="date-filter-display"
+                onClick={() => setIsDateModalOpen(true)}
+              >
+                {filterDate ? format(parseISO(filterDate), 'dd MMM yyyy') : 'Seleccionar fecha'}
+              </div>
+              {filterDate && (
+                <IonButton 
+                  fill="clear" 
+                  size="small" 
+                  onClick={clearDateFilter}
+                  style={{ minHeight: 'auto', minWidth: 'auto', padding: '4px' }}
+                >
+                  <IonIcon icon={close} style={{ fontSize: '16px' }} />
+                </IonButton>
+              )}
             </div>
             <IonModal isOpen={isDateModalOpen} onDidDismiss={() => setIsDateModalOpen(false)} keepContentsMounted={true} className="date-picker-modal">
               <IonDatetime
@@ -182,8 +399,8 @@ const Agenda: React.FC = () => {
           </IonItem>
 
            <IonItem>
-            <IonLabel position="stacked">Tipo de Actividad:</IonLabel>
             <IonSelect
+              label="Tipo de Actividad:"
               value={filterType}
               onIonChange={(e) => setFilterType(e.detail.value)}
               interface="popover"
@@ -197,8 +414,8 @@ const Agenda: React.FC = () => {
           </IonItem>
 
           <IonItem>
-            <IonLabel position="stacked">Lugar:</IonLabel>
             <IonSelect
+              label="Lugar:"
               value={filterLocation}
               onIonChange={(e) => setFilterLocation(e.detail.value)}
               interface="popover"
@@ -212,8 +429,8 @@ const Agenda: React.FC = () => {
           </IonItem>
 
            <IonItem>
-            <IonLabel position="stacked">Estado:</IonLabel>
             <IonSelect
+              label="Estado:"
               value={filterStatus}
               onIonChange={(e) => setFilterStatus(e.detail.value)}
               interface="popover"
@@ -221,6 +438,22 @@ const Agenda: React.FC = () => {
                {statuses.map(status => (
                 <IonSelectOption key={status} value={status}>
                   {status === 'all' ? 'Todos' : status}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+          </IonItem>
+
+          <IonItem>
+            <IonSelect
+              label="Residente:"
+              value={filterResident}
+              onIonChange={(e) => setFilterResident(e.detail.value)}
+              interface="popover"
+            >
+              <IonSelectOption value="all">Todos</IonSelectOption>
+              {residents.map(resident => (
+                <IonSelectOption key={resident.id} value={resident.id}>
+                  {resident.nombre}
                 </IonSelectOption>
               ))}
             </IonSelect>
@@ -235,7 +468,9 @@ const Agenda: React.FC = () => {
                 <IonButton fill="clear" onClick={handlePreviousDay}>
                   <IonIcon icon={chevronBackOutline} />
                 </IonButton>
-                <div className="current-day">{format(currentDay, 'EEEE, dd MMMM yyyy', { locale: es })}</div>
+                <div className="current-day">
+                  {format(currentDay, 'EEEE, dd MMMM yyyy', { locale: es })}
+                </div>
                 <IonButton fill="clear" onClick={handleNextDay}>
                   <IonIcon icon={chevronForwardOutline} />
                 </IonButton>
@@ -246,43 +481,53 @@ const Agenda: React.FC = () => {
                   <div key={timeIndex} className="daily-time-slot">
                     <div className="daily-time-label">{time}</div>
                     <div className="daily-activities-for-time">
-                      {filterActivities(getActivitiesForTimeSlot(currentDay, time)).map((activity, activityIndex) => (
-                         <div key={activityIndex} className="activity-block">
-                           {activity.title} ({activity.type})
-                         </div>
-                      ))}
+                      {getActivitiesForTimeSlot(currentDay, time).map(activity => 
+                        renderActivityBlock(activity)
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
-
             </div>
           )}
           {currentView === 'weekly' && (
             <div className="weekly-view">
               <div className="weekly-header">
-                <IonButton fill="clear">
+                <IonButton fill="clear" onClick={handlePreviousWeek}>
                   <IonIcon icon={chevronBackOutline} />
                 </IonButton>
-                <div className="current-month-year">{format(currentMonth, 'MMMM - yyyy', { locale: es })}</div>
-                <IonButton fill="clear">
+                <div className="current-week">
+                  {format(startOfWeek(currentDay), 'dd MMM', { locale: es })} - 
+                  {format(endOfWeek(currentDay), 'dd MMM yyyy', { locale: es })}
+                </div>
+                <IonButton fill="clear" onClick={handleNextWeek}>
                   <IonIcon icon={chevronForwardOutline} />
                 </IonButton>
               </div>
 
               <div className="weekly-grid">
-                <div className="time-column">Horas</div>
-                {daysOfWeek.map((day, index) => (
-                  <div key={index} className="day-label">{day}</div>
-                ))}
-                {timeSlots.map((time, timeIndex) => (
-                  <>
-                    <div key={timeIndex} className="time-slot-label">{time}</div>
-                    {daysOfWeek.map((day, dayIndex) => (
-                      <div key={`${timeIndex}-${dayIndex}`} className="activity-cell"></div>
-                    ))}
-                  </>
-                ))}
+                <div className="time-column">
+                  {timeSlots.map(time => (
+                    <div key={time} className="time-slot-label">{time}</div>
+                  ))}
+                </div>
+                {daysOfWeek.map((_, dayIndex) => {
+                  const currentDate = addDays(startOfWeek(currentDay), dayIndex);
+                  return (
+                    <div key={dayIndex} className="day-column">
+                      <div className="day-label">
+                        {format(currentDate, 'EEE dd', { locale: es })}
+                      </div>
+                      {timeSlots.map(time => (
+                        <div key={time} className="activity-cell">
+                          {getActivitiesForTimeSlot(currentDate, time).map(activity =>
+                            renderActivityBlock(activity)
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -292,7 +537,9 @@ const Agenda: React.FC = () => {
                 <IonButton fill="clear" onClick={handlePreviousMonth}>
                   <IonIcon icon={chevronBackOutline} />
                 </IonButton>
-                <div className="current-month-year">{format(currentMonth, 'MMMM - yyyy', { locale: es })}</div>
+                <div className="current-month-year">
+                  {format(currentMonth, 'MMMM yyyy', { locale: es })}
+                </div>
                 <IonButton fill="clear" onClick={handleNextMonth}>
                   <IonIcon icon={chevronForwardOutline} />
                 </IonButton>
@@ -308,14 +555,17 @@ const Agenda: React.FC = () => {
                 {weeks.map((week, weekIndex) => (
                   <div key={weekIndex} className="monthly-week-row">
                     {week.map((day, dayIndex) => (
-                      <div key={`${weekIndex}-${dayIndex}`} className={`monthly-day-cell ${!isSameMonth(day, currentMonth) ? 'outside-month' : ''} ${isToday(day) ? 'today' : ''}`}>
+                      <div 
+                        key={`${weekIndex}-${dayIndex}`} 
+                        className={`monthly-day-cell ${
+                          !isSameMonth(day, currentMonth) ? 'outside-month' : ''
+                        } ${isToday(day) ? 'today' : ''}`}
+                      >
                         <div className="day-number">{format(day, 'd')}</div>
                         <div className="activities">
-                          {filterActivities(getActivitiesForDay(day)).map((activity, activityIndex) => (
-                            <div key={activityIndex} className="activity-block">
-                              {activity.title}
-                            </div>
-                          ))}
+                          {getActivitiesForDay(day).map(activity =>
+                            renderActivityBlock(activity)
+                          )}
                         </div>
                       </div>
                     ))}
@@ -326,6 +576,26 @@ const Agenda: React.FC = () => {
           )}
         </div>
 
+        <CreateActivityModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSave={handleCreateActivity}
+        />
+
+        <ActivityModal
+          isOpen={isActivityModalOpen}
+          onClose={() => {
+            setIsActivityModalOpen(false);
+            setSelectedActivity(null);
+            setIsEditing(false);
+          }}
+          onSave={handleActivitySave}
+          onDelete={handleActivityDelete}
+          activity={selectedActivity}
+          residents={residents}
+          isEditing={isEditing}
+          onEdit={() => setIsEditing(true)}
+        />
       </IonContent>
     </IonPage>
   );

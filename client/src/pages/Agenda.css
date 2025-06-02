@@ -322,45 +322,134 @@
 .weekly-grid {
   display: grid;
   grid-template-columns: 80px repeat(7, 1fr);
-  border-top: 1px solid #ccc;
-}
-
-.time-column,
-.day-label,
-.time-slot-label,
-.activity-cell {
-  border: 1px solid #eee;
-  padding: 8px;
-  text-align: center;
 }
 
 .time-column {
-  border-left: none;
-  border-bottom: none;
-  font-weight: bold;
   background-color: #f8f8f8;
-  border-top: none;
+  border-right: 1px solid #eee;
 }
 
 .day-label {
-  font-weight: bold;
   background-color: #f8f8f8;
-  border-top: none;
+  border-bottom: 1px solid #eee;
+  padding: 8px;
+  text-align: center;
+  font-weight: bold;
 }
 
 .time-slot-label {
-  font-weight: bold;
+  padding: 8px;
   text-align: right;
-  padding-right: 16px;
-  border-left: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border-bottom: 1px solid #eee;
+  font-weight: bold;
 }
 
 .activity-cell {
-  min-height: 60px;
-  position: relative;
+  border-right: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 4px;
+  min-height: 40px;
+}
+
+.activity-block {
+    background-color: #cce5ff;
+    border-left: 4px solid #007bff;
+    padding: 4px;
+    font-size: 0.8em;
+    text-align: left;
+    border-radius: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.activity-block.cita {
+    background-color: #e8f5e9;
+    border-left-color: #4CAF50;
+}
+
+.activity-block.almuerzo {
+    background-color: #fff3e0;
+    border-left-color: #FF9800;
+}
+
+.activity-block.visita {
+    background-color: #e3f2fd;
+    border-left-color: #2196F3;
+}
+
+.activity-block.paseo {
+    background-color: #f3e5f5;
+    border-left-color: #9C27B0;
+}
+
+.activity-block.terapia {
+    background-color: #ffebee;
+    border-left-color: #F44336;
+}
+
+.activity-block.reunión {
+    background-color: #eceff1;
+    border-left-color: #607D8B;
+}
+
+.activity-time {
+    font-size: 0.75em;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.activity-title {
+    font-weight: 500;
+}
+
+.activity-type {
+    font-size: 0.75em;
+    color: #666;
+    margin-top: 2px;
+}
+
+.outside-month {
+    color: #ccc;
+}
+
+.today {
+    background-color: #fffacd;
+}
+
+.date-picker-modal {
+  --width: 300px; 
+  --height: 350px;
+  --border-radius: 8px; 
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+}
+
+.date-picker-modal .datetime-content {
+    padding: 16px; 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day)::after { 
+  background: var(--primary-color) !important;
+  color: white !important; 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day):hover { 
+    background: rgba(7, 64, 123, 0.1);
+    color: var(--primary-color); 
+}
+
+.date-picker-modal ion-datetime::part(day-button-text) {
+    color: var(--header-text-color); 
+}
+
+.date-picker-modal ion-datetime::part(day-button-text).calendar-day-today { 
+    color: var(--secondary-color); 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day-active) .day-button-text { 
+  color: white !important;
 }
 
 .monthly-view {
@@ -435,58 +524,28 @@
     text-align: left;
 }
 
-.activity-block {
-    background-color: #cce5ff;
-    border-left: 4px solid #007bff;
-    padding: 4px;
-    font-size: 0.8em;
-    text-align: left;
-    border-radius: 4px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: #333;
+.date-filter-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
 
-.outside-month {
-    color: #ccc;
+.date-filter-container .date-filter-display {
+  flex: 1;
 }
 
-.today {
-    background-color: #fffacd;
-}
-
-.date-picker-modal {
-  --width: 300px; 
-  --height: 350px;
-  --border-radius: 8px; 
-  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
-}
-
-.date-picker-modal .datetime-content {
-    padding: 16px; 
-}
-
-.date-picker-modal ion-datetime::part(calendar-day)::after { 
-  background: var(--primary-color) !important;
-  color: white !important; 
-}
-
-.date-picker-modal ion-datetime::part(calendar-day):hover { 
-    background: rgba(7, 64, 123, 0.1);
-    color: var(--primary-color); 
-}
-
-.date-picker-modal ion-datetime::part(day-button-text) {
-    color: var(--header-text-color); 
-}
-
-.date-picker-modal ion-datetime::part(day-button-text).calendar-day-today { 
-    color: var(--secondary-color); 
-}
-
-.date-picker-modal ion-datetime::part(calendar-day-active) .day-button-text { 
-  color: white !important;
+.clear-date-filter-btn {
+  --background: transparent;
+  --color: var(--primary-color);
+  --border-radius: 50%;
+  --padding-start: 4px;
+  --padding-end: 4px;
+  --padding-top: 4px;
+  --padding-bottom: 4px;
+  height: 24px;
+  width: 24px;
+  margin: 0;
 }
 
 
