@@ -37,6 +37,12 @@ export interface PasswordData {
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       if (passwordData.newPassword !== passwordData.confirmPassword) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+      
+      if (passwordData.newPassword.length < 6) {
+        alert('La nueva contraseña debe tener al menos 6 caracteres');
         return;
       }
       
@@ -50,6 +56,8 @@ export interface PasswordData {
         });
         onClose();
       } catch (error) {
+        console.error('Error al cambiar contraseña:', error);
+        alert(error instanceof Error ? error.message : 'Error al cambiar la contraseña');
       } finally {
         setIsLoading(false);
       }

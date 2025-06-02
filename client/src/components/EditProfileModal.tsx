@@ -31,10 +31,31 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, on
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(profileData);
-    onClose();
+    
+    if (!profileData.name.trim()) {
+      alert('El nombre es requerido');
+      return;
+    }
+    
+    if (!profileData.email.trim()) {
+      alert('El email es requerido');
+      return;
+    }
+    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profileData.email)) {
+      alert('Por favor ingresa un email válido');
+      return;
+    }
+    
+    try {
+      await onSave(profileData);
+      onClose();
+    } catch (error) {
+      console.error('Error al guardar perfil:', error);
+      alert(error instanceof Error ? error.message : 'Error al guardar el perfil');
+    }
   };
 
   return (

@@ -72,8 +72,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateProfile = async (profileData: { name: string; email: string; phone?: string; location?: string }) => {
     const token = localStorage.getItem('token');
     if (!token) throw new Error("No se encontró el token de autenticación");
+    
+    console.log('updateProfile - user:', user);
+    console.log('updateProfile - profileData:', profileData);
+    
+    if (!user || !user.id) {
+      throw new Error("No se encontró información del usuario");
+    }
 
     try {
+      console.log('updateProfile - Enviando request a:', endpoints.users.update(user.id));
       const response = await axios.put(
         endpoints.users.update(user.id),
         profileData,
@@ -81,6 +89,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           headers: { Authorization: `Bearer ${token}` }
         }
       );
+
+      console.log('updateProfile - Response:', response.data);
 
       if (response.data.success) {
         const updatedUser = { ...user, ...profileData };
@@ -90,6 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error(response.data.message || 'Error al actualizar el perfil');
       }
     } catch (error: any) {
+      console.error('updateProfile - Error:', error);
       throw new Error(error.response?.data?.message || 'Error al actualizar el perfil');
     }
   };
@@ -97,12 +108,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updatePassword = async (passwordData: { currentPassword: string; newPassword: string; confirmPassword: string }) => {
     const token = localStorage.getItem('token');
     if (!token) throw new Error("No se encontró el token de autenticación");
+    
+    console.log('updatePassword - user:', user);
+    console.log('updatePassword - passwordData (sin passwords):', {
+      currentPasswordLength: passwordData.currentPassword?.length,
+      newPasswordLength: passwordData.newPassword?.length,
+      confirmPasswordLength: passwordData.confirmPassword?.length
+    });
+    
+    if (!user || !user.id) {
+      throw new Error("No se encontró información del usuario");
+    }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       throw new Error('Las contraseñas no coinciden');
     }
 
     try {
+      console.log('updatePassword - Enviando request a:', `${endpoints.users.update(user.id)}/password`);
       const response = await axios.put(
         `${endpoints.users.update(user.id)}/password`,
         {
@@ -114,10 +137,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       );
 
+      console.log('updatePassword - Response:', response.data);
+
       if (!response.data.success) {
         throw new Error(response.data.message || 'Error al actualizar la contraseña');
       }
     } catch (error: any) {
+      console.error('updatePassword - Error:', error);
       throw new Error(error.response?.data?.message || 'Error al actualizar la contraseña');
     }
   };

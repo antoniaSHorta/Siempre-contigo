@@ -27,6 +27,7 @@ const Profile: React.FC = () => {
   };
 
   const handleSaveProfile = async (profileData: ProfileData) => {
+    console.log('handleSaveProfile called with:', profileData);
     try {
       await updateProfile(profileData);
       presentToast({
@@ -36,6 +37,7 @@ const Profile: React.FC = () => {
         color: 'success'
       });
     } catch (error) {
+      console.error('Error en handleSaveProfile:', error);
       presentToast({
         message: error instanceof Error ? error.message : 'Error al actualizar el perfil',
         duration: 3000,
