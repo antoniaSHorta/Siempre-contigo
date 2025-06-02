@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { config } from './config/config';
 import userRoutes from './routes/userRoutes';
+import medicacionRoutes from './routes/medicacionRoutes';
 import { handleError } from './utils/errorHandler';
 import { initDatabase } from './config/initDb';
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users', userRoutes);
+app.use('/api/medicacion', medicacionRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Bienvenido a Siempre Contigo API' });
