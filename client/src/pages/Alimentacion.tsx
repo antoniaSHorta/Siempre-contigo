@@ -25,8 +25,6 @@ const Alimentacion:React.FC = () =>{
 
     const fechaParaMostrar = fechaActual.toLocaleDateString('es-CL', opcionesFechaDisplay);
 
-    
-
     useEffect(() => {
         
         const datosEjemplo: AlimentacionInterface[] = [
@@ -64,6 +62,7 @@ const Alimentacion:React.FC = () =>{
         setListaAlimentacion(alimentosDelDia)
     },[fechaActual])
 
+    // TODO Cargar las entradas de alimentacion desde la base de datos
     /*useEffect(() => {
     const cargarAlimentacion = async (user.id, fechaActual) => {
       try {
@@ -76,10 +75,12 @@ const Alimentacion:React.FC = () =>{
 
     cargarAlimentacion();*/
 
-    //Handlers
+    //Handler para señalar que el residente comió
+    // TODO hacer que la notificación en el otro lado
     const handleComerClick = (entry:AlimentacionInterface) =>{
         presentAlert({
             header: 'Confirmar Acción',
+            cssClass:'.alimentacion-action-sheet-custom ',
             message: `¿El residente ha comido "${entry.tipo}: ${entry.descripcion}"?`,
             buttons: [
                 {
@@ -99,6 +100,7 @@ const Alimentacion:React.FC = () =>{
             });
     }
 
+    //Handler para editar los campos de la entrada de la comida
     const handleEditClick = (entry:AlimentacionInterface) =>{
         // Formatear la hora actual a HH:mm para el input del alert
         const currentHour = String(entry.hora.getHours()).padStart(2, '0');
@@ -107,6 +109,7 @@ const Alimentacion:React.FC = () =>{
 
         presentAlert({
             header: 'Editar Entrada de Alimentación',
+            cssClass:'.alimentacion-action-sheet-custom ',
             inputs: [
                 {
                     name: 'tipo',
@@ -188,6 +191,7 @@ const Alimentacion:React.FC = () =>{
     const handleDeleteClick = (id:number) =>{
         presentAlert({
             header: 'Confirmar Eliminación',
+            cssClass:'.alimentacion-action-sheet-custom ',
             message: '¿Estás seguro de que quieres eliminar esta entrada?',
             buttons: [
                 {
@@ -224,6 +228,7 @@ const Alimentacion:React.FC = () =>{
 
         presentAlert({
             header: 'Agregar Nueva Entrada de Alimentación',
+            cssClass:'.alimentacion-action-sheet-custom ',
             inputs: [
                 {
                     name: 'tipo',
