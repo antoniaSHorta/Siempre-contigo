@@ -6,7 +6,7 @@ import { AppError } from '../utils/errorHandler';
 
 export const createMedicacion = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { nombre, dosis, horario, cuidador_id, residente_id, estado } = req.body;
+    const { nombre, dosis, horario, fecha_hora, cuidador_id, residente_id, estado } = req.body;
 
     if (cuidador_id) {
       const cuidador = await User.findByPk(cuidador_id);
@@ -26,6 +26,7 @@ export const createMedicacion = async (req: Request, res: Response, next: NextFu
       nombre,
       dosis,
       horario,
+      fecha_hora,
       cuidador_id,
       residente_id,
       estado: estado || 'pendiente'
@@ -121,7 +122,7 @@ export const getMedicacionById = async (req: Request, res: Response, next: NextF
 export const updateMedicacion = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const { nombre, dosis, horario, cuidador_id, residente_id, estado } = req.body;
+    const { nombre, dosis, horario, fecha_hora, cuidador_id, residente_id, estado } = req.body;
 
     const medicacion = await Medicacion.findByPk(id);
     
@@ -147,6 +148,7 @@ export const updateMedicacion = async (req: Request, res: Response, next: NextFu
       nombre: nombre || medicacion.nombre,
       dosis: dosis || medicacion.dosis,
       horario: horario || medicacion.horario,
+      fecha_hora: fecha_hora !== undefined ? fecha_hora : medicacion.fecha_hora,
       cuidador_id: cuidador_id !== undefined ? cuidador_id : medicacion.cuidador_id,
       residente_id: residente_id !== undefined ? residente_id : medicacion.residente_id,
       estado: estado || medicacion.estado
@@ -216,7 +218,7 @@ export const getMedicacionesByResidente = async (req: Request, res: Response, ne
           attributes: ['id', 'name', 'email']
         }
       ],
-      order: [['horario', 'ASC']]
+      order: [['fecha_hora', 'ASC']]
     });
 
     res.status(200).json({

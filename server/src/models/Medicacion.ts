@@ -32,6 +32,12 @@ export class Medicacion extends Model {
   })
   horario?: string;
 
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  fecha_hora?: Date;
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,

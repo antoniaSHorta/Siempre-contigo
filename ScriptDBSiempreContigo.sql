@@ -60,6 +60,7 @@ CREATE TABLE medicacion (
   nombre VARCHAR(100),
   dosis VARCHAR(100),
   horario VARCHAR(100),
+  fecha_hora DATETIME,
   cuidador_id INT,
   residente_id INT,
   estado VARCHAR(50),
