@@ -13,4 +13,14 @@ export const endpoints = {
     update: (id: number) => `${API_URL}/users/${id}`,
     delete: (id: number) => `${API_URL}/users/${id}`,
   },
+  admin: {
+    users: {
+      list: `${API_URL}/admin`,                            
+      getById: (id: number) => `${API_URL}/admin/${id}`, 
+      create: `${API_URL}/admin`,                          
+      checkEmail: `${API_URL}/admin/check-email`,
+      update: (id: number) => `${API_URL}/admin/${id}`, 
+      toggle: (id: number) => `${API_URL}/admin/status/${id}`, 
+    }
+  }
 }; 

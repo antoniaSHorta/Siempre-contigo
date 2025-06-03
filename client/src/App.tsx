@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Agenda from './pages/Agenda';
 import ChatList from './pages/ChatList';
+import { AdminUserDetail, AdminHome, AdminCreateUser, AdminUserEdit, AdminUsers} from './pages/Admin';
 
 /* Styles */
 import './theme/variables.css';
@@ -42,6 +43,12 @@ const App: React.FC = () => (
       <IonReactRouter>
         <IonRouterOutlet>
           <Route exact path="/login" component={Login} />
+
+          <ProtectedRoute exact path="/admin" component={AdminHome} adminOnly/>
+          <ProtectedRoute exact path="/admin/users" component={AdminUsers} adminOnly/>
+          <ProtectedRoute exact path="/admin/users/add" component={AdminCreateUser} adminOnly/>
+          <ProtectedRoute exact path="/admin/users/detail/:id" component={AdminUserDetail} adminOnly/>
+          <ProtectedRoute exact path="/admin/users/edit/:id" component={AdminUserEdit} adminOnly/>
           
           <Route path="/app">
             <IonTabs>

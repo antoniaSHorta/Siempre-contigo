@@ -1,0 +1,116 @@
+:root {
+    --admin-primary-color: #07407B;
+    --admin-secondary-color: #F7931E;
+    --admin-background-color: #f4f5f8;
+    --admin-text-color: #333;
+    --admin-card-bg: #ffffff;
+    --admin-card-radius: 1rem;
+    --admin-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --admin-btn-radius: 0.5rem;
+}
+
+.admin-user-edit-page {
+    background-color: var(--admin-background-color);
+    min-height: 100vh;
+    color: var(--admin-text-color);
+    overflow-y: auto;
+}
+
+.admin-user-edit-content {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    padding: 4rem 1rem 2rem 1rem;
+    min-height: calc(100vh - 56px);
+    padding-bottom: 80px;
+}
+
+.admin-user-edit-container {
+    width: 100%;
+    max-width: 800px;
+    background-color: var(--admin-card-bg);
+    border-radius: var(--admin-card-radius);
+    box-shadow: var(--admin-card-shadow);
+    padding: 2rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+}
+
+.admin-user-edit-username {
+    position: sticky;
+    top: 0;
+    background-color: var(--admin-card-bg); /* para evitar que se superponga con contenido */
+    z-index: 1;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1.2rem;
+    text-align: center;
+    color: var(--admin-primary-color);
+    border-bottom: 1px solid #ccc;
+    padding: 1rem 0; /* opcional, mejora visual si queda pegado */
+}
+
+.admin-back-btn {
+    --background: transparent;
+    --color: var(--admin-secondary-color);
+    border: 2px solid var(--admin-primary-color);
+    border-radius: var(--admin-btn-radius);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+    margin-left: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.admin-back-btn:hover {
+    background: var(--admin-secondary-color);
+    --color: #fff;
+    transform: translateY(-2px) scale(1.05);
+}
+
+.admin-user-edit-message {
+    text-align: center;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.admin-user-edit-message.error {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #c0392b;
+}
+
+.admin-user-edit-message.success {
+    background-color: rgba(0, 128, 0, 0.1);
+    color: #2ecc71;
+}
+
+.admin-save-button {
+    --border-radius: var(--admin-btn-radius);
+    --background: var(--admin-secondary-color);
+    --color: white;
+}
+
+.admin-header-toolbar {
+    --background: var(--admin-primary-color);
+    --color: #fff;
+}
+
+.admin-header-toolbar ion-title {
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .admin-user-edit-container {
+        padding: 1.2rem;
+
+        max-height: 70vh;  
+        overflow-y: auto;  
+    }
+}
