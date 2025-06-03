@@ -2,7 +2,7 @@ import { Table, Column, Model, DataType, BeforeCreate, BeforeUpdate } from 'sequ
 import bcrypt from 'bcryptjs';
 
 @Table({
-  tableName: 'users',
+  tableName: 'usuarios',
   timestamps: true,
 })
 export class User extends Model {
@@ -16,6 +16,7 @@ export class User extends Model {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    field: 'nombre'
   })
   name!: string;
 
@@ -26,20 +27,37 @@ export class User extends Model {
     validate: {
       isEmail: true,
     },
+    field: 'correo',
   })
   email!: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    field: 'contrasena'
   })
   password!: string;
 
   @Column({
-    type: DataType.ENUM('user', 'admin'),
-    defaultValue: 'user',
+    type: DataType.ENUM('Admin', 'Cuidador', 'Familiar'),
+    defaultValue: 'Familiar',
+    field: 'rol'
   })
   role!: string;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+    field: 'activo',
+  })
+  isActive!: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    field: 'conectado',
+  })
+  isConnected!: boolean;
 
   @BeforeCreate
   static async hashPasswordBeforeCreate(instance: User) {

@@ -1,0 +1,61 @@
+:root {
+    --admin-primary-color: #07407B;
+    --admin-secondary-color: #F7931E;
+    --admin-background-color: #F7F9FB;
+    --admin-text-color: #333;
+    --admin-card-bg: #ffffff;
+    --admin-card-radius: 1rem;
+    --admin-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --admin-btn-radius: 0.5rem;
+}
+
+.admin-user-form-container {
+    background: var(--admin-card-bg);
+    box-shadow: var(--admin-card-shadow);
+    border-radius: var(--admin-card-radius);
+    padding: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.admin-user-form-container ion-item {
+    --background: transparent;
+    margin-bottom: 1rem;
+}
+
+.admin-user-form-container ion-label {
+    font-weight: 500;
+    color: var(--admin-primary-color);
+}
+
+.admin-user-form-container ion-input,
+.admin-user-form-container ion-select {
+    --padding-start: 0.5rem;
+    --padding-end: 0.5rem;
+}
+
+.admin-user-form-error {
+    margin-top: 0.5rem;
+    display: block;
+    text-align: center;
+    font-weight: 500;
+}
+
+.custom-select .select-text {
+    font-size: 16px;
+    padding-left: 8px;
+}
+
+.custom-select .select-icon {
+    color: var(--ion-color-primary);
+}
+
+.custom-select {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --border-radius: 12px;
+    --background: #f9f9f9;
+    --color: #333;
+    --min-height: 45px;
+    --border: 1px solid #ccc;
+}

@@ -10,6 +10,7 @@ interface AuthContextType {
   lastRoute: string;
   setLastRoute: (route: string) => void;
   isLoading: boolean;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,6 +20,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<any | null>(null);
   const [lastRoute, setLastRoute] = useState<string>('/login');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const isAdmin = user?.role === 'Admin';
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -69,7 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, lastRoute, setLastRoute, isLoading }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, lastRoute, setLastRoute, isLoading, isAdmin}}>
       {children}
     </AuthContext.Provider>
   );

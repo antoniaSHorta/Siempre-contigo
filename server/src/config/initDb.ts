@@ -6,7 +6,7 @@ export const initDatabase = async () => {
     await sequelize.authenticate();
     console.log('Database connection has been established successfully.');
 
-    await sequelize.sync({ force: true }); 
+    await sequelize.sync({ alter: true }); 
     console.log('Database synchronized successfully.');
 
     const adminExists = await User.findOne({ where: { email: 'admin@example.com' } });
@@ -16,6 +16,8 @@ export const initDatabase = async () => {
         email: 'admin@example.com',
         password: 'admin123',
         role: 'admin',
+        isActive: true,
+        isConnected: true
       });
       console.log('Admin user created successfully.');
     }

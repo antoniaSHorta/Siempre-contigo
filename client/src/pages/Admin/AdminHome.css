@@ -1,0 +1,114 @@
+.admin-home-page {
+    --admin-primary-color: #07407B;
+    --admin-secondary-color: #F7931E;
+    --admin-background-color: #f4f5f8;
+
+    background-color: var(--admin-background-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.admin-home-toolbar {
+    --background: var(--admin-primary-color);
+    color: white;
+}
+
+.admin-back-btn {
+    --background: transparent;
+    --color: var(--admin-secondary-color);
+    border: 2px solid var(--admin-primary-color);
+    border-radius: var(--admin-btn-radius);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+    margin-left: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.admin-back-btn:hover {
+    background: var(--admin-secondary-color);
+    --color: #fff;
+    transform: translateY(-2px) scale(1.05);
+}
+
+.admin-title {
+    color: white;
+    text-align: center;
+    width: 100%;
+}
+
+.admin-home-content {
+    --background: var(--admin-background-color);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px;
+    padding-bottom: 80px;
+}
+
+.admin-home-welcome {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto 1.5rem auto;
+    text-align: center;
+}
+
+.admin-home-welcome h2 {
+    font-size: 1.25rem;
+    color: var(--admin-primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.admin-home-welcome p {
+    color: var(--admin-secondary-color);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.admin-home-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.admin-home-card {
+    flex: 1 1 250px;
+    max-width: 280px;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    background-color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.admin-home-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.admin-home-card ion-card-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--admin-primary-color);
+}
+
+.admin-home-card ion-card-content {
+    font-size: 0.95rem;
+    padding-top: 0.5rem;
+    color: #333;
+}
