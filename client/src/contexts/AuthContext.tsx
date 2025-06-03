@@ -12,6 +12,7 @@ interface AuthContextType {
   isLoading: boolean;
   updateProfile: (profileData: { name: string; email: string; phone?: string; location?: string }) => Promise<void>;
   updatePassword: (passwordData: { currentPassword: string; newPassword: string; confirmPassword: string }) => Promise<void>;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,6 +22,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<any | null>(null);
   const [lastRoute, setLastRoute] = useState<string>('/login');
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const isAdmin = user?.role === 'Admin';
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -158,7 +160,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLastRoute, 
       isLoading,
       updateProfile,
-      updatePassword
+      updatePassword,
+      isAdmin
     }}>
       {children}
     </AuthContext.Provider>
