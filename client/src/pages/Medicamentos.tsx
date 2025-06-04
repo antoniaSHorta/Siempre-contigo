@@ -103,12 +103,10 @@ const Medicamentos: React.FC = () => {
                     }
                 )
                 setListaMedicamento([ejemploMedicacionDummy]);
-
             } finally {
             setIsLoading(false);
         }
     }, [formattedDateForApi, user?.id]);
-
 
     useEffect(() => {
         fetchMedicaciones();
@@ -268,7 +266,7 @@ const Medicamentos: React.FC = () => {
                     role: 'destructive',
                     handler: async () => {
                         try {
-                            await axios.delete(`${API_BASE_URL}/Medicamento/${id}`,
+                            await axios.delete(`${API_BASE_URL}/medicamento/${id}`,
                                 {
                                     headers: {
                                         Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -312,19 +310,19 @@ const Medicamentos: React.FC = () => {
                 {
                     name: 'tipo',
                     type: 'text',
-                    placeholder: 'Tipo (Ej: Desayuno, Almuerzo)',
+                    placeholder: 'Nombre',
                     value: '',
                     attributes: { required: true }
                 },
                 {
-                    name: 'descripcion',
+                    name: 'dosis',
                     type: 'textarea',
                     placeholder: 'Descripción de la comida...',
                     value: '',
                     attributes: { required: true }
                 },
                 {
-                    name: 'hora',
+                    name: 'horario',
                     type: 'time',
                     value: defaultTime,
                     attributes: { required: true }
@@ -512,7 +510,7 @@ const Medicamentos: React.FC = () => {
                                 <IonIcon icon={chevronForwardOutline} slot="icon-only" />
                             </IonButton>
                         </div>
-
+                        
                         {listaMedicamento && listaMedicamento.length > 0 ? (
                             <IonList className='medicamento-lista-entradas'>
                                 {listaMedicamento.map(entry => (
