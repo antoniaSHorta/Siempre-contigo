@@ -89,7 +89,7 @@ export const getAlimentacionById = async (req: Request, res: Response, next: Nex
         },
         {
           model: User,
-          attributes: ['id', 'nombre']
+          attributes: ['id', 'name']
         }
       ]
     });
@@ -210,7 +210,7 @@ export const getAlimentacionesByTipo = async (req: Request, res: Response, next:
         },
         {
           model: User,
-          attributes: ['id', 'nombre']
+          attributes: ['id', 'name']
         }
       ],
       order: [['hora', 'ASC']],
@@ -276,7 +276,7 @@ export const getAlimentacionesByResidente = async (req: Request, res: Response, 
         },
         {
           model: User,
-          attributes: ['id', 'nombre']
+          attributes: ['id', 'name']
         }
       ],
       order: [['fecha_hora', 'ASC']],
