@@ -148,7 +148,7 @@ const Alimentacion: React.FC = () => {
 
     // Funcion para editar la entrada de alimentación seleccionada
     const handleEditClick = (entry: AlimentacionInterface) => {
-        const dateToUse = entry.fecha_hora ?? new Date();
+        const dateToUse = entry.fecha_hora ? new Date(entry.fecha_hora) : new Date();
 
         const currentHour = String(dateToUse.getHours()).padStart(2, '0');
         const currentMinute = String(dateToUse.getMinutes()).padStart(2, '0');
@@ -210,6 +210,7 @@ const Alimentacion: React.FC = () => {
                     ).toISOString();
 
                     try {
+                        let token = localStorage.getItem('token')
                         await axios.put(`${API_BASE_URL}/alimentacion/${entry.id}`, {
                         tipo: data.tipo,
                         descripcion: data.descripcion,
@@ -217,6 +218,10 @@ const Alimentacion: React.FC = () => {
                         fecha_hora: newFechaHora,
                         residente_id: entry.residente_id,
                         cuidador_id: entry.cuidador_id,
+                        },{
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
                         });
                         presentToast({
                         message: 'Entrada actualizada con éxito.',
