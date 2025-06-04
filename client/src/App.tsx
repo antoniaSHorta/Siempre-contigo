@@ -1,7 +1,7 @@
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { home, person, calendar } from 'ionicons/icons';
+import { home, person, calendar,lockClosed } from 'ionicons/icons';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -10,7 +10,9 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Agenda from './pages/Agenda';
-import { AdminUserDetail, AdminHome, AdminCreateUser, AdminUserEdit, AdminUsers} from './pages/Admin';
+import { AdminHome } from './pages/Admin/AdminHome';
+import { AdminUserDetail, AdminCreateUser, AdminUserEdit, AdminUsers} from './pages/Admin/Users';
+
 
 /* Styles */
 import './theme/variables.css';
@@ -32,6 +34,8 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
+import { AdminCreateResident, AdminResidentEdit, AdminResidents } from './pages/Admin/Residents';
+import AdminResidentDetail from './pages/Admin/Residents/AdminResidentDetail';
 
 setupIonicReact();
 
@@ -42,18 +46,24 @@ const App: React.FC = () => (
         <IonRouterOutlet>
           <Route exact path="/login" component={Login} />
 
-          <ProtectedRoute exact path="/admin" component={AdminHome} adminOnly/>
-          <ProtectedRoute exact path="/admin/users" component={AdminUsers} adminOnly/>
-          <ProtectedRoute exact path="/admin/users/add" component={AdminCreateUser} adminOnly/>
-          <ProtectedRoute exact path="/admin/users/detail/:id" component={AdminUserDetail} adminOnly/>
-          <ProtectedRoute exact path="/admin/users/edit/:id" component={AdminUserEdit} adminOnly/>
           
+          
+
           <Route path="/app">
             <IonTabs>
               <IonRouterOutlet>
                 <ProtectedRoute exact path="/app/home" component={Home} />
                 <ProtectedRoute exact path="/app/profile" component={Profile} />
                 <ProtectedRoute exact path="/app/agenda" component={Agenda} />
+                <ProtectedRoute exact path="/app/admin" component={AdminHome} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/users" component={AdminUsers} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/users/add" component={AdminCreateUser} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/users/detail/:id" component={AdminUserDetail} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/users/edit/:id" component={AdminUserEdit} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/residents" component={AdminResidents} adminOnly />
+                <ProtectedRoute exact path="/app/admin/residents/add" component={AdminCreateResident} adminOnly />
+                <ProtectedRoute exact path="/app/admin/residents/detail/:id" component={AdminResidentDetail} adminOnly />
+                <ProtectedRoute exact path="/app/admin/residents/edit/:id" component={AdminResidentEdit} adminOnly />
                 <Route exact path="/app">
                   <Redirect to="/app/home" />
                 </Route>

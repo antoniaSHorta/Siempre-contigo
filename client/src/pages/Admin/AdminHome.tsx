@@ -16,28 +16,23 @@ import { chevronBackOutline, peopleOutline } from 'ionicons/icons';
 import { useIonRouter } from '@ionic/react';
 import { useAuth } from '../../contexts/AuthContext';
 import './AdminHome.css';
+import Header from '../../components/Header';
 
 export const AdminHome: React.FC = () => {
     const router = useIonRouter();
     const { user } = useAuth();
 
     const goToUsers = () => {
-        router.push('/admin/users', 'forward');
+        router.push('/app/admin/users', 'forward');
+    };
+
+    const goToResidents = () => {
+        router.push('/app/admin/residents', 'forward');
     };
 
     return (
         <IonPage className="admin-home-page">
-            <IonHeader>
-                <IonToolbar className="admin-home-toolbar">
-                    <IonButtons slot="start">
-                        <button className="admin-back-btn" onClick={() => router.push('/')}>
-                            <IonIcon icon={chevronBackOutline} />
-                        </button>
-                    </IonButtons>
-                    <IonTitle className="admin-title">Panel de Administración</IonTitle>
-                </IonToolbar>
-            </IonHeader>
-
+            <Header title='Panel de Administración'></Header>
             <IonContent className="admin-home-content">
                 <div className="admin-home-welcome">
                     <h2>Bienvenido, {user?.name || 'Admin'}</h2>
@@ -54,6 +49,18 @@ export const AdminHome: React.FC = () => {
                         </IonCardHeader>
                         <IonCardContent>
                             Crear, editar o desactivar cuidadores y familiares.
+                        </IonCardContent>
+                    </IonCard>
+
+                    <IonCard button onClick={goToResidents} className="admin-home-card">
+                        <IonCardHeader>
+                            <IonCardTitle>
+                                <IonIcon icon={peopleOutline} />
+                                Gestión de Residentes
+                            </IonCardTitle>
+                        </IonCardHeader>
+                        <IonCardContent>
+                            Crear, editar o desactivar residentes.
                         </IonCardContent>
                     </IonCard>
                 </div>

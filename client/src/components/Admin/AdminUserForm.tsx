@@ -9,7 +9,7 @@ import {
     IonText,
 } from '@ionic/react';
 
-import './AdminUserForm.css'
+import './AdminForm.css'
 
 interface UserFormProps {
     form: {
@@ -17,6 +17,8 @@ interface UserFormProps {
         email: string;
         password: string;
         role: string;
+        phone: string;
+        location: string;
     };
     onChange: (field: string, value: string) => void;
     error?: string | null;
@@ -27,14 +29,16 @@ const AdminUserForm: React.FC<UserFormProps> = ({ form, onChange, error }) => {
         <div className="admin-user-form-container">
             <IonList>
                 <IonItem>
-                    <IonLabel position="floating">Nombre</IonLabel>
-                    <IonInput
-                        value={form.name}
-                        onIonChange={e => onChange('name', e.detail.value!)}
-                        required
-                        type="text"
-                        autocomplete="name"
-                    />
+                    <div className="form-field-container">
+                        <IonLabel position="floating">Nombre</IonLabel>
+                        <IonInput
+                            value={form.name}
+                            onIonChange={e => onChange('name', e.detail.value!)}
+                            required
+                            type="text"
+                            autocomplete="name"
+                        />
+                    </div>
                 </IonItem>
 
                 <IonItem>
@@ -56,6 +60,28 @@ const AdminUserForm: React.FC<UserFormProps> = ({ form, onChange, error }) => {
                         required
                         type="password"
                         autocomplete="new-password"
+                    />
+                </IonItem>
+
+                <IonItem>
+                    <IonLabel position="floating">Teléfono</IonLabel>
+                    <IonInput
+                        value={form.phone}
+                        onIonChange={e => onChange('phone', e.detail.value!)}
+                        required
+                        type="tel"
+                        autocomplete="tel"
+                    />
+                </IonItem>
+
+                <IonItem>
+                    <IonLabel position="floating">Dirección</IonLabel>
+                    <IonInput
+                        value={form.location}
+                        onIonChange={e => onChange('location', e.detail.value!)}
+                        required
+                        type="text"
+                        autocomplete="street-address"
                     />
                 </IonItem>
 

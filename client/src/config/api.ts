@@ -22,5 +22,25 @@ export const endpoints = {
       update: (id: number) => `${API_URL}/admin/${id}`, 
       toggle: (id: number) => `${API_URL}/admin/status/${id}`, 
     }
+  },
+  activities:{
+    list: `${API_URL}/activities`,
+    getById: (id: number) => `${API_URL}/activities/${id}`,
+    create: `${API_URL}/activities`,
+    update: (id: number) => `${API_URL}/activities/${id}`,
+    delete: (id: number) => `${API_URL}/activities/${id}`,
+  },
+  residents:{
+    list: `${API_URL}/residents`,
+    listAll: `${API_URL}/residents/activeAndInactive`,
+    getById: (id: number) => `${API_URL}/residents/${id}`,
+    create: `${API_URL}/residents`,
+    update: (id: number) => `${API_URL}/residents/${id}`,
+    active: (id: number) => `${API_URL}/residents/active/${id}`,
+    delete: (id: number) => `${API_URL}/residents/${id}`,
+    addCuidadores: (id:number) => `${API_URL}/residentesCuidadores/${id}/cuidadores`,
+    addFamiliares: (id:number) => `${API_URL}/residentesFamiliares/${id}/familiares`,
+    updateCuidadores: (id:number) => `${API_URL}/residentesCuidadores/${id}/cuidadores`,
+    updateFamiliares: (id:number) => `${API_URL}/residentesFamiliares/${id}/familiares`
   }
 }; 

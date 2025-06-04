@@ -11,27 +11,59 @@
 
 .admin-user-form-container {
     background: var(--admin-card-bg);
-    box-shadow: var(--admin-card-shadow);
     border-radius: var(--admin-card-radius);
     padding: 1.5rem;
     width: 100%;
     box-sizing: border-box;
 }
 
-.admin-user-form-container ion-item {
-    --background: transparent;
-    margin-bottom: 1rem;
+.date-filter-display {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 0; 
+  padding-right: 0;
+  color: var(--primary-color);
+  font-size: 1rem;
+  width: 100%;
+  background: transparent; 
+  border: none;
+  box-shadow: none;
+  cursor: pointer; 
 }
 
-.admin-user-form-container ion-label {
-    font-weight: 500;
+
+
+.admin-user-form-container ion-item {
+    --background: white;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    --highlight-color-focused: var(--admin-primary-color);
+    --color: var(--admin-primary-color);
+    --border-color-focused: var(--admin-primary-color);
+}
+
+.form-field-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+
+.form-field-container ion-label {
     color: var(--admin-primary-color);
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    margin-bottom: 4px;
 }
 
 .admin-user-form-container ion-input,
 .admin-user-form-container ion-select {
-    --padding-start: 0.5rem;
-    --padding-end: 0.5rem;
+    --padding-start: 0;
+    --color: var(--admin-primary-color);
+    --placeholder-color: var(--admin-primary-color);
+    --highlight-color-focused: var(--admin-primary-color);
+    --caret-color-focused: var(--admin-primary-color);
+    font-size: 1rem;
 }
 
 .admin-user-form-error {

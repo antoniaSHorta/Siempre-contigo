@@ -13,11 +13,12 @@ import {
     useIonRouter,
 } from '@ionic/react';
 import { useParams } from 'react-router-dom';
-import { checkEmailExists, getUserByIdAdmin, updateUserAdmin } from '../../services/adminService';
-import AdminUserForm from '../../components/Admin/AdminUserForm';
-import { IUser } from '../../interfaces/IUser';
-import './AdminUserEdit.css';
+import { checkEmailExists, getUserByIdAdmin, updateUserAdmin } from '../../../services/adminService';
+import AdminUserForm from '../../../components/Admin/AdminUserForm';
+import { IUser } from '../../../interfaces/IUser';
+import '../Styles/AdminEdit.css';
 import { chevronBackOutline } from 'ionicons/icons';
+import Header from '../../../components/Header';
 
 export const AdminUserEdit: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -31,6 +32,8 @@ export const AdminUserEdit: React.FC = () => {
         email: '',
         password: '',
         role: '',
+        phone: '',
+        location: ''
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -47,6 +50,8 @@ export const AdminUserEdit: React.FC = () => {
                     email: data.email,
                     password: '',
                     role: data.role,
+                    phone: data.phone,
+                    location: data.location
                 });
             } catch (err) {
                 setError('No se pudo cargar el usuario.');
@@ -67,7 +72,7 @@ export const AdminUserEdit: React.FC = () => {
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     const handleSave = async () => {
-        if (!form.name.trim() || !form.email.trim() || !form.role) {
+        if (!form.name.trim() || !form.email.trim() || !form.role.trim() || !form.location.trim() || !form.phone.trim()) {
             setError('Por favor completa todos los campos requeridos.');
             return;
         }
@@ -105,17 +110,7 @@ export const AdminUserEdit: React.FC = () => {
 
     return (
         <IonPage className="admin-user-edit-page">
-            <IonHeader>
-                <IonToolbar className="admin-header-toolbar">
-                    <IonButtons slot="start">
-                        <button className="admin-back-btn" onClick={() => router.push('/admin/users')}>
-                            <IonIcon icon={chevronBackOutline}/>
-                        </button>
-                    </IonButtons>
-                    <IonTitle className='admin-title'>Editar Usuario</IonTitle>
-                </IonToolbar>
-            </IonHeader>
-
+            <Header title='Editar Usuario'></Header>
             <div className="admin-user-edit-content">
                 <div className="admin-user-edit-container">
                     {error && (
@@ -137,6 +132,14 @@ export const AdminUserEdit: React.FC = () => {
                             <AdminUserForm form={form} onChange={handleChange} error={null} />
                             <IonButton expand="block" onClick={handleSave} className="admin-save-button">
                                 Guardar Cambios
+                            </IonButton>
+                            <IonButton
+                                expand="block" 
+                                fill="outline" 
+                                color="medium" 
+                                onClick={() => router.push('/app/admin/users')}
+                                >
+                                Cancelar
                             </IonButton>
                         </>
                         
