@@ -68,7 +68,6 @@ const App: React.FC = () => (
                 <Route exact path="/app">
                   <Redirect to="/app/home" />
                 </Route>
-
               </IonRouterOutlet>
 
               <IonTabBar slot="bottom">
