@@ -48,7 +48,6 @@ const App: React.FC = () => (
                 <ProtectedRoute exact path="/app/home" component={Home} />
                 <ProtectedRoute exact path="/app/profile" component={Profile}/>
                 <ProtectedRoute exact path="/app/medicamentos" component={Medicamentos}/>
-                <ProtectedRoute exact path="/app/alimentacion" component={Alimentacion}/>
                 <ProtectedRoute exact path="/app/chat" component={Profile}/> 
                 <ProtectedRoute exact path="/app/profile" component={Profile} />
                 <ProtectedRoute exact path="/app/agenda" component={Agenda} />
