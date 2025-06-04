@@ -20,6 +20,8 @@ export const initDatabase = async () => {
     await sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
 
     const adminExists = await User.findOne({ where: { email: 'admin@example.com' } });
+    const residentExists = await Resident.findOne({ where: { nombre: 'Joaquin' } });
+    const alimentacionExists = await Alimentacion.findOne({ where: { tipo: 'Desayuno' } });
     if (!adminExists) {
       await User.create({
         name: 'Admin',
@@ -31,6 +33,29 @@ export const initDatabase = async () => {
       });
       console.log('Admin user created successfully.');
     }
+    if (!residentExists) {
+      await Resident.create({
+        nombre: 'Joaquin',
+        nacimiento: '1945-05-10',
+        estado_salud: 'Estable',
+        habitacion: 'Habitación 101',
+        ingreso: '2024-11-15',
+        activo: true,
+      });
+      console.log('Resident created successfully.');
+    }
+    if (!alimentacionExists) {
+    await Alimentacion.create({
+      tipo: 'Desayuno',
+      descripcion: 'Pan con mantequilla y jugo de naranja',
+      hora: '08:00:00',
+      fecha_hora: '2025-06-04 08:00:00',
+      residente_id: 1,
+      cuidador_id: 1,
+    });
+    console.log('Alimentación creada correctamente.');
+  }
+    
   } catch (error) {
     console.error('Unable to initialize database:', error);
     throw error;

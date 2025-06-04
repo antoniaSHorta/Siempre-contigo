@@ -1,226 +1,273 @@
-import { IonButton, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, IonText, useIonAlert, useIonToast } from '@ionic/react';
-import Header from '../components/Header'
+import { IonButton, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, IonText, useIonAlert, useIonToast, IonSpinner } from '@ionic/react';
+import Header from '../components/Header';
 import FechaWrapper from '../components/FechaWrapper';
-import {AlimentacionInterface} from '../Util/AlimentacionInterface'
-import { useEffect, useState } from 'react';
+import { AlimentacionInterface } from '../types/alimentacion';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import AlimentacionCard from '../components/AlimentacionCard';
 import './Alimentacion.css';
 import { addCircle, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
+import axios from 'axios';
 
-const Alimentacion:React.FC = () =>{
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5173/api';
 
+interface residentInterface{
+    id: number,
+    nombre: string
+}
+
+const Alimentacion: React.FC = () => {
     const [fechaActual, setFechaActual] = useState(new Date());
-    const [listaAlimentacion, setListaAlimentacion] = useState(new Array<AlimentacionInterface>())
-    const [presentAlert] = useIonAlert(); 
-    const [presentToast] = useIonToast();
-    const {user} = useAuth()
+    const [listaAlimentacion, setListaAlimentacion] = useState<AlimentacionInterface[]>([]);
+    const [residents, setResidents] = useState<Array<residentInterface>>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const opcionesFechaDisplay: Intl.DateTimeFormatOptions = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
+    const [presentAlert] = useIonAlert();
+    const [presentToast] = useIonToast();
+    const { user } = useAuth();
+
+    const ejemploAlmuerzoDummy: AlimentacionInterface = {
+        id: 1,
+        tipo: 'Almuerzo',
+        descripcion: 'Pollo asao con arroz',
+        hora: '13:00:00',
+        fecha_hora: new Date(new Date().setHours(13, 0, 0, 0)),
+        residente_id: 1,
+        cuidador_id: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
     };
 
-    const fechaParaMostrar = fechaActual.toLocaleDateString('es-CL', opcionesFechaDisplay);
+    const formattedDateForApi = useMemo(() => {
+        return fechaActual.toISOString().split('T')[0];
+    }, [fechaActual]);
 
     useEffect(() => {
-        
-        const datosEjemplo: AlimentacionInterface[] = [
-            {
-                id: 1,
-                tipo: 'Desayuno',
-                descripcion: 'Tostadas con palta y café',
-                hora: new Date(2025, 5, 1, 6, 0, 0),
-            },
-            {
-                id: 2,
-                tipo: 'Almuerzo',
-                descripcion: 'Ensalada de pollo con quinoa',
-                hora: new Date(2025, 5, 1, 12, 0, 0),
-            },
-            {
-                id: 3,
-                tipo: 'Cena',
-                descripcion: 'Sopa de verduras y pechuga a la plancha',
-                hora: new Date(2025, 5, 1, 18, 0, 0),
-            },
-            {
-                id: 4,
-                tipo: 'Snack',
-                descripcion: 'Yogur con frutos rojos',
-                hora: new Date(2025, 5, 2, 22, 0, 0),
+        const fetchResidents = async () => {
+          try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+              console.error('No hay sesión activa');
+              return;
             }
-        ];
-         const alimentosDelDia = datosEjemplo.filter(entry =>
-            entry.hora.getDate() === fechaActual.getDate() &&
-            entry.hora.getMonth() === fechaActual.getMonth() &&
-            entry.hora.getFullYear() === fechaActual.getFullYear()
-        );
+    
+            const response = await fetch('/api/residents/', {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+    
+            if (!response.ok) {
+              throw new Error('Error al cargar los residentes');
+            }
+    
+            const data = await response.json();
+            setResidents(data.data);
+          } catch (error) {
+            console.error('Error fetching residents:', error);
+          }
+        };
+    
+        fetchResidents();
+      }, []);
 
-        setListaAlimentacion(alimentosDelDia)
-    },[fechaActual])
+    // Función para cargar las alimentaciones
+    const fetchAlimentaciones = useCallback(async () => {
+        if (!user?.id) {
+            setError('Usuario no autorizado.');
+            return;
+        }
 
-    // TODO Cargar las entradas de alimentacion desde la base de datos
-    /*useEffect(() => {
-    const cargarAlimentacion = async (user.id, fechaActual) => {
-      try {
-        const data = await api;
-        setListaAlimentacion(data);
-      } catch (error) {
-        console.error('Error al cargar la alimentación para la fecha actual:', error);
-      }
-    };
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await axios.get(`${API_BASE_URL}/alimentacion/byFecha/${formattedDateForApi}`);
+            
+            const data: AlimentacionInterface[] = response.data.data;
 
-    cargarAlimentacion();*/
+            setListaAlimentacion(data);
+            } catch (err: any) {
+            console.log(err);
+            setListaAlimentacion([ejemploAlmuerzoDummy]);
+            } finally {
+            setIsLoading(false);
+        }
+    }, [formattedDateForApi, user?.id]);
 
-    //Handler para señalar que el residente comió
-    // TODO hacer que la notificación en el otro lado
-    const handleComerClick = (entry:AlimentacionInterface) =>{
+
+    useEffect(() => {
+        fetchAlimentaciones();
+    }, [fetchAlimentaciones]);
+
+
+    // --- CRUD Operations Handlers ---
+
+    const handleComerClick = (entry: AlimentacionInterface) => {
         presentAlert({
             header: 'Confirmar Acción',
-            cssClass:'.alimentacion-action-sheet-custom ',
+            cssClass: '.alimentacion-action-sheet-custom',
             message: `¿El residente ha comido "${entry.tipo}: ${entry.descripcion}"?`,
-            buttons: [
-                {
-                text: 'Cancelar',
-                role: 'cancel', // Le da un estilo de cancelación
-                handler: () => {
-                    console.log('ñamnt!');
-                },
-                },
-                {
-                text: 'Confirmar',
-                handler: () => {
-                    console.log(`ñam!`);
-                    },
-                },
-            ],
-            });
-    }
-
-    //Handler para editar los campos de la entrada de la comida
-    const handleEditClick = (entry:AlimentacionInterface) =>{
-        // Formatear la hora actual a HH:mm para el input del alert
-        const currentHour = String(entry.hora.getHours()).padStart(2, '0');
-        const currentMinute = String(entry.hora.getMinutes()).padStart(2, '0');
-        const formattedTime = `${currentHour}:${currentMinute}`;
-
-        presentAlert({
-            header: 'Editar Entrada de Alimentación',
-            cssClass:'.alimentacion-action-sheet-custom ',
-            inputs: [
-                {
-                    name: 'tipo',
-                    type: 'text',
-                    placeholder: 'Tipo (Ej: Desayuno, Almuerzo)',
-                    value: entry.tipo,
-                    attributes: {
-                        required: true,
-                    }
-                },
-                {
-                    name: 'descripcion',
-                    type: 'textarea',
-                    placeholder: 'Descripción de la comida',
-                    value: entry.descripcion,
-                    attributes: {
-                        required: true,
-                    }
-                },
-                {
-                    name: 'hora',
-                    type: 'time',
-                    value: formattedTime,
-                    attributes: {
-                        required: true,
-                    }
-                }
-            ],
             buttons: [
                 {
                     text: 'Cancelar',
                     role: 'cancel',
                     handler: () => {
-                        console.log('Edición cancelada.');
+                        console.log('ñamt');
                     },
                 },
                 {
-                    text: 'Guardar',
-                    handler: (data) => {
-                        if (!data.tipo || !data.descripcion || !data.hora) {
-                            presentToast({
-                                message: 'Todos los campos son obligatorios.',
-                                duration: 2000,
-                                color: 'danger',
-                                position: 'top',
-                            });
-                            return false;
-                        }
-
-                        const [newHour, newMinute] = data.hora.split(':').map(Number);
-                        const newHora = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate(), newHour, newMinute, 0);
-
-                        const updatedEntry: AlimentacionInterface = {
-                            ...entry,
-                            tipo: data.tipo,
-                            descripcion: data.descripcion,
-                            hora: newHora,
-                        };
-
-                        setListaAlimentacion(prevList =>
-                            prevList.map(item => (item.id === updatedEntry.id ? updatedEntry : item))
-                        );
-                         
-                        // TODO llamada API para actualizar en la base de datos
-
+                    text: 'Confirmar',
+                    handler: async () => {
+                        // TODO: Implementar notificacion
+                        console.log(`ñam`);
                         presentToast({
-                            message: 'Entrada actualizada con éxito.',
+                            message: `Se marcó como comido: ${entry.tipo}, notificación enviada`,
                             duration: 1500,
                             color: 'success',
                             position: 'top',
                         });
-                        console.log('Entrada actualizada:', updatedEntry);
                     },
                 },
             ],
         });
-    }
+    };
 
-    const handleDeleteClick = (id:number) =>{
+    // Funcion para editar la entrada de alimentación seleccionada
+    const handleEditClick = (entry: AlimentacionInterface) => {
+        const dateToUse = entry.fecha_hora ?? new Date();
+
+        const currentHour = String(dateToUse.getHours()).padStart(2, '0');
+        const currentMinute = String(dateToUse.getMinutes()).padStart(2, '0');
+        const formattedTime = `${currentHour}:${currentMinute}`;
+
+        presentAlert({
+            header: 'Editar Entrada de Alimentación',
+            cssClass: '.alimentacion-action-sheet-custom',
+            inputs: [
+            {
+                name: 'tipo',
+                type: 'text',
+                placeholder: 'Tipo (Ej: Desayuno, Almuerzo)',
+                value: entry.tipo,
+                attributes: { required: true },
+            },
+            {
+                name: 'descripcion',
+                type: 'textarea',
+                placeholder: 'Descripción de la comida',
+                value: entry.descripcion,
+                attributes: { required: true },
+            },
+            {
+                name: 'hora',
+                type: 'time',
+                value: formattedTime,
+                attributes: { required: true },
+            },
+            ],
+            buttons: [
+            {
+                text: 'Cancelar',
+                role: 'cancel',
+                handler: () => console.log('Edición cancelada.'),
+            },
+            {
+                text: 'Guardar',
+                handler: async (data: { tipo: string; descripcion: string; hora: string }) => {
+                if (!data.tipo || !data.descripcion || !data.hora) {
+                    presentToast({
+                    message: 'Todos los campos son obligatorios.',
+                    duration: 2000,
+                    color: 'danger',
+                    position: 'top',
+                    });
+                    return false;
+                }
+
+                const [newHour, newMinute] = data.hora.split(':').map(Number);
+                const originalDate = dateToUse;
+                const newFechaHora = new Date(
+                    originalDate.getFullYear(),
+                    originalDate.getMonth(),
+                    originalDate.getDate(),
+                    newHour,
+                    newMinute,
+                    0
+                ).toISOString();
+
+                try {
+                    await axios.put(`${API_BASE_URL}/alimentacion/${entry.id}`, {
+                    tipo: data.tipo,
+                    descripcion: data.descripcion,
+                    hora: data.hora,
+                    fecha_hora: newFechaHora,
+                    residente_id: entry.residente_id,
+                    cuidador_id: entry.cuidador_id,
+                    });
+                    presentToast({
+                    message: 'Entrada actualizada con éxito.',
+                    duration: 1500,
+                    color: 'success',
+                    position: 'top',
+                    });
+                    fetchAlimentaciones();
+                } catch (err: any) {
+                    console.error('Error updating alimentacion:', err);
+                    presentToast({
+                    message: `Error al actualizar: ${err.response?.data?.message || err.message}`,
+                    duration: 2000,
+                    color: 'danger',
+                    position: 'top',
+                    });
+                }
+                },
+            },
+            ],
+        });
+    };
+
+    const handleDeleteClick = (id: number) => {
         presentAlert({
             header: 'Confirmar Eliminación',
-            cssClass:'.alimentacion-action-sheet-custom ',
+            cssClass: '.alimentacion-action-sheet-custom',
             message: '¿Estás seguro de que quieres eliminar esta entrada?',
             buttons: [
                 {
                     text: 'Cancelar',
                     role: 'cancel',
-                    handler: () => {
-                        console.log('Eliminación cancelada');
-                    },
+                    handler: () => console.log('Eliminación cancelada'),
                 },
                 {
                     text: 'Eliminar',
                     role: 'destructive',
-                    handler: () => {
-                        setListaAlimentacion(prev => prev.filter(item => item.id !== id));
-                        presentToast({
-                            message: 'Entrada eliminada con éxito.',
-                            duration: 1500,
-                            color: 'danger',
-                            position: 'top',
-                        });
-                        console.log(`Eliminado ID: ${id}`);
+                    handler: async () => {
+                        try {
+                            await axios.delete(`${API_BASE_URL}/alimentaciones/${id}`);
+                            presentToast({
+                                message: 'Entrada eliminada con éxito.',
+                                duration: 1500,
+                                color: 'danger',
+                                position: 'top',
+                            });
+                            fetchAlimentaciones();
+                        } catch (err: any) {
+                            console.error('Error deleting alimentacion:', err);
+                            presentToast({
+                                message: `Error al eliminar: ${err.response?.data?.message || err.message}`,
+                                duration: 2000,
+                                color: 'danger',
+                                position: 'top',
+                            });
+                        }
                     },
                 },
             ],
         });
-        // TODO llamada API para borrar en la base de datos
-    }
+    };
 
-    const handleAddEntry = () => {
+    const handleAddEntry = (residents: Array<residentInterface>) => {
+
         const now = new Date();
         const currentHour = String(now.getHours()).padStart(2, '0');
         const currentMinute = String(now.getMinutes()).padStart(2, '0');
@@ -228,7 +275,7 @@ const Alimentacion:React.FC = () =>{
 
         presentAlert({
             header: 'Agregar Nueva Entrada de Alimentación',
-            cssClass:'.alimentacion-action-sheet-custom ',
+            cssClass: '.alimentacion-action-sheet-custom',
             inputs: [
                 {
                     name: 'tipo',
@@ -240,7 +287,7 @@ const Alimentacion:React.FC = () =>{
                 {
                     name: 'descripcion',
                     type: 'textarea',
-                    placeholder: 'Descripción de la comida',
+                    placeholder: 'Descripción de la comida...',
                     value: '',
                     attributes: { required: true }
                 },
@@ -249,22 +296,26 @@ const Alimentacion:React.FC = () =>{
                     type: 'time',
                     value: defaultTime,
                     attributes: { required: true }
+                },
+                {
+                    name: 'Residente',
+                    type: 'text',
+                    value: '',
+                    placeholder: 'Nombre del residente...',
+                    attributes: { required: true }
                 }
             ],
             buttons: [
                 {
                     text: 'Cancelar',
-                    role: 'cancel',
-                    handler: () => {
-                        console.log('Adición cancelada.');
-                    },
+                    role: 'cancel'
                 },
                 {
                     text: 'Guardar',
-                    handler: (data) => {
+                    handler: async (data: { tipo: string; descripcion: string; hora: string; residenteNombre: string }) => {
                         if (!data.tipo || !data.descripcion || !data.hora) {
                             presentToast({
-                                message: 'Todos los campos son obligatorios.',
+                                message: 'Todos los campos son obligatorios, incluyendo el residente.',
                                 duration: 2000,
                                 color: 'danger',
                                 position: 'top',
@@ -272,79 +323,156 @@ const Alimentacion:React.FC = () =>{
                             return false;
                         }
 
-                        const [newHour, newMinute] = data.hora.split(':').map(Number);
-                        const newHora = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate(), newHour, newMinute, 0);
-                        
-                        const newId = listaAlimentacion.length > 0
-                            ? Math.max(...listaAlimentacion.map(item => item.id)) + 1
-                            : 1;
+                        let finalResidenteId: number | undefined;
 
-                        const newEntry: AlimentacionInterface = {
-                            id: newId,
-                            tipo: data.tipo,
-                            descripcion: data.descripcion,
-                            hora: newHora,
-                        };
+                        try {
+                            const foundResident = residents.find(res => res.nombre.toLowerCase() === data.residenteNombre.toLowerCase());
+                            if (foundResident) {
+                                finalResidenteId = foundResident.id;
+                            } else {
+                                const response = await axios.get(`${API_BASE_URL}/residents/`, {
+                                    params: { nombre: data.residenteNombre }
+                                });
 
-                        setListaAlimentacion(prevList => [...prevList, newEntry]);
+                                if (response.data && response.data.id) {
+                                    finalResidenteId = response.data.id;
+                                } else {
+                                    presentToast({
+                                        message: 'Residente no encontrado. Por favor, ingrese un nombre de residente válido.',
+                                        duration: 2000,
+                                        color: 'danger',
+                                        position: 'top',
+                                    });
+                                    return false; // Evita que se cierre el alert
+                                }
+                            }
 
-                        // TODO: Llamada API para guardar en la base de datos
+                            if (!finalResidenteId) { // Doble verificación por si la lógica anterior falla
+                                presentToast({
+                                    message: 'No se pudo determinar el ID del residente. Verifique el nombre.',
+                                    duration: 2000,
+                                    color: 'danger',
+                                    position: 'top',
+                                });
+                                return false;
+                            }
 
-                        presentToast({
-                            message: 'Nueva entrada agregada con éxito.',
-                            duration: 1500,
-                            color: 'success',
-                            position: 'top',
-                        });
+                            const [newHour, newMinute] = data.hora.split(':').map(Number);
+                            const currentDayDate = new Date();
+                            const newFechaHora = new Date(
+                                currentDayDate.getFullYear(),
+                                currentDayDate.getMonth(),
+                                currentDayDate.getDate(),
+                                newHour,
+                                newMinute,
+                                0
+                            ).toISOString();
+
+                            const newEntryData = {
+                                tipo: data.tipo,
+                                descripcion: data.descripcion,
+                                hora: data.hora,
+                                fecha_hora: newFechaHora,
+                                residente_id: finalResidenteId,
+                                cuidador_id: user?.id,
+                            };
+
+                            await axios.post(`${API_BASE_URL}/alimentaciones`, newEntryData);
+                            presentToast({
+                                message: 'Nueva entrada agregada con éxito.',
+                                duration: 1500,
+                                color: 'success',
+                                position: 'top',
+                            });
+                            fetchAlimentaciones();
+                        } catch (err: any) {
+                            console.error('Error adding alimentacion or finding resident:', err);
+                            let errorMessage = 'Error al agregar entrada de alimentación.';
+                            if (err.response && err.response.data && err.response.data.message) {
+                                errorMessage = `Error al agregar: ${err.response.data.message}`;
+                            } else if (err.message) {
+                                errorMessage = `Error al agregar: ${err.message}`;
+                            }
+                            presentToast({
+                                message: errorMessage,
+                                duration: 2000,
+                                color: 'danger',
+                                position: 'top',
+                            });
+                            return false;
+                        }
                     },
                 },
             ],
         });
     };
 
-    return(
+    if (isLoading) {
+        return (
+            <IonPage>
+                <Header title='Alimentación' />
+                <IonContent className='ion-padding ion-text-center'>
+                    <IonSpinner name="crescent" />
+                    <IonText>Cargando entradas...</IonText>
+                </IonContent>
+            </IonPage>
+        );
+    }
+
+    if (error) {
+        return (
+            <IonPage>
+                <Header title='Alimentación' />
+                <IonContent className='ion-padding ion-text-center'>
+                    <IonText color="danger">Error al cargar las entradas: {error}</IonText>
+                    <IonButton onClick={() => fetchAlimentaciones()}>Reintentar</IonButton>
+                </IonContent>
+            </IonPage>
+        );
+    }
+
+    return (
         <>
             <IonPage className='alimentacion-page'>
-                <Header title='Alimentación'/>
+                <Header title='Alimentación' />
                 <IonContent className='alimentacion-content '>
                     <div className='alimentacion-content-wrapper'>
-                        <div className= 'alimentacion-fecha-nav'>
-                            <IonButton onClick = {() => {
-                                    setFechaActual(prevDate => {
+                        <div className='alimentacion-fecha-nav'>
+                            <IonButton onClick={() => {
+                                setFechaActual(prevDate => {
                                     const newDate = new Date(prevDate);
                                     newDate.setDate(newDate.getDate() - 1);
                                     return newDate;
-                                    })
-                                 }}>
-                                <IonIcon icon={chevronBackOutline} slot="icon-only"/>
+                                });
+                            }}>
+                                <IonIcon icon={chevronBackOutline} slot="icon-only" />
                             </IonButton>
-                            <FechaWrapper fecha={fechaActual}/>
-                            <IonButton onClick = {() => {
-                                    setFechaActual(prevDate => {
+                            <FechaWrapper fecha={fechaActual} />
+                            <IonButton onClick={() => {
+                                setFechaActual(prevDate => {
                                     const newDate = new Date(prevDate);
                                     newDate.setDate(newDate.getDate() + 1);
                                     return newDate;
-                                    })
-                                 }}>
-                                <IonIcon icon={chevronForwardOutline} slot="icon-only"/>
+                                });
+                            }}>
+                                <IonIcon icon={chevronForwardOutline} slot="icon-only" />
                             </IonButton>
                         </div>
-                        
-                        {listaAlimentacion.length > 0 ? (
+
+                        {listaAlimentacion && listaAlimentacion.length > 0 ? (
                             <IonList className='alimentacion-lista-entradas'>
-                                {listaAlimentacion.sort((a, b) => a.hora.getTime() - b.hora.getTime()).map(entry => (
-                                        <AlimentacionCard
-                                            key={entry.id || `${entry.tipo}-${entry.hora.getTime()}-${Math.random()}`}
-                                            entry={entry}
-                                            onComerClick={handleComerClick}
-                                            onEditClick={handleEditClick}
-                                            onDeleteClick={handleDeleteClick}
-                                        />
-                                    ))
-                                }
+                                {listaAlimentacion.map(entry => (
+                                    <AlimentacionCard
+                                        key={entry.id || `${entry.tipo}-${entry.hora}-${Math.random()}`}
+                                        entry={entry}
+                                        onComerClick={handleComerClick}
+                                        onEditClick={handleEditClick}
+                                        onDeleteClick={handleDeleteClick}
+                                    />
+                                ))}
                                 <IonItem className="alimentacion-card-item">
                                     <IonButton fill="clear" className="add-button-content"
-                                    onClick={handleAddEntry}                                >
+                                        onClick={() => handleAddEntry(residents)}>
                                         <IonIcon icon={addCircle} slot="start" className="add-icon" />
                                         <IonLabel className="add-label">Agregar Nueva Entrada</IonLabel>
                                     </IonButton>
@@ -353,11 +481,11 @@ const Alimentacion:React.FC = () =>{
                         ) : (
                             <IonList className='alimentacion-lista-entradas'>
                                 <IonText className='alimentacion-lista-sin-datos'>
-                                    No hay registros de alimentación para hoy.
+                                    No hay registros de alimentación para esta fecha.
                                 </IonText>
-                            <IonItem className="alimentacion-card-item">
+                                <IonItem className="alimentacion-card-item">
                                     <IonButton fill="clear" className="add-button-content"
-                                    onClick={handleAddEntry}                                >
+                                        onClick={() => handleAddEntry(residents)}>
                                         <IonIcon icon={addCircle} slot="start" className="add-icon" />
                                         <IonLabel className="add-label">Agregar Nueva Entrada</IonLabel>
                                     </IonButton>
@@ -369,6 +497,6 @@ const Alimentacion:React.FC = () =>{
             </IonPage>
         </>
     );
-}
+};
 
 export default Alimentacion;

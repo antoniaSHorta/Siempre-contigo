@@ -4,6 +4,7 @@ import { Activity } from '../models/Activity';
 import { Resident } from '../models/Resident';
 import { User } from '../models/User';
 import { AppError } from '../utils/errorHandler';
+import { Op } from 'sequelize';
 
 export const createAlimentacion = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -60,7 +61,7 @@ export const getAllAlimentaciones = async (req: Request, res: Response, next: Ne
         },
         {
           model: User,
-          attributes: ['id', 'nombre']
+          attributes: ['id', 'name']
         }
       ],
       order: [['hora', 'ASC']],
@@ -224,6 +225,43 @@ export const getAlimentacionesByTipo = async (req: Request, res: Response, next:
     next(error);
   }
 };
+
+export const getAlimentacionesByFecha = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { fecha } = req.params; // espera formato: '2025-06-04'
+    const startDate = new Date(`${fecha}T00:00:00.000Z`);
+    const endDate = new Date(`${fecha}T23:59:59.999Z`);
+
+    const alimentaciones = await Alimentacion.findAll({
+      where: {
+        fecha_hora: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+      include: [
+        {
+          model: Resident,
+          attributes: ['id', 'nombre']
+        },
+        {
+          model: User,
+          attributes: ['id', 'name']
+        }
+      ],
+      order: [['fecha_hora', 'ASC']],
+    });
+
+    res.status(200).json({
+      success: true,
+      data: alimentaciones,
+      count: alimentaciones.length,
+    });
+  } catch (error) {
+    console.log(error)
+    next(error);
+  }
+};
+
 
 export const getAlimentacionesByResidente = async (req: Request, res: Response, next: NextFunction) => {
   try {
