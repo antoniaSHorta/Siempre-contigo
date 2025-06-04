@@ -1,0 +1,179 @@
+/* Variables de color consistentes con Agenda.css */
+:root {
+  --primary-color: #07407B;
+  --secondary-color: #F7931E;
+  --background-color: #D9D9D9;
+  --header-text-color: #0E0F3B;
+}
+
+/* Estilos del menú lateral */
+ion-menu {
+  --width: 280px;
+  --background: white;
+  --border: none;
+}
+
+ion-menu ion-header {
+  background: var(--background-color);
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+ion-menu ion-toolbar {
+  --background: transparent;
+  --border-color: transparent;
+  --min-height: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+ion-menu ion-title {
+  color: var(--header-text-color);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  text-transform: capitalize;
+  text-align: center;
+  width: 100%;
+  position: relative;
+  left: 0;
+  transform: none;
+  padding: 0;
+  margin: 0;
+}
+
+ion-menu ion-content {
+  --background: white;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+}
+
+ion-menu ion-list {
+  padding: 0;
+  background: transparent;
+}
+
+ion-menu ion-item {
+  --background: transparent;
+  --color: var(--header-text-color);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --min-height: 56px;
+  margin: 4px 0;
+  --border-radius: 8px;
+  --ripple-color: var(--primary-color);
+  --background-hover: rgba(7, 64, 123, 0.1);
+  --background-activated: rgba(7, 64, 123, 0.2);
+  --background-focused: rgba(7, 64, 123, 0.2);
+}
+
+ion-menu ion-item:hover {
+  --background: rgba(7, 64, 123, 0.1);
+}
+
+ion-menu ion-item.ion-activated {
+  --background: rgba(7, 64, 123, 0.2);
+}
+
+ion-menu ion-item ion-icon {
+  color: var(--primary-color);
+  font-size: 24px;
+  margin-right: 16px;
+}
+
+ion-menu ion-item ion-label {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--header-text-color);
+}
+
+/* Estilos para el botón de toggle */
+ion-menu-button {
+  --color: var(--header-text-color);
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
+ion-menu-button::part(native) {
+  padding: 0;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  ion-menu {
+    --width: 250px;
+  }
+
+  ion-menu ion-header {
+    padding: 12px;
+  }
+
+  ion-menu ion-title {
+    font-size: 20px;
+  }
+
+  ion-menu ion-item {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+    --min-height: 48px;
+  }
+
+  ion-menu ion-item ion-icon {
+    font-size: 20px;
+    margin-right: 12px;
+  }
+
+  ion-menu ion-item ion-label {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  ion-menu {
+    --width: 220px;
+  }
+
+  ion-menu ion-header {
+    padding: 8px;
+  }
+
+  ion-menu ion-title {
+    font-size: 18px;
+  }
+
+  ion-menu ion-item {
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    --min-height: 40px;
+  }
+
+  ion-menu ion-item ion-icon {
+    font-size: 18px;
+    margin-right: 8px;
+  }
+
+  ion-menu ion-item ion-label {
+    font-size: 13px;
+  }
+}
+
+.menu-item-active {
+  --color: #F7931E !important;
+}
+
+.menu-item-active ion-icon {
+  color: #F7931E !important;
+} 

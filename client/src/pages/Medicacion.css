@@ -1,0 +1,130 @@
+.medicacion-page {
+  --primary-color: #07407B;
+  --secondary-color: #F7931E;
+  --background-color: #D9D9D9;
+  --header-text-color: #0E0F3B;
+}
+
+.medicacion-page ion-header ion-toolbar {
+  --background: var(--background-color);
+  --color: var(--header-text-color);
+  --min-height: 90px;
+  padding: 0 16px;
+  position: relative;
+}
+
+.medicacion-page .header-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+
+.medicacion-page .header-logo {
+  width: auto;
+  height: 80px;
+  min-width: 100px;
+  max-width: 180px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.medicacion-page ion-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 130%;
+  letter-spacing: 0%;
+  text-transform: capitalize;
+  color: var(--header-text-color);
+  padding: 0;
+  margin: 0;
+  height: auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  flex: none;
+}
+
+.medicacion-page ion-content {
+  --background: white;
+}
+
+.medicacion-container {
+  text-align: center;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.medicacion-container h1 {
+  color: var(--primary-color);
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.medicacion-container p {
+  color: var(--header-text-color);
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .medicacion-page ion-header ion-toolbar {
+    --min-height: 65px;
+    padding: 0 12px;
+  }
+
+  .medicacion-page .header-content {
+    gap: 12px;
+  }
+
+  .medicacion-page .header-logo {
+    height: 25px;
+    min-width: 90px;
+    max-width: 140px;
+  }
+
+  .medicacion-page ion-title {
+    font-size: 24px;
+  }
+
+  .medicacion-container h1 {
+    font-size: 2rem;
+  }
+
+  .medicacion-container p {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .medicacion-page ion-header ion-toolbar {
+    --min-height: 55px;
+    padding: 0 8px;
+  }
+
+  .medicacion-page .header-content {
+    gap: 8px;
+  }
+
+  .medicacion-page .header-logo {
+    height: 20px;
+    min-width: 70px;
+    max-width: 120px;
+  }
+
+  .medicacion-page ion-title {
+    font-size: 20px;
+  }
+
+  .medicacion-container h1 {
+    font-size: 1.8rem;
+  }
+
+  .medicacion-container p {
+    font-size: 1rem;
+  }
+} 

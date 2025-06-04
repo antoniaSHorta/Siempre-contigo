@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useState } from 'react';
 import EditProfileModal, { ProfileData } from '../components/EditProfileModal';
 import ChangePasswordModal, { PasswordData } from '../components/ChangePasswordModal';
+import ToggleBar from '../components/ToggleBar';
 import './Profile.css';
 import logo from '../assets/logo.png';
 
@@ -72,6 +73,7 @@ const Profile: React.FC = () => {
       <IonHeader className="ion-no-border">
         <IonToolbar>
           <div className="header-content">
+            <ToggleBar />
             <img src={logo} alt="Logo" className="header-logo" />
             <IonTitle>Perfil</IonTitle>
           </div>

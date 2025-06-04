@@ -8,6 +8,7 @@ import { eachDayOfInterval } from 'date-fns/eachDayOfInterval';
 import { es } from 'date-fns/locale';
 import CreateActivityModal from '../components/CreateActivityModal';
 import ActivityModal from '../components/ActivityModal';
+import ToggleBar from '../components/ToggleBar';
 import { Activity, ActivityInput, ACTIVITY_TYPES, ACTIVITY_LOCATIONS, ACTIVITY_STATUSES } from '../types/activity';
 
 const Agenda: React.FC = () => {
@@ -351,6 +352,7 @@ const Agenda: React.FC = () => {
       <IonHeader className="ion-no-border">
         <IonToolbar>
           <div className="header-content">
+            <ToggleBar />
             <img src={logo} alt="Logo" className="header-logo" />
             <IonTitle>Agenda</IonTitle>
           </div>
