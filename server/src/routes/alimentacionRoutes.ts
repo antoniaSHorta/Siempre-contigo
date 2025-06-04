@@ -7,16 +7,18 @@ import {
   deleteAlimentacion,
   getAlimentacionesByTipo,
   getAlimentacionesByResidente,
+  getAlimentacionesByFecha,
 } from '../controllers/alimentacionController';
 import { protect } from '../middleware/auth';
 
 const router = express.Router();
 
-router.use(protect);
+// router.use(protect);
 
 router.post('/', createAlimentacion);                  
 router.get('/', getAllAlimentaciones);                 
-router.get('/:id', getAlimentacionById);                
+router.get('/:id', getAlimentacionById);  
+router.get('/byFecha/:fecha', getAlimentacionesByFecha);              
 router.put('/:id', updateAlimentacion);               
 router.delete('/:id', deleteAlimentacion);            
 
