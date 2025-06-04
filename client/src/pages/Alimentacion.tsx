@@ -6,7 +6,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import AlimentacionCard from '../components/AlimentacionCard';
 import './Alimentacion.css';
-import { addCircle, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
+import { addCircle, body, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5173/api';
@@ -82,14 +82,27 @@ const Alimentacion: React.FC = () => {
         setIsLoading(true);
         setError(null);
         try {
-            const response = await axios.get(`${API_BASE_URL}/alimentacion/byFecha/${formattedDateForApi}`);
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${API_BASE_URL}/alimentacion/byFecha/${formattedDateForApi}`,{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             
             const data: AlimentacionInterface[] = response.data.data;
 
             setListaAlimentacion(data);
             } catch (err: any) {
-            console.log(err);
-            setListaAlimentacion([ejemploAlmuerzoDummy]);
+                presentToast(
+                    {
+                        message: `Error al cargar los datos, se presentan datos dummy`,
+                        duration: 1500,
+                        color: 'danger',
+                        position: 'top',
+                    }
+                )
+                setListaAlimentacion([ejemploAlmuerzoDummy]);
+
             } finally {
             setIsLoading(false);
         }
@@ -175,58 +188,59 @@ const Alimentacion: React.FC = () => {
             {
                 text: 'Guardar',
                 handler: async (data: { tipo: string; descripcion: string; hora: string }) => {
-                if (!data.tipo || !data.descripcion || !data.hora) {
-                    presentToast({
-                    message: 'Todos los campos son obligatorios.',
-                    duration: 2000,
-                    color: 'danger',
-                    position: 'top',
-                    });
-                    return false;
-                }
+                    if (!data.tipo || !data.descripcion || !data.hora) {
+                        presentToast({
+                        message: 'Todos los campos son obligatorios.',
+                        duration: 2000,
+                        color: 'danger',
+                        position: 'top',
+                        });
+                        return false;
+                    }
 
-                const [newHour, newMinute] = data.hora.split(':').map(Number);
-                const originalDate = dateToUse;
-                const newFechaHora = new Date(
-                    originalDate.getFullYear(),
-                    originalDate.getMonth(),
-                    originalDate.getDate(),
-                    newHour,
-                    newMinute,
-                    0
-                ).toISOString();
+                    const [newHour, newMinute] = data.hora.split(':').map(Number);
+                    const originalDate = dateToUse;
+                    const newFechaHora = new Date(
+                        originalDate.getFullYear(),
+                        originalDate.getMonth(),
+                        originalDate.getDate(),
+                        newHour,
+                        newMinute,
+                        0
+                    ).toISOString();
 
-                try {
-                    await axios.put(`${API_BASE_URL}/alimentacion/${entry.id}`, {
-                    tipo: data.tipo,
-                    descripcion: data.descripcion,
-                    hora: data.hora,
-                    fecha_hora: newFechaHora,
-                    residente_id: entry.residente_id,
-                    cuidador_id: entry.cuidador_id,
-                    });
-                    presentToast({
-                    message: 'Entrada actualizada con éxito.',
-                    duration: 1500,
-                    color: 'success',
-                    position: 'top',
-                    });
-                    fetchAlimentaciones();
-                } catch (err: any) {
-                    console.error('Error updating alimentacion:', err);
-                    presentToast({
-                    message: `Error al actualizar: ${err.response?.data?.message || err.message}`,
-                    duration: 2000,
-                    color: 'danger',
-                    position: 'top',
-                    });
-                }
+                    try {
+                        await axios.put(`${API_BASE_URL}/alimentacion/${entry.id}`, {
+                        tipo: data.tipo,
+                        descripcion: data.descripcion,
+                        hora: data.hora,
+                        fecha_hora: newFechaHora,
+                        residente_id: entry.residente_id,
+                        cuidador_id: entry.cuidador_id,
+                        });
+                        presentToast({
+                        message: 'Entrada actualizada con éxito.',
+                        duration: 1500,
+                        color: 'success',
+                        position: 'top',
+                        });
+                        fetchAlimentaciones();
+                    } catch (err: any) {
+                        console.error('Error updating alimentacion:', err);
+                        presentToast({
+                            message: `Error al actualizar: ${err.response?.data?.message || err.message}`,
+                            duration: 2000,
+                            color: 'danger',
+                            position: 'top',
+                        });
+                    }
                 },
             },
             ],
         });
     };
 
+    // Funcion para eliminar una entrada
     const handleDeleteClick = (id: number) => {
         presentAlert({
             header: 'Confirmar Eliminación',
@@ -243,7 +257,7 @@ const Alimentacion: React.FC = () => {
                     role: 'destructive',
                     handler: async () => {
                         try {
-                            await axios.delete(`${API_BASE_URL}/alimentaciones/${id}`);
+                            await axios.delete(`${API_BASE_URL}/alimentacion/${id}`);
                             presentToast({
                                 message: 'Entrada eliminada con éxito.',
                                 duration: 1500,
@@ -266,6 +280,7 @@ const Alimentacion: React.FC = () => {
         });
     };
 
+    // Funcionalidad para agregar una entrada
     const handleAddEntry = (residents: Array<residentInterface>) => {
 
         const now = new Date();
@@ -298,7 +313,7 @@ const Alimentacion: React.FC = () => {
                     attributes: { required: true }
                 },
                 {
-                    name: 'Residente',
+                    name: 'residente',
                     type: 'text',
                     value: '',
                     placeholder: 'Nombre del residente...',
@@ -312,7 +327,7 @@ const Alimentacion: React.FC = () => {
                 },
                 {
                     text: 'Guardar',
-                    handler: async (data: { tipo: string; descripcion: string; hora: string; residenteNombre: string }) => {
+                    handler: async (data: { tipo: string; descripcion: string; hora: string; residente: string }) => {
                         if (!data.tipo || !data.descripcion || !data.hora) {
                             presentToast({
                                 message: 'Todos los campos son obligatorios, incluyendo el residente.',
@@ -326,12 +341,23 @@ const Alimentacion: React.FC = () => {
                         let finalResidenteId: number | undefined;
 
                         try {
-                            const foundResident = residents.find(res => res.nombre.toLowerCase() === data.residenteNombre.toLowerCase());
+                            if (!data.residente) {
+                                throw new Error("residente no está definido en data");
+                            }
+                            console.log(data)
+                            const foundResident = residents.find(res => res.nombre.toLowerCase() === data.residente.toLowerCase());
                             if (foundResident) {
                                 finalResidenteId = foundResident.id;
                             } else {
+                                let token = localStorage.getItem('token');
+                                if (!token) {
+                                    throw new Error('No hay sesión activa');
+                                }
                                 const response = await axios.get(`${API_BASE_URL}/residents/`, {
-                                    params: { nombre: data.residenteNombre }
+                                    params: { nombre: data.residente },
+                                    headers: {
+                                        Authorization: `Bearer ${token}`,
+                                    },
                                 });
 
                                 if (response.data && response.data.id) {
@@ -366,7 +392,7 @@ const Alimentacion: React.FC = () => {
                                 newHour,
                                 newMinute,
                                 0
-                            ).toISOString();
+                            );
 
                             const newEntryData = {
                                 tipo: data.tipo,
@@ -376,8 +402,19 @@ const Alimentacion: React.FC = () => {
                                 residente_id: finalResidenteId,
                                 cuidador_id: user?.id,
                             };
+                            
+                            console.log("Llegue a agregar con los datos:", newEntryData)
 
-                            await axios.post(`${API_BASE_URL}/alimentaciones`, newEntryData);
+                            let token = localStorage.getItem('token');
+                            if (!token) {
+                                throw new Error('No hay sesión activa');
+                            }
+
+                            await axios.post(`${API_BASE_URL}/alimentacion/`,newEntryData,{
+                                headers: {
+                                    Authorization: `Bearer ${token}`,
+                                },
+                            });
                             presentToast({
                                 message: 'Nueva entrada agregada con éxito.',
                                 duration: 1500,
