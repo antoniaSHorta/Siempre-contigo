@@ -46,6 +46,20 @@ export class User extends Model {
   role!: string;
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'telefono'
+  })
+  phone?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'direccion'
+  })
+  location?: string;
+
+  @Column({
     type: DataType.BOOLEAN,
     defaultValue: true,
     field: 'activo',

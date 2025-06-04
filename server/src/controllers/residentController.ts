@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { Resident } from '../models/Resident';
 import { AppError } from '../utils/errorHandler';
+import { User } from '../models/User';
 
 export const getAllResidents = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -18,10 +19,28 @@ export const getAllResidents = async (req: Request, res: Response, next: NextFun
   }
 };
 
+export const getAllResidentsInactiveAndActive = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const residents = await Resident.findAll();
+
+    res.json({
+      success: true,
+      data: residents
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getResidentById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const resident = await Resident.findByPk(id);
+    const resident = await Resident.findByPk(id,{
+      include: [
+      { model: User, as: 'cuidadores', attributes: ['id', 'name'] },
+      { model: User, as: 'familiares', attributes: ['id', 'name'] }
+    ]
+    });
 
     if (!resident) {
       return next(new AppError('Residente no encontrado', 404));
@@ -80,6 +99,27 @@ export const updateResident = async (req: Request, res: Response, next: NextFunc
     res.json({
       success: true,
       data: resident
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const activateResident = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+
+    const resident = await Resident.findByPk(id);
+
+    if (!resident) {
+      return next(new AppError('Residente no encontrado', 404));
+    }
+
+    await resident.update({ activo: true });
+
+    res.json({
+      success: true,
+      message: 'Residente eliminado correctamente'
     });
   } catch (error) {
     next(error);

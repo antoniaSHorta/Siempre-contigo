@@ -1,5 +1,8 @@
-import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, HasMany, BelongsToMany } from 'sequelize-typescript';
 import { Activity } from './Activity';
+import { User } from './User';
+import { ResidentesCuidadores } from './ResidentesCuidadores';
+import { ResidentesFamiliares } from './ResidentesFamiliares';
 
 @Table({
   tableName: 'residentes',
@@ -51,4 +54,10 @@ export class Resident extends Model {
 
   @HasMany(() => Activity)
   actividades!: Activity[];
+
+  @BelongsToMany(() => User, () => ResidentesCuidadores)
+  cuidadores!: User[];
+
+  @BelongsToMany(() => User, () => ResidentesFamiliares)
+  familiares!: User[];
 } 
