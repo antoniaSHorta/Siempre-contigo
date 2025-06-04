@@ -84,7 +84,7 @@ const Medicamentos: React.FC = () => {
         setError(null);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_BASE_URL}/Medicamento/byFecha/${formattedDateForApi}`,{
+            const response = await axios.get(`${API_BASE_URL}/medicacion/byFecha/${formattedDateForApi}`,{
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
