@@ -91,6 +91,10 @@ const App: React.FC = () => (
                   <IonIcon icon={person} />
                   <IonLabel>Perfil</IonLabel>
                 </IonTabButton>
+                <IonTabButton tab="medicamentos" href="/app/medicamentos">
+                  <IonIcon icon={heart} />
+                  <IonLabel>Medicamentos</IonLabel>
+                </IonTabButton>
                 <IonTabButton tab="chat" href="/app/chat">
                   <IonIcon icon={chatbubble} />
                   <IonLabel>Chat</IonLabel>
