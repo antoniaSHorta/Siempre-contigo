@@ -1,7 +1,7 @@
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { home, person, calendar } from 'ionicons/icons';
+import { home, person, calendar, heart } from 'ionicons/icons';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -67,6 +67,10 @@ const App: React.FC = () => (
                 <IonTabButton tab="profile" href="/app/profile">
                   <IonIcon icon={person} />
                   <IonLabel>Perfil</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="medicamentos" href="/app/medicamentos">
+                  <IonIcon icon={heart} />
+                  <IonLabel>Medicamentos</IonLabel>
                 </IonTabButton>
               </IonTabBar>
             </IonTabs>
