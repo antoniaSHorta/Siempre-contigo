@@ -3,6 +3,28 @@
   --secondary-color: #F7931E;
   --background-color: #D9D9D9;
   --header-text-color: #0E0F3B;
+
+  --ion-color-primary: var(--primary-color);
+  --ion-color-secondary: var(--secondary-color);
+  --ion-color-dark: var(--primary-color);
+  --ion-color-medium: var(--primary-color);
+  --ion-color-step-150: #e0e5eb; 
+  --ion-color-step-200: #d1d7e0; 
+  --ion-color-step-750: var(--primary-color);
+  --ion-color-step-800: var(--primary-color); 
+  --ion-color-step-850: var(--primary-color); 
+  --ion-highlight-color-focused: var(--primary-color);
+
+  --ion-color-primary-tint: var(--primary-color); 
+  --ion-color-step-150: var(--primary-color); 
+  --ion-color-step-200: var(--primary-color); 
+  --ion-color-step-750: var(--primary-color);
+  --ion-color-step-800: var(--primary-color);
+  --ion-color-step-850: var(--primary-color);
+  --ion-item-background-activated: rgba(7, 64, 123, 0.2); 
+  --ion-item-background-focused: rgba(7, 64, 123, 0.2); 
+  --ion-item-color-activated: var(--header-text-color); 
+  --ion-item-color-focused: var(--header-text-color); 
 }
 
 .alimentador-page ion-header ion-toolbar {
@@ -48,27 +70,152 @@
 
 .alimentador-page ion-content {
   --background: white;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
 }
 
-.alimentador-container {
-  text-align: center;
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
+.alimentador-page ion-segment {
+  margin: 16px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.alimentador-container h1 {
+.alimentador-page ion-segment-button {
+  --color: var(--primary-color);
+  --color-checked: white;
+  --background: white;
+  --background-checked: var(--primary-color);
+  --border-color: var(--primary-color);
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+.create-alimentacion-button {
+  --background: var(--secondary-color);
+  --color: var(--primary-color);
+  --border-radius: 8px;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 16px;
+}
+
+.alimentador-filters {
+  display: flex;
+  overflow-x: auto;
+  padding: 0 16px;
+  margin-bottom: 16px;
+  gap: 12px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.alimentador-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.alimentador-filters ion-item {
+  --background: white;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  --highlight-color-focused: var(--primary-color);
+  --color: var(--primary-color);
+  --border-color-focused: var(--primary-color);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --inner-padding-end: 0;
+  --inner-border-width: 0;
+  align-items: flex-start;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  flex-grow: 1;
+  --min-height: 40px;
+}
+
+.alimentador-filters ion-item ion-label {
+  margin-bottom: 4px;
+}
+
+.alimentador-filters ion-select {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --padding-start: 0;
+  --padding-end: 0;
   color: var(--primary-color);
-  font-family: 'Poppins', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
+  --placeholder-color: var(--primary-color);
+  --highlight-color-focused: var(--primary-color);
+  font-size: 1rem;
+  width: 100%;
 }
 
-.alimentador-container p {
+.alimentador-filters .date-filter-display {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 0; 
+  padding-right: 0;
+  color: var(--primary-color);
+  font-size: 1rem;
+  width: 100%;
+  background: transparent; 
+  border: none;
+  box-shadow: none;
+  cursor: pointer; 
+}
+
+.date-picker-modal {
+  --width: 300px; 
+  --height: 350px;
+  --border-radius: 8px; 
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+}
+
+.date-picker-modal .datetime-content {
+  padding: 16px; 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day)::after { 
+  background: var(--primary-color) !important;
+  color: white !important; 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day):hover { 
+  background: rgba(7, 64, 123, 0.1);
+  color: var(--primary-color); 
+}
+
+.date-picker-modal ion-datetime::part(day-button-text) {
+  color: var(--header-text-color); 
+}
+
+.date-picker-modal ion-datetime::part(day-button-text).calendar-day-today { 
+  color: var(--secondary-color); 
+}
+
+.date-picker-modal ion-datetime::part(calendar-day-active) .day-button-text { 
+  color: white !important;
+}
+
+.alimentador-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.alimentador-card-header {
+  background: var(--background-color);
+  padding: 16px;
   color: var(--header-text-color);
-  font-size: 1.2rem;
-  line-height: 1.6;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alimentador-card-content {
+  padding: 16px;
 }
 
 @media (max-width: 768px) {
@@ -91,12 +238,13 @@
     font-size: 24px;
   }
 
-  .alimentador-container h1 {
-    font-size: 2rem;
+  .alimentador-filters {
+    padding: 0 12px;
+    gap: 8px;
   }
 
-  .alimentador-container p {
-    font-size: 1.1rem;
+  .alimentador-card {
+    margin: 12px;
   }
 }
 
@@ -120,11 +268,20 @@
     font-size: 20px;
   }
 
-  .alimentador-container h1 {
-    font-size: 1.8rem;
+  .alimentador-filters {
+    padding: 0 8px;
+    gap: 6px;
   }
 
-  .alimentador-container p {
-    font-size: 1rem;
+  .alimentador-card {
+    margin: 8px;
+  }
+
+  .alimentador-card-header {
+    padding: 12px;
+  }
+
+  .alimentador-card-content {
+    padding: 12px;
   }
 } 
