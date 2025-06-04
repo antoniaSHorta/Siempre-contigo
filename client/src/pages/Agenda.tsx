@@ -48,18 +48,24 @@ const Agenda: React.FC = () => {
   };
 
   const handlePreviousWeek = () => {
-    setCurrentDay(prevDay => addDays(prevDay, -7));
+    setCurrentDay(prevDay => {
+      const newDate = addDays(prevDay, -7);
+      return startOfWeek(newDate, { weekStartsOn: 1 });
+    });
   };
 
   const handleNextWeek = () => {
-    setCurrentDay(prevDay => addDays(prevDay, 7));
+    setCurrentDay(prevDay => {
+      const newDate = addDays(prevDay, 7);
+      return startOfWeek(newDate, { weekStartsOn: 1 });
+    });
   };
 
   const clearDateFilter = () => {
     setFilterDate(undefined);
   };
 
-  const daysOfWeek = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'];
+  const daysOfWeek = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
   const timeSlots = Array.from({ length: 14 }, (_, i) => `${7 + i}:00`);
 
   const start = startOfMonth(currentMonth);
@@ -226,7 +232,7 @@ const Agenda: React.FC = () => {
   const getActivitiesForTimeSlot = (date: Date, timeSlot: string) => {
     const [hours, minutes] = timeSlot.split(':').map(Number);
     const slotStart = setHours(setMinutes(date, minutes), hours);
-    const slotEnd = addMinutes(slotStart, 30);
+    const slotEnd = addMinutes(slotStart, 60);
 
     const filteredActivities = filterActivities(activities);
     return filteredActivities.filter(activity => {
@@ -497,8 +503,8 @@ const Agenda: React.FC = () => {
                   <IonIcon icon={chevronBackOutline} />
                 </IonButton>
                 <div className="current-week">
-                  {format(startOfWeek(currentDay), 'dd MMM', { locale: es })} - 
-                  {format(endOfWeek(currentDay), 'dd MMM yyyy', { locale: es })}
+                  {format(startOfWeek(currentDay, { weekStartsOn: 1 }), 'dd MMM', { locale: es })} - 
+                  {format(endOfWeek(currentDay, { weekStartsOn: 1 }), 'dd MMM yyyy', { locale: es })}
                 </div>
                 <IonButton fill="clear" onClick={handleNextWeek}>
                   <IonIcon icon={chevronForwardOutline} />
@@ -508,7 +514,7 @@ const Agenda: React.FC = () => {
               <div className="weekly-grid">
                 <div className="weekly-time-header">Horas</div>
                 {daysOfWeek.map((dayName, dayIndex) => {
-                  const currentDate = addDays(startOfWeek(currentDay), dayIndex);
+                  const currentDate = addDays(startOfWeek(currentDay, { weekStartsOn: 1 }), dayIndex);
                   return (
                     <div key={dayIndex} className="weekly-day-header">
                       <div className="day-name">{dayName}</div>
@@ -523,7 +529,7 @@ const Agenda: React.FC = () => {
                       {time}
                     </div>
                     {daysOfWeek.map((_, dayIndex) => {
-                      const currentDate = addDays(startOfWeek(currentDay), dayIndex);
+                      const currentDate = addDays(startOfWeek(currentDay, { weekStartsOn: 1 }), dayIndex);
                       const activitiesForSlot = getActivitiesForTimeSlot(currentDate, time);
                       return (
                         <div key={`${timeIndex}-${dayIndex}`} className="weekly-activity-cell">
