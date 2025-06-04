@@ -51,6 +51,7 @@ CREATE TABLE reportes (
   id INT AUTO_INCREMENT PRIMARY KEY,
   fecha DATE,
   descripcion TEXT,
+  archivo_pdf LONGBLOB,
   residente_id INT,
   emisor_id INT,
   FOREIGN KEY (residente_id) REFERENCES residentes(id),

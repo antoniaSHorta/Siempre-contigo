@@ -12,6 +12,7 @@ import residentesCuidadoresRoutes from  './routes/residentesCuidadoresRoutes'
 import residentesFamiliaresRoutes from  './routes/residentesFamiliaresRoutes'
 import { handleError } from './utils/errorHandler';
 import { initDatabase } from './config/initDb';
+import {startWeeklyReportJob} from './jobs/reportJob'
 
 dotenv.config();
 
@@ -29,6 +30,8 @@ app.use('/api/medicacion', medicacionRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/residentesCuidadores', residentesCuidadoresRoutes);
 app.use('/api/residentesFamiliares', residentesFamiliaresRoutes);
+
+startWeeklyReportJob();
 
 app.get('/', (req, res) => {
   res.json({ message: 'Bienvenido a Siempre Contigo API' });
