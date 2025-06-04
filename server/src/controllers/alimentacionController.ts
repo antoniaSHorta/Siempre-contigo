@@ -9,7 +9,6 @@ import { Op } from 'sequelize';
 export const createAlimentacion = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { tipo, descripcion, hora, fecha_hora, residente_id, cuidador_id } = req.body;
-
     const alimentacion = await Alimentacion.create({
       tipo,
       descripcion,
@@ -22,9 +21,9 @@ export const createAlimentacion = async (req: Request, res: Response, next: Next
     const existingActivity = await Activity.findOne({
       where: {
         tipo: 'Alimentacion',
-        fecha: fecha_hora,
-        residente_id,
-        cuidador_id
+        fecha: new Date(fecha_hora),
+        residente_id: residente_id,
+        cuidador_id: cuidador_id
       }
     });
 
