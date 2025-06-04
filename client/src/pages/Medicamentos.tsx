@@ -207,41 +207,42 @@ const Medicamentos: React.FC = () => {
                     newMinute,
                     0
                     ).toISOString();
-
+                    
                     try {
-                    const token = localStorage.getItem('token');
-                    await axios.put(
-                        `${API_BASE_URL}/medicacion/${entry.id}`,
-                        {
-                        nombre: data.nombre,
-                        dosis: data.dosis,
-                        horario: data.horario,
-                        fecha_hora: newFechaHora,
-                        residente_id: entry.residente_id,
-                        cuidador_id: entry.cuidador_id,
-                        estado: entry.estado || 'Pendiente',
-                        },
-                        {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                        }
-                    );
-                    presentToast({
-                        message: 'Entrada de medicación actualizada con éxito.',
-                        duration: 1500,
-                        color: 'success',
-                        position: 'top',
-                    });
-                    fetchMedicaciones();
-                    } catch (err: any) {
-                    console.error('Error updating medicación:', err);
-                    presentToast({
-                        message: `Error al actualizar: ${err.response?.data?.message || err.message}`,
-                        duration: 2000,
-                        color: 'danger',
-                        position: 'top',
-                    });
+                        const token = localStorage.getItem('token');
+                        
+                        await axios.put(
+                            `${API_BASE_URL}/medicacion/${entry.id}`,
+                            {
+                            nombre: data.nombre,
+                            dosis: data.dosis,
+                            horario: data.horario,
+                            fecha_hora: newFechaHora,
+                            residente_id: entry.residente_id,
+                            cuidador_id: entry.cuidador_id,
+                            estado: (entry.estado || 'pendiente').toLowerCase(),
+                            },
+                            {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                            }
+                        );
+                        presentToast({
+                            message: 'Entrada de medicación actualizada con éxito.',
+                            duration: 1500,
+                            color: 'success',
+                            position: 'top',
+                        });
+                        fetchMedicaciones();
+                        } catch (err: any) {
+                        console.error('Error updating medicación:', err);
+                        presentToast({
+                            message: `Error al actualizar: ${err.response?.data?.message || err.message}`,
+                            duration: 2000,
+                            color: 'danger',
+                            position: 'top',
+                        });
                     }
                 },
                 },
