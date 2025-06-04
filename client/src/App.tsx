@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Agenda from './pages/Agenda';
+import ChatList from './pages/ChatList';
 
 /* Styles */
 import './theme/variables.css';
@@ -47,6 +48,7 @@ const App: React.FC = () => (
                 <ProtectedRoute exact path="/app/home" component={Home} />
                 <ProtectedRoute exact path="/app/profile" component={Profile} />
                 <ProtectedRoute exact path="/app/agenda" component={Agenda} />
+                <ProtectedRoute exact path="/app/agenda" component={ChatList} />
                 <Route exact path="/app">
                   <Redirect to="/app/home" />
                 </Route>
