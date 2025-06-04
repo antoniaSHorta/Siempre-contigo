@@ -192,6 +192,7 @@ export const deleteAlimentacion = async (req: Request, res: Response, next: Next
       message: 'Alimentación eliminada exitosamente (sincronizada con agenda)',
     });
   } catch (error) {
+    console.log(error)
     next(error);
   }
 };
@@ -256,7 +257,6 @@ export const getAlimentacionesByFecha = async (req: Request, res: Response, next
       count: alimentaciones.length,
     });
   } catch (error) {
-    console.log(error)
     next(error);
   }
 };

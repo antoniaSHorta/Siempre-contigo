@@ -262,7 +262,13 @@ const Alimentacion: React.FC = () => {
                     role: 'destructive',
                     handler: async () => {
                         try {
-                            await axios.delete(`${API_BASE_URL}/alimentacion/${id}`);
+                            await axios.delete(`${API_BASE_URL}/alimentacion/${id}`,
+                                {
+                                    headers: {
+                                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                                    },
+                                }
+                            );
                             presentToast({
                                 message: 'Entrada eliminada con éxito.',
                                 duration: 1500,
