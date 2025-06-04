@@ -48,27 +48,106 @@
 
 .medicacion-page ion-content {
   --background: white;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
 }
 
-.medicacion-container {
-  text-align: center;
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
+.medicacion-page ion-segment {
+  margin: 16px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.medicacion-container h1 {
+.medicacion-page ion-segment-button {
+  --color: var(--primary-color);
+  --color-checked: white;
+  --background: white;
+  --background-checked: var(--primary-color);
+  --border-color: var(--primary-color);
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+.create-medicacion-button {
+  --background: var(--secondary-color);
+  --color: var(--primary-color);
+  --border-radius: 8px;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 16px;
+}
+
+.medicacion-filters {
+  display: flex;
+  overflow-x: auto;
+  padding: 0 16px;
+  margin-bottom: 16px;
+  gap: 12px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.medicacion-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.medicacion-filters ion-item {
+  --background: white;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  --highlight-color-focused: var(--primary-color);
+  --color: var(--primary-color);
+  --border-color-focused: var(--primary-color);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --inner-padding-end: 0;
+  --inner-border-width: 0;
+  align-items: flex-start;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  flex-grow: 1;
+  --min-height: 40px;
+}
+
+.medicacion-filters ion-item ion-label {
+  margin-bottom: 4px;
+}
+
+.medicacion-filters ion-select {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --padding-start: 0;
+  --padding-end: 0;
   color: var(--primary-color);
-  font-family: 'Poppins', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
+  --placeholder-color: var(--primary-color);
+  --highlight-color-focused: var(--primary-color);
+  font-size: 1rem;
+  width: 100%;
 }
 
-.medicacion-container p {
-  color: var(--header-text-color);
-  font-size: 1.2rem;
-  line-height: 1.6;
+.date-filter-display {
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: var(--primary-color);
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: 1px solid #e9ecef;
+  width: 100%;
+}
+
+.date-picker-modal {
+  --height: auto;
+  --width: 300px;
+}
+
+.date-picker-modal ion-datetime {
+  --background: white;
+  border-radius: 8px;
+  margin: 0;
+  padding: 0;
 }
 
 @media (max-width: 768px) {
@@ -91,12 +170,17 @@
     font-size: 24px;
   }
 
-  .medicacion-container h1 {
-    font-size: 2rem;
+  .medicacion-filters ion-item {
+    --min-height: 35px;
   }
 
-  .medicacion-container p {
-    font-size: 1.1rem;
+  .medicacion-filters ion-select {
+    font-size: 0.9rem;
+  }
+
+  .date-filter-display {
+    font-size: 0.9rem;
+    padding: 6px 10px;
   }
 }
 
@@ -120,11 +204,16 @@
     font-size: 20px;
   }
 
-  .medicacion-container h1 {
-    font-size: 1.8rem;
+  .medicacion-filters ion-item {
+    --min-height: 30px;
   }
 
-  .medicacion-container p {
-    font-size: 1rem;
+  .medicacion-filters ion-select {
+    font-size: 0.85rem;
+  }
+
+  .date-filter-display {
+    font-size: 0.85rem;
+    padding: 4px 8px;
   }
 } 

@@ -5,11 +5,12 @@ import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import ToggleBar from '../components/ToggleBar';
 import AlimentacionList from '../components/AlimentacionList';
+import AlimentacionModal, { AlimentacionData } from '../components/AlimentacionModal';
 import logo from '../assets/logo.png';
 import './Alimentador.css';
 
 type EstadoAlimentacion = 'pendiente' | 'completado' | 'cancelado';
-type FilterValue = 'todos' | EstadoAlimentacion;
+type FilterValue = EstadoAlimentacion | 'todos';
 
 interface Alimentacion {
   id: number;
@@ -61,20 +62,39 @@ const Alimentador: React.FC = () => {
   const [filterResident, setFilterResident] = useState<string>('all');
   const [isDateModalOpen, setIsDateModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedAlimentacion, setSelectedAlimentacion] = useState<Alimentacion | undefined>(undefined);
   const [alimentaciones, setAlimentaciones] = useState<Alimentacion[]>(alimentacionesEjemplo);
 
   const handleEdit = (id: number) => {
-    // Implementar lógica de edición
-    console.log('Editar alimentación:', id);
+    const alimentacion = alimentaciones.find(a => a.id === id);
+    if (alimentacion) {
+      setSelectedAlimentacion(alimentacion);
+      setIsEditModalOpen(true);
+    }
   };
 
   const handleDelete = (id: number) => {
-    // Implementar lógica de eliminación
     setAlimentaciones(alimentaciones.filter(a => a.id !== id));
   };
 
   const handleAdd = () => {
     setIsCreateModalOpen(true);
+  };
+
+  const handleSaveCreate = (alimentacionData: AlimentacionData) => {
+    const newAlimentacion: Alimentacion = {
+      ...alimentacionData,
+      id: Math.max(...alimentaciones.map(a => a.id)) + 1,
+      estado: 'pendiente'
+    };
+    setAlimentaciones([...alimentaciones, newAlimentacion]);
+  };
+
+  const handleSaveEdit = (alimentacionData: AlimentacionData) => {
+    setAlimentaciones(alimentaciones.map(a => 
+      a.id === selectedAlimentacion?.id ? { ...alimentacionData, id: a.id } : a
+    ));
   };
 
   const clearDateFilter = () => {
@@ -100,7 +120,7 @@ const Alimentador: React.FC = () => {
           <div className="header-content">
             <ToggleBar />
             <img src={logo} alt="Logo" className="header-logo" />
-            <IonTitle>Alimentador</IonTitle>
+            <IonTitle>Alimentación</IonTitle>
           </div>
         </IonToolbar>
       </IonHeader>
@@ -193,6 +213,24 @@ const Alimentador: React.FC = () => {
           alimentaciones={filteredAlimentaciones}
           onEdit={handleEdit}
           onDelete={handleDelete}
+        />
+
+        <AlimentacionModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSave={handleSaveCreate}
+          mode="create"
+        />
+
+        <AlimentacionModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setSelectedAlimentacion(undefined);
+          }}
+          onSave={handleSaveEdit}
+          initialData={selectedAlimentacion}
+          mode="edit"
         />
       </IonContent>
     </IonPage>

@@ -91,7 +91,7 @@ const MenuContent: React.FC = () => {
             className={isActive('/app/alimentador') ? 'menu-item-active' : ''}
           >
             <IonIcon slot="start" icon={nutrition} />
-            <IonLabel>Alimentador</IonLabel>
+            <IonLabel>Alimentación</IonLabel>
           </IonItem>
           <IonItem 
             routerLink="/app/medicacion" 

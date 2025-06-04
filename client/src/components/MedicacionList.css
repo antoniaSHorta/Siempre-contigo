@@ -1,9 +1,9 @@
-.alimentacion-list {
+.medicacion-list {
   background: transparent;
   padding: 8px;
 }
 
-.alimentacion-item {
+.medicacion-item {
   --background: #f8f9fa;
   --padding-start: 0;
   --inner-padding-end: 0;
@@ -16,25 +16,25 @@
   border: 1px solid #e9ecef;
 }
 
-.alimentacion-content {
+.medicacion-content {
   width: 100%;
   padding: 16px;
   background: white;
   border-radius: 12px;
 }
 
-.alimentacion-header {
+.medicacion-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-  background: rgba(247, 147, 30, 0.1);
+  background: rgba(7, 64, 123, 0.1);
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid rgba(247, 147, 30, 0.2);
+  border: 1px solid rgba(7, 64, 123, 0.2);
 }
 
-.alimentacion-header .residente {
+.medicacion-header .residente {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -43,12 +43,18 @@
   color: var(--primary-color);
 }
 
-.alimentacion-header ion-icon {
-  color: var(--secondary-color);
+.medicacion-header ion-icon {
+  color: var(--primary-color);
   font-size: 1.2em;
 }
 
-.alimentacion-details {
+.medicacion-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.medicacion-details {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -73,31 +79,54 @@
 
 .detail-item ion-icon {
   font-size: 1.1em;
-  color: var(--secondary-color);
+  color: var(--primary-color);
 }
 
-.tipo-alimentacion {
+.tipo-medicacion {
   margin-left: auto;
 }
 
-.tipo-alimentacion ion-badge {
-  --background: var(--secondary-color);
-  --color: white;
-  font-weight: 500;
-  padding: 6px 12px;
+.tipo-medicacion ion-badge {
+  --background: #F7931E !important;
+  --color: #07407B !important;
+  font-weight: 600;
+  padding: 8px 14px;
   border-radius: 6px;
-  text-transform: uppercase;
-  font-size: 0.8em;
+  text-transform: none;
+  font-size: 0.9em;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #F7931E !important;
+  color: #07407B !important;
 }
 
-.observaciones {
-  background: rgba(247, 147, 30, 0.05);
+.tipo-medicacion ion-badge ion-icon {
+  color: #07407B !important;
+  font-size: 1.1em;
+}
+
+.dosis-info {
+  background: rgba(7, 64, 123, 0.05);
   padding: 12px;
   border-radius: 8px;
   margin: 12px 0;
-  border-left: 4px solid var(--secondary-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid var(--primary-color);
+}
+
+.dosis-info ion-label {
+  color: var(--primary-color);
+  font-weight: 500;
+  font-size: 0.95em;
+}
+
+.observaciones {
+  background: rgba(7, 64, 123, 0.05);
+  padding: 12px;
+  border-radius: 8px;
+  margin: 12px 0;
+  border-left: 4px solid var(--primary-color);
 }
 
 .observaciones p {
@@ -107,19 +136,13 @@
   line-height: 1.5;
 }
 
-.alimentacion-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.alimentacion-actions {
+.medicacion-actions {
   display: flex;
   gap: 4px;
   margin-left: 8px;
 }
 
-.alimentacion-header-actions .alimentacion-actions ion-button[fill="clear"] {
+.medicacion-header-actions .medicacion-actions ion-button[fill="clear"] {
   --color: #07407B !important;
   --background-hover: rgba(7, 64, 123, 0.1);
   border: 1px solid #07407B;
@@ -127,22 +150,22 @@
   margin: 0;
 }
 
-.alimentacion-header-actions .alimentacion-actions ion-button[color="danger"] {
+.medicacion-header-actions .medicacion-actions ion-button[color="danger"] {
   --color: #dc3545 !important;
   border: 1px solid #dc3545;
   border-radius: 6px;
   margin: 0;
 }
 
-.alimentacion-header-actions .alimentacion-actions ion-button[fill="clear"]:hover {
+.medicacion-header-actions .medicacion-actions ion-button[fill="clear"]:hover {
   --background: rgba(7, 64, 123, 0.1);
 }
 
-.alimentacion-header-actions .alimentacion-actions ion-button[color="danger"]:hover {
+.medicacion-header-actions .medicacion-actions ion-button[color="danger"]:hover {
   --background: rgba(220, 53, 69, 0.1);
 }
 
-.alimentacion-header-actions .alimentacion-actions ion-button {
+.medicacion-header-actions .medicacion-actions ion-button {
   --padding-start: 8px;
   --padding-end: 8px;
   --padding-top: 8px;
@@ -151,7 +174,7 @@
   width: 32px;
 }
 
-.alimentacion-header-actions .alimentacion-actions ion-icon {
+.medicacion-header-actions .medicacion-actions ion-icon {
   font-size: 18px;
   color: inherit;
 }
@@ -180,20 +203,25 @@ ion-chip[color="danger"] {
   --color: #c62828;
 }
 
+ion-chip[color="medium"] {
+  --background: #eceff1;
+  --color: #546e7a;
+}
+
 @media (max-width: 768px) {
-  .alimentacion-content {
+  .medicacion-content {
     padding: 12px;
   }
 
-  .alimentacion-header {
+  .medicacion-header {
     padding: 10px;
   }
 
-  .alimentacion-header .residente {
+  .medicacion-header .residente {
     font-size: 1em;
   }
 
-  .alimentacion-details {
+  .medicacion-details {
     gap: 8px;
     padding: 10px;
   }
@@ -203,39 +231,48 @@ ion-chip[color="danger"] {
     padding: 4px 8px;
   }
 
-  .tipo-alimentacion ion-badge {
-    padding: 4px 8px;
-    font-size: 0.75em;
+  .tipo-medicacion ion-badge {
+    padding: 6px 10px;
+    font-size: 0.85em;
   }
 
+  .dosis-info,
   .observaciones {
     padding: 10px;
     margin: 10px 0;
   }
 
+  .dosis-info ion-label,
   .observaciones p {
     font-size: 0.85em;
   }
 
-  .alimentacion-actions {
-    padding: 10px;
+  .medicacion-header-actions .medicacion-actions ion-button {
+    height: 28px;
+    width: 28px;
+    --padding-start: 6px;
+    --padding-end: 6px;
+  }
+
+  .medicacion-header-actions .medicacion-actions ion-icon {
+    font-size: 16px;
   }
 }
 
 @media (max-width: 480px) {
-  .alimentacion-content {
+  .medicacion-content {
     padding: 10px;
   }
 
-  .alimentacion-header {
+  .medicacion-header {
     padding: 8px;
   }
 
-  .alimentacion-header .residente {
+  .medicacion-header .residente {
     font-size: 0.95em;
   }
 
-  .alimentacion-details {
+  .medicacion-details {
     gap: 6px;
     padding: 8px;
   }
@@ -245,26 +282,30 @@ ion-chip[color="danger"] {
     padding: 3px 6px;
   }
 
+  .tipo-medicacion ion-badge {
+    padding: 4px 8px;
+    font-size: 0.8em;
+  }
+
+  .dosis-info,
   .observaciones {
     padding: 8px;
     margin: 8px 0;
   }
 
+  .dosis-info ion-label,
   .observaciones p {
     font-size: 0.8em;
   }
 
-  .tipo-alimentacion ion-badge {
-    padding: 3px 6px;
-    font-size: 0.7em;
+  .medicacion-header-actions .medicacion-actions ion-button {
+    height: 24px;
+    width: 24px;
+    --padding-start: 4px;
+    --padding-end: 4px;
   }
 
-  ion-chip {
-    font-size: 0.8em;
-    height: 22px;
-  }
-
-  .alimentacion-actions {
-    padding: 8px;
+  .medicacion-header-actions .medicacion-actions ion-icon {
+    font-size: 14px;
   }
 } 

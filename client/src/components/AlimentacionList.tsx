@@ -43,9 +43,19 @@ const AlimentacionList: React.FC<AlimentacionListProps> = ({ alimentaciones, onE
                 <IonIcon icon={personOutline} />
                 {alimentacion.residente}
               </IonLabel>
-              <IonChip color={getEstadoColor(alimentacion.estado)}>
-                {alimentacion.estado}
-              </IonChip>
+              <div className="alimentacion-header-actions">
+                <IonChip color={getEstadoColor(alimentacion.estado)}>
+                  {alimentacion.estado}
+                </IonChip>
+                <div className="alimentacion-actions">
+                  <IonButton fill="clear" onClick={() => onEdit(alimentacion.id)}>
+                    <IonIcon icon={createOutline} slot="icon-only" />
+                  </IonButton>
+                  <IonButton fill="clear" color="danger" onClick={() => onDelete(alimentacion.id)}>
+                    <IonIcon icon={trashOutline} slot="icon-only" />
+                  </IonButton>
+                </div>
+              </div>
             </div>
             
             <div className="alimentacion-details">
@@ -67,15 +77,6 @@ const AlimentacionList: React.FC<AlimentacionListProps> = ({ alimentaciones, onE
                 <p>{alimentacion.observaciones}</p>
               </div>
             )}
-
-            <div className="alimentacion-actions">
-              <IonButton fill="clear" onClick={() => onEdit(alimentacion.id)}>
-                <IonIcon icon={createOutline} slot="icon-only" />
-              </IonButton>
-              <IonButton fill="clear" color="danger" onClick={() => onDelete(alimentacion.id)}>
-                <IonIcon icon={trashOutline} slot="icon-only" />
-              </IonButton>
-            </div>
           </div>
         </IonItem>
       ))}
