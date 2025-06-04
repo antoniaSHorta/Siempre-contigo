@@ -13,7 +13,7 @@ import { protect } from '../middleware/auth';
 
 const router = express.Router();
 
-// router.use(protect);
+router.use(protect);
 
 router.post('/', createAlimentacion);                  
 router.get('/', getAllAlimentaciones);                 
