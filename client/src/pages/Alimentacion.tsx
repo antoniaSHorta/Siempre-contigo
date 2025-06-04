@@ -389,11 +389,11 @@ const Alimentacion: React.FC = () => {
                             }
 
                             const [newHour, newMinute] = data.hora.split(':').map(Number);
-                            const currentDayDate = new Date();
+                            
                             const newFechaHora = new Date(
-                                currentDayDate.getFullYear(),
-                                currentDayDate.getMonth(),
-                                currentDayDate.getDate(),
+                                fechaActual.getFullYear(),
+                                fechaActual.getMonth(),
+                                fechaActual.getDate(),
                                 newHour,
                                 newMinute,
                                 0
