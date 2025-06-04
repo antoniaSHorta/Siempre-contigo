@@ -102,15 +102,13 @@ export const generatePdfReport = async (req: Request, res: Response) => {
             activities: activitiesSummary,
         });
 
-        console.log(htmlContent);
-
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
+        
 
         const pdfBuffer = await page.pdf({
-            path: 'mypdf.pdf',
             format: 'A4',
             printBackground: true,
             margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' },

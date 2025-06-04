@@ -9,7 +9,6 @@ import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
 
-
 export const generateAndSaveWeeklyReports = async () => {
   const residents = await Resident.findAll();
 
