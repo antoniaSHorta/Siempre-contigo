@@ -4,6 +4,8 @@ export interface IUser {
     email: string;
     password: string;
     role: string;
+    phone: string;
+    location: string;
     isActive: boolean;
     isConnected: boolean;
     createdAt?: string;

@@ -11,7 +11,9 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Agenda from './pages/Agenda';
 import ChatList from './pages/ChatList';
-import { AdminUserDetail, AdminHome, AdminCreateUser, AdminUserEdit, AdminUsers} from './pages/Admin';
+import { AdminHome } from './pages/Admin/AdminHome';
+import { AdminUserDetail, AdminCreateUser, AdminUserEdit, AdminUsers} from './pages/Admin/Users';
+
 
 /* Styles */
 import './theme/variables.css';
@@ -34,6 +36,8 @@ import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import ChatDetail from './pages/ChatDetail';
+import { AdminCreateResident, AdminResidentEdit, AdminResidents } from './pages/Admin/Residents';
+import AdminResidentDetail from './pages/Admin/Residents/AdminResidentDetail';
 
 setupIonicReact();
 
@@ -44,12 +48,9 @@ const App: React.FC = () => (
         <IonRouterOutlet>
           <Route exact path="/login" component={Login} />
 
-          <ProtectedRoute exact path="/admin" component={AdminHome} adminOnly/>
-          <ProtectedRoute exact path="/admin/users" component={AdminUsers} adminOnly/>
-          <ProtectedRoute exact path="/admin/users/add" component={AdminCreateUser} adminOnly/>
-          <ProtectedRoute exact path="/admin/users/detail/:id" component={AdminUserDetail} adminOnly/>
-          <ProtectedRoute exact path="/admin/users/edit/:id" component={AdminUserEdit} adminOnly/>
           
+          
+
           <Route path="/app">
             <IonTabs>
               <IonRouterOutlet>
@@ -58,6 +59,15 @@ const App: React.FC = () => (
                 <ProtectedRoute exact path="/app/agenda" component={Agenda} />
                 <ProtectedRoute exact path="/app/chat" component={ChatList} />
                 <ProtectedRoute exact path="/app/chat/:chatId" component={ChatDetail} />
+                <ProtectedRoute exact path="/app/admin" component={AdminHome} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/users" component={AdminUsers} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/users/add" component={AdminCreateUser} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/users/detail/:id" component={AdminUserDetail} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/users/edit/:id" component={AdminUserEdit} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/residents" component={AdminResidents} adminOnly />
+                <ProtectedRoute exact path="/app/admin/residents/add" component={AdminCreateResident} adminOnly />
+                <ProtectedRoute exact path="/app/admin/residents/detail/:id" component={AdminResidentDetail} adminOnly />
+                <ProtectedRoute exact path="/app/admin/residents/edit/:id" component={AdminResidentEdit} adminOnly />
                 <Route exact path="/app">
                   <Redirect to="/app/home" />
                 </Route>

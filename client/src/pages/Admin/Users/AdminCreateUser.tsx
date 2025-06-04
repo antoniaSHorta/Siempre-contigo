@@ -11,10 +11,11 @@ import {
     IonIcon,
 } from '@ionic/react';
 import { useIonRouter } from '@ionic/react';
-import AdminUserForm from '../../components/Admin/AdminUserForm';
-import { checkEmailExists, createUserAdmin } from '../../services/adminService'; 
-import './AdminCreateUser.css'
+import AdminUserForm from '../../../components/Admin/AdminUserForm';
+import { checkEmailExists, createUserAdmin } from '../../../services/adminService'; 
+import '../Styles/AdminCreate.css';
 import { chevronBackOutline } from 'ionicons/icons';
+import Header from '../../../components/Header';
 
 export const AdminCreateUser: React.FC = () => {
     const router = useIonRouter();
@@ -26,6 +27,8 @@ export const AdminCreateUser: React.FC = () => {
         email: '',
         password: '',
         role: 'Cuidador',
+        phone: '',
+        location: ''
     });
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
@@ -40,11 +43,15 @@ export const AdminCreateUser: React.FC = () => {
     const validateEmail = (email: string) =>
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+    const isValidChileanPhone = (phone: string): boolean => {
+        return /^(\+569\d{8}|9\d{8})$/.test(phone);
+    };
+
     const handleSubmit = async () => {
         setError(null);
         setSuccess(null);
 
-        if (!form.name.trim() || !form.email.trim() || !form.password.trim() ) {
+        if (!form.name.trim() || !form.email.trim() || !form.role.trim() || !form.location.trim() || !form.phone.trim()) {
             setError('Por favor, completa todos los campos.');
         return;
         }
@@ -52,6 +59,11 @@ export const AdminCreateUser: React.FC = () => {
         if (!validateEmail(form.email)) {
             setError('Email no es válido.');
         return;
+        }
+
+        if (!isValidChileanPhone(form.phone)) {
+            setError('El número de teléfono debe tener el formato +569XXXXXXXX o 9XXXXXXXX.');
+            return;
         }
 
         if (form.password.length < 6) {
@@ -85,11 +97,13 @@ export const AdminCreateUser: React.FC = () => {
             name: '',
             email: '',
             password: '',
-            role: 'user',
+            role: 'Cuidador',
+            phone: '',
+            location: ''
         });
 
         setTimeout(() => {
-            router.push('/admin/users');
+            router.push('/app/admin/users');
             window.location.reload();
         }, 1000);
         } catch (err) {
@@ -101,27 +115,27 @@ export const AdminCreateUser: React.FC = () => {
 
     return (
         <IonPage className="admin-user-create-page">
-            <IonHeader>
-                <IonToolbar className="admin-header-toolbar">
-                    <IonButtons slot="start">
-                        <button className="admin-back-btn" onClick={() => router.push('/admin/users')}>
-                            <IonIcon icon={chevronBackOutline}/>
-                        </button>
-                    </IonButtons>
-                    <IonTitle>Añadir Nuevo Usuario</IonTitle>
-                </IonToolbar>
-            </IonHeader>
+            <Header title='Añadir nuevo usuario'></Header>
             <div className="admin-user-create-content">
                 <div className="admin-user-create-container">
-                <div className="admin-form-header-text">Crear nuevo usuario</div>
-                <AdminUserForm form={form} onChange={handleChange} error={error} />
+                    <div className="admin-form-header-text">Crear nuevo usuario</div>
+                    <AdminUserForm form={form} onChange={handleChange} error={error} />
 
-                {error && <div className="admin-user-create-message error">{error}</div>}
-                {success && <div className="admin-user-create-message success">{success}</div>}
+                    {error && <div className="admin-user-create-message error">{error}</div>}
+                    {success && <div className="admin-user-create-message success">{success}</div>}
 
-                <IonButton expand="block" className="admin-save-button" onClick={handleSubmit} disabled={loading}>
-                    {loading ? 'Creando...' : 'Crear Usuario'}
-                </IonButton>
+                    <IonButton expand="block" className="admin-save-button" onClick={handleSubmit} disabled={loading}>
+                        {loading ? 'Creando...' : 'Crear Usuario'}
+                    </IonButton>
+
+                    <IonButton
+                        expand="block" 
+                        fill="outline" 
+                        color="medium" 
+                        onClick={() => router.push('/app/admin/users')}
+                        >
+                        Cancelar
+                    </IonButton>
                 </div>
             </div>
         </IonPage>

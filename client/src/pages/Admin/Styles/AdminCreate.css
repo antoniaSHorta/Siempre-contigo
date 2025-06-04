@@ -13,7 +13,6 @@
     background-color: var(--admin-background-color);
     min-height: 100vh;
     color: var(--admin-text-color);
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
 }
@@ -25,7 +24,7 @@
     padding: 4rem 1rem 2rem 1rem;
     flex-grow: 1;
     min-height: calc(100vh - 56px);
-    padding-bottom: 80px;
+    padding-bottom: 120px;
 }
 
 .admin-user-create-container {
@@ -61,62 +60,15 @@
     color: #2ecc71;
 }
 
-.admin-save-button {
-    --border-radius: var(--admin-btn-radius);
-    --background: var(--admin-secondary-color);
-    --color: white;
-}
-
-.admin-header-toolbar {
-    --background: var(--admin-primary-color);
-    --color: #fff;
-    display: flex;
-    justify-content: center;
-    position: relative;
-}
-
-.admin-header-toolbar ion-title {
-    color: white;
-    margin: 0 auto;
-    text-align: center;
-    font-weight: 600;
-    font-size: 1.5rem;
-}
-
-.admin-back-btn {
-    --background: transparent;
-    --color: var(--admin-secondary-color);
-    border: 2px solid var(--admin-primary-color);
-    border-radius: var(--admin-btn-radius);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease, transform 0.2s ease;
-    margin-left: 0.5rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.admin-back-btn:hover {
-    background: var(--admin-secondary-color);
-    --color: #fff;
-    transform: translateY(-2px) scale(1.05);
-}
-
-
 .admin-form-header-text {
     text-align: center;
-    font-size: 1.25rem;
+    font-size: 30px;
     font-weight: 600;
     color: var(--admin-primary-color);
     margin-bottom: 1.5rem;
-    position: sticky;
     top: 0;
     background-color: white;
     z-index: 10;
-    padding: 1rem 0;
-    border-bottom: 1px solid #ccc;
 }
 
 @media (max-width: 768px) {

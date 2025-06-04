@@ -16,7 +16,7 @@ const Home: React.FC = () => {
   const {isAdmin} = useAuth();
 
   const handleAdminClick = () => {
-    history.push('/admin');
+    history.push('/app/admin');
   };
   return (
     <IonPage>
