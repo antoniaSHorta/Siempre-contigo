@@ -9,6 +9,7 @@ import alimentacionRoutes from './routes/alimentacionRoutes';
 import medicacionRoutes from './routes/medicacionRoutes';
 import { handleError } from './utils/errorHandler';
 import { initDatabase } from './config/initDb';
+import {startWeeklyReportJob} from './jobs/reportJob'
 
 dotenv.config();
 
@@ -23,6 +24,8 @@ app.use('/api/activities', activityRoutes);
 app.use('/api/residents', residentRoutes);
 app.use('/api/alimentacion', alimentacionRoutes);
 app.use('/api/medicacion', medicacionRoutes);
+
+startWeeklyReportJob();
 
 app.get('/', (req, res) => {
   res.json({ message: 'Bienvenido a Siempre Contigo API' });
