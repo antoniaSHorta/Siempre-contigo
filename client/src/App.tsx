@@ -31,6 +31,7 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
+import Medicamentos from './pages/Medicamentos';
 
 setupIonicReact();
 
@@ -45,6 +46,10 @@ const App: React.FC = () => (
             <IonTabs>
               <IonRouterOutlet>
                 <ProtectedRoute exact path="/app/home" component={Home} />
+                <ProtectedRoute exact path="/app/profile" component={Profile}/>
+                <ProtectedRoute exact path="/app/medicamentos" component={Medicamentos}/>
+                <ProtectedRoute exact path="/app/alimentacion" component={Alimentacion}/>
+                <ProtectedRoute exact path="/app/chat" component={Profile}/> 
                 <ProtectedRoute exact path="/app/profile" component={Profile} />
                 <ProtectedRoute exact path="/app/agenda" component={Agenda} />
                 <Route exact path="/app">
