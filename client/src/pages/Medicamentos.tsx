@@ -267,7 +267,7 @@ const Medicamentos: React.FC = () => {
                     role: 'destructive',
                     handler: async () => {
                         try {
-                            await axios.delete(`${API_BASE_URL}/medicamento/${id}`,
+                            await axios.delete(`${API_BASE_URL}/medicacion/${id}`,
                                 {
                                     headers: {
                                         Authorization: `Bearer ${localStorage.getItem('token')}`,
