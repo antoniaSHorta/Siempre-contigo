@@ -1,0 +1,54 @@
+.contact-info-content {
+  --background: #f8f9fa;
+}
+
+.contact-header {
+  background: white;
+  padding: 32px 24px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.contact-avatar {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 16px;
+  border: 3px solid #f7931e;
+}
+
+.contact-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: #07407b;
+  margin: 0 0 8px 0;
+}
+
+.contact-status {
+  color: #666;
+  margin: 0;
+  font-size: 14px;
+}
+
+.contact-actions {
+  display: flex;
+  gap: 12px;
+  padding: 0 24px 24px;
+  background: white;
+}
+
+.action-button {
+  flex: 1;
+  --border-color: #07407b;
+  --color: #07407b;
+}
+
+.contact-danger-zone {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-danger-zone ion-button {
+  --border-radius: 8px;
+}

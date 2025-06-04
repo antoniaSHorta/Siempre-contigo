@@ -1,0 +1,244 @@
+.chat-list-page {
+  --primary-color: #07407b;
+  --secondary-color: #f7931e;
+  --background-color: #d9d9d9;
+  --header-text-color: #0e0f3b;
+
+  --ion-color-primary: var(--primary-color);
+  --ion-color-secondary: var(--secondary-color);
+  --ion-color-dark: var(--primary-color);
+  --ion-color-medium: var(--primary-color);
+}
+
+.chat-list-page ion-header ion-toolbar {
+  --background: var(--background-color);
+  --color: var(--header-text-color);
+  --min-height: 79px;
+  padding: 0 16px;
+  position: relative;
+}
+
+.chat-list-page .header-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+
+.chat-list-page .header-logo {
+  width: auto;
+  height: 80px;
+  min-width: 100px;
+  max-width: 180px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.chat-list-page ion-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-transform: capitalize;
+  color: var(--header-text-color);
+  padding: 0;
+  margin: 0;
+  height: auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  flex: none;
+}
+
+.chat-list-page ion-content {
+  --background: white;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+.chat-searchbar {
+  margin: 16px;
+  --background: #f5f5f5;
+  --border-radius: 12px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --color: var(--primary-color);
+  --placeholder-color: #999;
+}
+
+.chat-list {
+  background: white;
+  margin: 0;
+}
+
+.chat-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --border-color: #f0f0f0;
+  margin: 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chat-item:last-child {
+  border-bottom: none;
+}
+
+.chat-avatar-container {
+  position: relative;
+  margin-right: 12px;
+}
+
+.chat-avatar {
+  width: 50px;
+  height: 50px;
+  border: 2px solid var(--secondary-color);
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background: #4caf50;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.chat-label {
+  --color: var(--primary-color);
+  margin: 0;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.chat-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.chat-timestamp {
+  font-size: 12px;
+  color: #999;
+  font-weight: 400;
+}
+
+.chat-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-last-message {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.unread-badge {
+  --background: var(--secondary-color);
+  --color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 64px;
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  color: var(--primary-color);
+  font-size: 18px;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.new-chat-fab {
+  --background: var(--secondary-color);
+  --color: var(--primary-color);
+  --box-shadow: 0 4px 16px rgba(247, 147, 30, 0.3);
+}
+
+@media (max-width: 768px) {
+  .chat-list-page ion-header ion-toolbar {
+    --min-height: 60px;
+    padding: 0 12px;
+  }
+
+  .chat-list-page .header-content {
+    gap: 12px;
+  }
+
+  .chat-list-page .header-logo {
+    height: 25px;
+    min-width: 90px;
+    max-width: 140px;
+  }
+
+  .chat-list-page ion-title {
+    font-size: 24px;
+  }
+
+  .chat-last-message {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-list-page ion-header ion-toolbar {
+    --min-height: 50px;
+    padding: 0 8px;
+  }
+
+  .chat-list-page .header-content {
+    gap: 8px;
+  }
+
+  .chat-list-page .header-logo {
+    height: 20px;
+    min-width: 70px;
+    max-width: 120px;
+  }
+
+  .chat-list-page ion-title {
+    font-size: 20px;
+  }
+
+  .chat-last-message {
+    max-width: 120px;
+  }
+}

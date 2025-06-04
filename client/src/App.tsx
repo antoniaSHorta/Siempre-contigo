@@ -1,7 +1,7 @@
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { home, person, calendar } from 'ionicons/icons';
+import { home, person, calendar, chatbubble } from 'ionicons/icons';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Agenda from './pages/Agenda';
+import ChatList from './pages/ChatList';
 
 /* Styles */
 import './theme/variables.css';
@@ -31,6 +32,7 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
+import ChatDetail from './pages/ChatDetail';
 
 setupIonicReact();
 
@@ -47,6 +49,8 @@ const App: React.FC = () => (
                 <ProtectedRoute exact path="/app/home" component={Home} />
                 <ProtectedRoute exact path="/app/profile" component={Profile} />
                 <ProtectedRoute exact path="/app/agenda" component={Agenda} />
+                <ProtectedRoute exact path="/app/chat" component={ChatList} />
+                <ProtectedRoute exact path="/app/chat/:chatId" component={ChatDetail} />
                 <Route exact path="/app">
                   <Redirect to="/app/home" />
                 </Route>
@@ -64,7 +68,12 @@ const App: React.FC = () => (
                   <IonIcon icon={person} />
                   <IonLabel>Perfil</IonLabel>
                 </IonTabButton>
+                <IonTabButton tab="chat" href="/app/chat">
+                  <IonIcon icon={chatbubble} />
+                  <IonLabel>Chat</IonLabel>
+                </IonTabButton>
               </IonTabBar>
+              
             </IonTabs>
           </Route>
 

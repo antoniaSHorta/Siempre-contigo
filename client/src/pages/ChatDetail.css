@@ -1,0 +1,248 @@
+.chat-detail-page {
+  --primary-color: #07407b;
+  --secondary-color: #f7931e;
+  --background-color: #d9d9d9;
+  --header-text-color: #0e0f3b;
+
+  --ion-color-primary: var(--primary-color);
+  --ion-color-secondary: var(--secondary-color);
+  --ion-color-dark: var(--primary-color);
+  --ion-color-medium: var(--primary-color);
+}
+
+.chat-detail-page ion-header ion-toolbar {
+  --background: var(--background-color);
+  --color: var(--header-text-color);
+  --min-height: 70px;
+  padding: 0 8px;
+}
+
+.chat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.header-avatar {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--secondary-color);
+}
+
+.header-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.chat-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--header-text-color);
+  padding: 0;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.chat-status {
+  font-size: 12px;
+  color: #666;
+  font-weight: 400;
+}
+
+.chat-content {
+  --background: #f5f5f5;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 16px;
+  --padding-bottom: 0;
+}
+
+.messages-container {
+  padding: 0 16px 16px 16px;
+  min-height: 100%;
+}
+
+.message {
+  margin-bottom: 12px;
+  display: flex;
+}
+
+.message-own {
+  justify-content: flex-end;
+}
+
+.message-other {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  position: relative;
+}
+
+.message-own .message-bubble {
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  border-bottom-right-radius: 4px;
+}
+
+.message-other .message-bubble {
+  background: white;
+  color: var(--primary-color);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.message-text {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.message-info {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.message-time {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.message-status {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.message-status.read {
+  color: #4caf50;
+  opacity: 1;
+}
+
+.message-highlighted {
+  animation: highlight 2s ease-in-out;
+}
+
+@keyframes highlight {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(247, 147, 30, 0.3);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.message-input-container {
+  background: white;
+  border-top: 1px solid #e0e0e0;
+  padding: 8px;
+}
+
+.message-input-item {
+  --background: #f8f8f8;
+  --border-radius: 25px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --inner-padding-end: 0;
+  margin: 0;
+  border-radius: 25px;
+}
+
+.message-textarea {
+  --color: var(--primary-color);
+  --placeholder-color: #999;
+  font-size: 16px;
+  max-height: 120px;
+  margin: 0 8px;
+}
+
+.attachment-button,
+.camera-button,
+.send-button,
+.mic-button {
+  --color: var(--primary-color);
+  margin: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.send-button {
+  --color: var(--secondary-color);
+}
+
+.mic-button.recording {
+  --color: #f44336;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-detail-page ion-header ion-toolbar {
+    --min-height: 60px;
+    padding: 0 4px;
+  }
+
+  .chat-title {
+    font-size: 16px;
+  }
+
+  .message-bubble {
+    max-width: 85%;
+    padding: 10px 14px;
+  }
+
+  .message-text {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-detail-page ion-header ion-toolbar {
+    --min-height: 55px;
+  }
+
+  .header-avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  .chat-title {
+    font-size: 15px;
+  }
+
+  .chat-status {
+    font-size: 11px;
+  }
+
+  .message-bubble {
+    max-width: 90%;
+    padding: 8px 12px;
+  }
+
+  .message-text {
+    font-size: 14px;
+  }
+}
