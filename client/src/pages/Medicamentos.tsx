@@ -309,7 +309,7 @@ const Medicamentos: React.FC = () => {
             cssClass: '.Medicamento-action-sheet-custom',
             inputs: [
                 {
-                    name: 'tipo',
+                    name: 'nombre',
                     type: 'text',
                     placeholder: 'Nombre',
                     value: '',
@@ -318,7 +318,7 @@ const Medicamentos: React.FC = () => {
                 {
                     name: 'dosis',
                     type: 'textarea',
-                    placeholder: 'Descripción de la comida...',
+                    placeholder: 'Dosis a administrar',
                     value: '',
                     attributes: { required: true }
                 },
@@ -343,8 +343,8 @@ const Medicamentos: React.FC = () => {
                 },
                 {
                     text: 'Guardar',
-                    handler: async (data: { tipo: string; descripcion: string; hora: string; residente: string }) => {
-                        if (!data.tipo || !data.descripcion || !data.hora) {
+                    handler: async (data: { nombre: string; dosis: string; horario: string; residente: string }) => {
+                        if (!data.nombre || !data.dosis || !data.horario) {
                             presentToast({
                                 message: 'Todos los campos son obligatorios, incluyendo el residente.',
                                 duration: 2000,
@@ -399,7 +399,7 @@ const Medicamentos: React.FC = () => {
                                 return false;
                             }
 
-                            const [newHour, newMinute] = data.hora.split(':').map(Number);
+                            const [newHour, newMinute] = data.horario.split(':').map(Number);
                             
                             const newFechaHora = new Date(
                                 fechaActual.getFullYear(),
@@ -411,9 +411,9 @@ const Medicamentos: React.FC = () => {
                             );
 
                             const newEntryData = {
-                                tipo: data.tipo,
-                                descripcion: data.descripcion,
-                                hora: data.hora,
+                                nombre: data.nombre,
+                                dosis: data.dosis,
+                                horario: data.horario,
                                 fecha_hora: newFechaHora,
                                 residente_id: finalResidenteId,
                                 cuidador_id: user?.id,
@@ -426,7 +426,7 @@ const Medicamentos: React.FC = () => {
                                 throw new Error('No hay sesión activa');
                             }
 
-                            await axios.post(`${API_BASE_URL}/Medicamento/`,newEntryData,{
+                            await axios.post(`${API_BASE_URL}/medicacion/`,newEntryData,{
                                 headers: {
                                     Authorization: `Bearer ${token}`,
                                 },
