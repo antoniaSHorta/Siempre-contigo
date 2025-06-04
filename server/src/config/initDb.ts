@@ -3,6 +3,7 @@ import { User } from '../models/User';
 import { Activity } from '../models/Activity';
 import { Resident } from '../models/Resident';
 import { Alimentacion } from '../models/Alimentacion';
+import { Medicacion } from '../models/Medicacion';
 
 export const initDatabase = async () => {
   try {
@@ -31,6 +32,33 @@ export const initDatabase = async () => {
       });
       console.log('Admin user created successfully.');
     }
+    const residentExists = await Resident.findOne({ where: { nombre: 'Joaquin' } });
+    if (!residentExists) {
+      await Resident.create({
+        nombre: 'Joaquin',
+        nacimiento: '1945-05-10',
+        estado_salud: 'Estable',
+        habitacion: 'Habitación 101',
+        ingreso: '2024-11-15',
+        activo: true,
+      });
+      console.log('Resident created successfully.');
+    }
+
+    const medicacionExists = await Medicacion.findOne({ where: { nombre: 'Kitadol' } });
+    if (!medicacionExists) {
+      await Medicacion.create({
+        nombre: 'Kitadol',
+        dosis: '500 gr',
+        horario: '08:00:00',
+        fecha_hora: new Date('2025-06-04T08:00:00'),
+        cuidador_id: 1,
+        residente_id: 1,
+        estado: 'Pendiente'
+      });
+      console.log('Medicacion creada exitosamente.');
+    }
+    
   } catch (error) {
     console.error('Unable to initialize database:', error);
     throw error;
