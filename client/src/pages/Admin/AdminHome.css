@@ -1,0 +1,82 @@
+.admin-home-page {
+    --admin-primary-color: #07407B;
+    --admin-secondary-color: #F7931E;
+    --admin-background-color: #fff;
+
+    background-color: var(--admin-background-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.admin-home-content {
+    --background: var(--admin-background-color);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px;
+    padding-bottom: 80px;
+}
+
+.admin-home-welcome {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto 1.5rem auto;
+    text-align: center;
+}
+
+.admin-home-welcome h2 {
+    font-size: 1.25rem;
+    color: var(--admin-primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.admin-home-welcome p {
+    color: var(--admin-secondary-color);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.admin-home-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.admin-home-card {
+    flex: 1 1 250px;
+    max-width: 280px;
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    padding: 1rem;
+    background-color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.admin-home-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(7,64,123,0.4);
+}
+
+.admin-home-card ion-card-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--admin-primary-color);
+}
+
+.admin-home-card ion-card-content {
+    font-size: 0.95rem;
+    padding-top: 0.5rem;
+    color: #333;
+}

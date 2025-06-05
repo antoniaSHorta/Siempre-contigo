@@ -1,0 +1,93 @@
+:root {
+    --admin-primary-color: #07407B;
+    --admin-secondary-color: #F7931E;
+    --admin-background-color: #F7F9FB;
+    --admin-text-color: #333;
+    --admin-card-bg: #ffffff;
+    --admin-card-radius: 1rem;
+    --admin-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --admin-btn-radius: 0.5rem;
+}
+
+.admin-user-form-container {
+    background: var(--admin-card-bg);
+    border-radius: var(--admin-card-radius);
+    padding: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.date-filter-display {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 0; 
+  padding-right: 0;
+  color: var(--primary-color);
+  font-size: 1rem;
+  width: 100%;
+  background: transparent; 
+  border: none;
+  box-shadow: none;
+  cursor: pointer; 
+}
+
+
+
+.admin-user-form-container ion-item {
+    --background: white;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    --highlight-color-focused: var(--admin-primary-color);
+    --color: var(--admin-primary-color);
+    --border-color-focused: var(--admin-primary-color);
+}
+
+.form-field-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+
+.form-field-container ion-label {
+    color: var(--admin-primary-color);
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+    margin-bottom: 4px;
+}
+
+.admin-user-form-container ion-input,
+.admin-user-form-container ion-select {
+    --padding-start: 0;
+    --color: var(--admin-primary-color);
+    --placeholder-color: var(--admin-primary-color);
+    --highlight-color-focused: var(--admin-primary-color);
+    --caret-color-focused: var(--admin-primary-color);
+    font-size: 1rem;
+}
+
+.admin-user-form-error {
+    margin-top: 0.5rem;
+    display: block;
+    text-align: center;
+    font-weight: 500;
+}
+
+.custom-select .select-text {
+    font-size: 16px;
+    padding-left: 8px;
+}
+
+.custom-select .select-icon {
+    color: var(--ion-color-primary);
+}
+
+.custom-select {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --border-radius: 12px;
+    --background: #f9f9f9;
+    --color: #333;
+    --min-height: 45px;
+    --border: 1px solid #ccc;
+}

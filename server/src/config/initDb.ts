@@ -28,8 +28,8 @@ export const initDatabase = async () => {
         email: 'admin@example.com',
         password: 'admin123',
         role: 'admin',
-        phone: '123-456-7890',
-        location: 'Oficina Principal'
+        isActive: true,
+        isConnected: true
       });
       console.log('Admin user created successfully.');
     }

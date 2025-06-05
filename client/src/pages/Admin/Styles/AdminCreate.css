@@ -1,0 +1,80 @@
+:root {
+    --admin-primary-color: #07407B;
+    --admin-secondary-color: #F7931E;
+    --admin-background-color: #f4f5f8;
+    --admin-text-color: #333;
+    --admin-card-bg: #ffffff;
+    --admin-card-radius: 1rem;
+    --admin-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --admin-btn-radius: 0.5rem;
+}
+
+.admin-user-create-page {
+    background-color: var(--admin-background-color);
+    min-height: 100vh;
+    color: var(--admin-text-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-user-create-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 1rem 2rem 1rem;
+    flex-grow: 1;
+    min-height: calc(100vh - 56px);
+    padding-bottom: 120px;
+}
+
+.admin-user-create-container {
+    width: 100%;
+    max-width: 800px;
+    background-color: var(--admin-card-bg);
+    border-radius: var(--admin-card-radius);
+    box-shadow: var(--admin-card-shadow);
+    padding: 2rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.admin-user-create-message {
+    text-align: center;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.admin-user-create-message.error {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #c0392b;
+}
+
+.admin-user-create-message.success {
+    background-color: rgba(0, 128, 0, 0.1);
+    color: #2ecc71;
+}
+
+.admin-form-header-text {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--admin-primary-color);
+    margin-bottom: 1.5rem;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+}
+
+@media (max-width: 768px) {
+    .admin-user-create-container {
+        padding: 1.2rem;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+}

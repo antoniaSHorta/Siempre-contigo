@@ -1,27 +1,23 @@
-import { IonHeader, IonToolbar, IonTitle, IonButtons, IonMenuButton } from "@ionic/react"
-import logo from '../assets/logo.png';
+import React from 'react';
+import { IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton } from '@ionic/react';
 import './Header.css';
+import logo from '../assets/logo.png';
 
-interface HeaderProps {
-  title: string;
+interface CustomHeaderProps {
+    title: string;
 }
 
-const Header:React.FC<HeaderProps> = ({ title }) =>{
-    return(
-        <>
-        <IonHeader className="ion-no-border">
-            <IonToolbar>
-            <div className="header-content">
-                <img src={logo} alt="Logo" className="header-logo" />
-                <IonTitle className="header-title">{title}</IonTitle>
-            </div>
-            <IonButtons slot="end">
-                <IonMenuButton autoHide={false} />
-            </IonButtons>
+const Header: React.FC<CustomHeaderProps> = ({ title}) => {
+    return (
+        <IonHeader className="custom-header">
+            <IonToolbar className="custom-toolbar">
+                <div className="custom-header-content">
+                    <img src={logo} alt="Logo" className="custom-header-logo" />
+                    <IonTitle className="custom-header-title">{title}</IonTitle>
+                </div>
             </IonToolbar>
         </IonHeader>
-        </>
-    )
-}
+    );
+};
 
 export default Header;

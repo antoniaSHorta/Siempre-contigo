@@ -1,8 +1,23 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonCardSubtitle, IonButton, IonIcon, IonGrid, IonRow, IonCol, IonSearchbar,} from '@ionic/react';
-import { add, calendar, time, location } from 'ionicons/icons';
+import { 
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  IonButton,
+  IonSearchbar,} from '@ionic/react';
+import { useHistory } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+
 import './Home.css';
 
 const Home: React.FC = () => {
+  const history = useHistory();
+  const {isAdmin} = useAuth();
+
+  const handleAdminClick = () => {
+    history.push('/app/admin');
+  };
   return (
     <IonPage>
       <IonHeader>
@@ -15,6 +30,12 @@ const Home: React.FC = () => {
           placeholder="Buscar ..."
           className="custom-searchbar"
         />
+
+        {isAdmin && (
+          <IonButton expand="block" onClick={handleAdminClick} color="primary">
+            Ir a Panel de Administración
+          </IonButton>
+        )}
       </IonContent>
     </IonPage>
   );

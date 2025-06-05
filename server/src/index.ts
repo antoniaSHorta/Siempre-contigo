@@ -7,6 +7,9 @@ import activityRoutes from './routes/activityRoutes';
 import residentRoutes from './routes/residentRoutes';
 import alimentacionRoutes from './routes/alimentacionRoutes';
 import medicacionRoutes from './routes/medicacionRoutes';
+import adminRoutes from './routes/adminRoutes'
+import residentesCuidadoresRoutes from  './routes/residentesCuidadoresRoutes'
+import residentesFamiliaresRoutes from  './routes/residentesFamiliaresRoutes'
 import { handleError } from './utils/errorHandler';
 import { initDatabase } from './config/initDb';
 
@@ -23,6 +26,9 @@ app.use('/api/activities', activityRoutes);
 app.use('/api/residents', residentRoutes);
 app.use('/api/alimentacion', alimentacionRoutes);
 app.use('/api/medicacion', medicacionRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/residentesCuidadores', residentesCuidadoresRoutes);
+app.use('/api/residentesFamiliares', residentesFamiliaresRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Bienvenido a Siempre Contigo API' });
