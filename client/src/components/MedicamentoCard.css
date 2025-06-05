@@ -1,0 +1,64 @@
+.medicamento-card-item {
+    --background: var(--medicamento-light-color, #ffffff);
+    border-radius: 16px;
+    --border-width: 0px;
+    --inner-border-width: 0px;
+    --border-color: transparent;
+    margin: 0.5rem 0.3rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.medicamento-card-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.medicamento-card-item h2 {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--medicamento-primary-color, #07407B);
+    margin: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.medicamento-card-item h2 span.hora {
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-left: 0.6rem;
+    color: var(--medicamento-medium-color, #92949c);
+    background-color: var(--medicamento-light-color, #f4f5f8);
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+}
+
+.medicamento-card-item p {
+    font-size: 0.9em;
+    color: var(--medicamento-dark-color, #666666); /* Nueva variable sugerida abajo */
+    margin-top: 0;
+    line-height: 1.5;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+/* Acción Sheet (custom header size) */
+.medicamento-action-sheet-custom {
+    --header-font-size: 1.3em;
+    --header-font-weight: bold;
+}
+
+/* Backdrop control (mantener como está si es para un fix específico) */
+ion-backdrop {
+  pointer-events: auto;
+}
+
+ion-backdrop::part(backdrop) {
+  visibility: visible;
+  display: block !important;
+}
+
+ion-backdrop[aria-hidden='true'] {
+  display: block;
+}

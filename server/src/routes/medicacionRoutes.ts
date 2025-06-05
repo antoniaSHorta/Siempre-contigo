@@ -6,7 +6,8 @@ import {
   updateMedicacion,
   deleteMedicacion,
   getMedicacionesByResidente,
-  updateEstadoMedicacion
+  updateEstadoMedicacion,
+  getMedicacionByFecha
 } from '../controllers/medicacionController';
 import { protect } from '../middleware/auth';
 import {
@@ -22,6 +23,7 @@ router.use(protect);
 router.post('/', validateCreateMedicacion, createMedicacion);
 router.get('/', getAllMedicaciones);
 router.get('/:id', getMedicacionById);
+router.get('/byFecha/:fecha', getMedicacionByFecha);
 router.put('/:id', validateUpdateMedicacion, updateMedicacion);
 router.delete('/:id', deleteMedicacion);
 
