@@ -145,7 +145,7 @@ const Medicamentos: React.FC = () => {
         });
     };
 
-    // Funcion para editar la entrada de alimentación seleccionada
+    // Funcion para editar la entrada de Medicación seleccionada
     const handleEditClick = (entry: MedicacionInterface) => {
         const dateToUse = entry.fecha_hora ? new Date(entry.fecha_hora) : new Date();
 
@@ -305,7 +305,7 @@ const Medicamentos: React.FC = () => {
         const defaultTime = `${currentHour}:${currentMinute}`;
 
         presentAlert({
-            header: 'Agregar Nueva Entrada de Alimentación',
+            header: 'Agregar Nueva Entrada de Medicación',
             cssClass: '.Medicamento-action-sheet-custom',
             inputs: [
                 {
@@ -440,7 +440,7 @@ const Medicamentos: React.FC = () => {
                             fetchMedicaciones();
                         } catch (err: any) {
                             console.error('Error adding Medicamento or finding resident:', err);
-                            let errorMessage = 'Error al agregar entrada de alimentación.';
+                            let errorMessage = 'Error al agregar entrada de Medicación.';
                             if (err.response && err.response.data && err.response.data.message) {
                                 errorMessage = `Error al agregar: ${err.response.data.message}`;
                             } else if (err.message) {
@@ -463,7 +463,7 @@ const Medicamentos: React.FC = () => {
     if (isLoading) {
         return (
             <IonPage>
-                <Header title='Alimentación' />
+                <Header title='Medicación' />
                 <IonContent className='ion-padding ion-text-center'>
                     <IonSpinner name="crescent" />
                     <IonText>Cargando entradas...</IonText>
@@ -475,7 +475,7 @@ const Medicamentos: React.FC = () => {
     if (error) {
         return (
             <IonPage>
-                <Header title='Alimentación' />
+                <Header title='Medicación' />
                 <IonContent className='ion-padding ion-text-center'>
                     <IonText color="danger">Error al cargar las entradas: {error}</IonText>
                     <IonButton onClick={() => fetchMedicaciones()}>Reintentar</IonButton>
@@ -534,7 +534,7 @@ const Medicamentos: React.FC = () => {
                         ) : (
                             <IonList className='medicamento-lista-entradas'>
                                 <IonText className='Medicamento-lista-sin-datos'>
-                                    No hay registros de alimentación para esta fecha.
+                                    No hay registros de Medicación para esta fecha.
                                 </IonText>
                                 <IonItem className="medicamento-card-item">
                                     <IonButton fill="clear" className="add-button-content"
