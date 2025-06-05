@@ -44,6 +44,7 @@ export const AdminUserEdit: React.FC = () => {
             try {
                 const response = await getUserByIdAdmin(numericId, token);
                 const data = response.user;
+                console.log(data)
                 setUser(data);
                 setForm({
                     name: data.name,
@@ -78,8 +79,8 @@ export const AdminUserEdit: React.FC = () => {
         }
 
         if (!validateEmail(form.email)) {
-        setError('Email no es válido.');
-        return;
+            setError('Email no es válido.');
+            return;
         }
 
         if (form.password && form.password.length < 6) {
@@ -87,18 +88,19 @@ export const AdminUserEdit: React.FC = () => {
             return;
         }
 
-        const emailExists = await checkEmailExists(form.email,token);
-        
-        if(emailExists){
-            setError('El correo ya existe');
-            return;
+        if(user?.email!=form.email){
+            const emailExists = await checkEmailExists(form.email,token);
+            if(emailExists){
+                setError('El correo ya existe');
+                return;
+            }
         }
 
         try {
             await updateUserAdmin(numericId, form, token);
             setSuccess('Usuario actualizado correctamente.');
             setTimeout(() => {
-                router.push('/admin/users');
+                router.push('/app/admin/users');
             window.location.reload();
         }, 1000);
         } catch (err) {
@@ -129,7 +131,7 @@ export const AdminUserEdit: React.FC = () => {
                             <IonText className="admin-user-edit-username" style={{ marginBottom: '1rem', fontWeight: '600', fontSize: '1.2rem' }}>
                                 Editando usuario: {user.name}
                             </IonText>
-                            <AdminUserForm form={form} onChange={handleChange} error={null} />
+                            <AdminUserForm form={form} onChange={handleChange} error={null} isEdit={true}/>
                             <IonButton expand="block" onClick={handleSave} className="admin-save-button">
                                 Guardar Cambios
                             </IonButton>

@@ -66,6 +66,7 @@ export const AdminResidents: React.FC = () => {
             else await activateResident(residentId, token!);
             setToastMessage(`Residente ${!isActive ? 'activado' : 'desactivado'} correctamente`);
             fetchResidents();
+            console.log(residents)
         } catch (err) {
             setToastMessage('No se pudo actualizar el estado del residente');
         }
@@ -73,7 +74,7 @@ export const AdminResidents: React.FC = () => {
 
     const filteredResidents = residents.filter(resident =>{
         const matchState = filterState === 'Todos' || resident.estado_salud==filterState;
-        const matchName = resident.nacimiento?.toLowerCase().includes(searchName.toLowerCase());
+        const matchName = resident.nombre?.toLowerCase().includes(searchName.toLowerCase());
         return matchState && matchName;
     }
         

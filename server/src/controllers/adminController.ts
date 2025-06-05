@@ -4,7 +4,8 @@ import { AppError } from '../utils/errorHandler';
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { name, email, password, role } = req.body;
+        const user = req.body
+        const {email, role } = user;
 
         const allowedRoles = ['Cuidador', 'Familiar'];
         if (!allowedRoles.includes(role)) {
@@ -16,7 +17,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
             return next(new AppError('User already exists', 400));
         }
 
-        const newUser = await User.create({ name, email, password, role });
+        const newUser = await User.create(user);
 
         res.status(201).json({
             success: true,
@@ -34,9 +35,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const users = await User.findAll({
-            attributes: ['id', 'name', 'email', 'role', 'isActive'],
-        });
+        const users = await User.findAll();
 
         res.status(200).json({
             success: true,
@@ -50,9 +49,7 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const user = await User.findByPk(id, {
-            attributes: ['id', 'name', 'email', 'role', 'isActive'],
-        });
+        const user = await User.findByPk(id);
 
         if (!user) {
             return next(new AppError('User not found', 404));

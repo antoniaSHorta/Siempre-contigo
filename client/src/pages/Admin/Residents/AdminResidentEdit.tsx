@@ -35,22 +35,19 @@ export const AdminResidentEdit: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [cuidadoresDisponibles, setCuidadoresDisponibles] = useState<IUser[]>([]);
-  const [familiaresDisponibles, setFamiliaresDisponibles] = useState<IUser[]>([]);
+    const [familiaresDisponibles, setFamiliaresDisponibles] = useState<IUser[]>([]);
 
     useEffect(() => {
     const fetchData = async () => {
         try {
             setLoading(true);
 
-            // Cargar residente
             const responseResident = await getResidentById(numericId, token);
             const dataResident: IResident = responseResident;
 
-            // Cargar todos los usuarios
             const responseUsers = await getAllUsersAdmin(token);
             const allUsers: IUser[] = responseUsers.users;
 
-            // Filtrar cuidadores y familiares activos
             const cuidadores = allUsers.filter(u => u.isActive && u.role === 'Cuidador');
             const familiares = allUsers.filter(u => u.isActive && u.role === 'Familiar');
 
@@ -58,7 +55,6 @@ export const AdminResidentEdit: React.FC = () => {
             setCuidadoresDisponibles(cuidadores);
             setFamiliaresDisponibles(familiares);
 
-            // Setear residente y form
             setResident(dataResident);
             setForm({
                 nombre: dataResident.nombre,
@@ -97,9 +93,10 @@ export const AdminResidentEdit: React.FC = () => {
                 updateResidentCuidadores(numericId, cuidadores, token),
                 updateResidentFamiliares(numericId, familiares, token)
             ])
+            
             setSuccess('Residente actualizado correctamente.');
             setTimeout(() => {
-                router.push('/admin/residents');
+                router.push('/app/admin/residents');
                 window.location.reload();
             }, 1000);
         } catch (err) {

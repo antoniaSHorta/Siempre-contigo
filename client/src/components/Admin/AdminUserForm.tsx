@@ -22,9 +22,10 @@ interface UserFormProps {
     };
     onChange: (field: string, value: string) => void;
     error?: string | null;
+    isEdit?: boolean;
 }
 
-const AdminUserForm: React.FC<UserFormProps> = ({ form, onChange, error }) => {
+const AdminUserForm: React.FC<UserFormProps> = ({ form, onChange, error ,isEdit}) => {
     return (
         <div className="admin-user-form-container">
             <IonList>
@@ -84,19 +85,22 @@ const AdminUserForm: React.FC<UserFormProps> = ({ form, onChange, error }) => {
                         autocomplete="street-address"
                     />
                 </IonItem>
-
-                <IonItem>
-                    <IonLabel>Rol</IonLabel>
-                    <IonSelect
-                        value={form.role}
-                        onIonChange={e => onChange('role', e.detail.value!)}
-                        interface="popover"
-                        className='custom-select'
-                    >
-                        <IonSelectOption value="Familiar">Familiar</IonSelectOption>
-                        <IonSelectOption value="Cuidador">Cuidador</IonSelectOption>
-                    </IonSelect>
-                </IonItem>
+                
+                {!isEdit &&(
+                    <IonItem>
+                        <IonLabel>Rol</IonLabel>
+                        <IonSelect
+                            value={form.role}
+                            onIonChange={e => onChange('role', e.detail.value!)}
+                            interface="popover"
+                            className='custom-select'
+                        >
+                            <IonSelectOption value="Familiar">Familiar</IonSelectOption>
+                            <IonSelectOption value="Cuidador">Cuidador</IonSelectOption>
+                        </IonSelect>
+                    </IonItem>
+                )}
+                
             </IonList>
         </div>
     );

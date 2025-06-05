@@ -90,6 +90,7 @@ export const AdminCreateUser: React.FC = () => {
             isActive: true,
             isConnected: false,
         };
+        console.log(newUser)
 
         await createUserAdmin(newUser, token);
         setSuccess('Usuario creado correctamente.');
@@ -104,7 +105,6 @@ export const AdminCreateUser: React.FC = () => {
 
         setTimeout(() => {
             router.push('/app/admin/users');
-            window.location.reload();
         }, 1000);
         } catch (err) {
             setError('Error al crear el usuario. Inténtalo de nuevo.');
@@ -119,7 +119,7 @@ export const AdminCreateUser: React.FC = () => {
             <div className="admin-user-create-content">
                 <div className="admin-user-create-container">
                     <div className="admin-form-header-text">Crear nuevo usuario</div>
-                    <AdminUserForm form={form} onChange={handleChange} error={error} />
+                    <AdminUserForm form={form} onChange={handleChange} error={error} isEdit={false}/>
 
                     {error && <div className="admin-user-create-message error">{error}</div>}
                     {success && <div className="admin-user-create-message success">{success}</div>}

@@ -17,7 +17,8 @@ import {
     IonBackButton,
     IonInput,
     IonSelect,
-    IonSelectOption
+    IonSelectOption,
+    useIonViewWillEnter
 } from '@ionic/react';
 import {
     eyeOutline,
@@ -58,10 +59,10 @@ export const AdminUsers: React.FC = () => {
         try {
             setLoading(true);
             const result = await getAllUsersAdmin(token!);
-            const filteredUsers = result.users.filter(
+            const filtered = result.users.filter(
                 (user: IUser) => user.role === 'Familiar' || user.role === 'Cuidador'
             );
-            setUsers(filteredUsers);
+            setUsers([...filtered]);
             setCurrentPage(1);
         } catch (err) {
             setToastMessage('Error al cargar usuarios');
@@ -73,9 +74,13 @@ export const AdminUsers: React.FC = () => {
 
     const handleToggleStatus = async (userId: number, isActive: boolean) => {
         try {
-        await toggleStatusUser(userId, token!, !isActive);
+            await toggleStatusUser(userId, token!, !isActive);
             setToastMessage(`Usuario ${!isActive ? 'activado' : 'desactivado'} correctamente`);
-            fetchUsers();
+            setUsers(prevUsers => 
+                prevUsers.map(user =>
+                    user.id === userId ? { ...user, isActive: !isActive } : user
+                )
+            );
         } catch (err) {
             setToastMessage('No se pudo actualizar el estado del usuario');
         }
@@ -89,7 +94,11 @@ export const AdminUsers: React.FC = () => {
 
     const goToAddUser = () => router.push('/app/admin/users/add', 'forward');
     const goToEditUser = (id: number) => router.push(`/app/admin/users/edit/${id}`, 'forward');
-    const goToDetailUser = (id: number) => router.push(`/app/admin/users/detail/${id}`, 'forward');
+    const goToDetailUser = (id: number) => {
+        router.push(`/app/admin/users/detail/${id}`, 'forward');
+        window.location.reload();
+    }
+        
 
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
     const indexOfLastUser = currentPage * usersPerPage;
