@@ -1,0 +1,92 @@
+.medicamento-page {
+    --medicamento-primary-color: #07407B;
+    --medicamento-secondary-color: #F7931E;
+    --medicamento-background-color: #D9D9D9;
+    --medicamento-header-text-color: #0E0F3B;
+    --medicamento-light-color: #f4f5f8;
+    --medicamento-medium-color: #92949c;
+
+    background-color: var(--medicamento-background-color);
+}
+
+.medicamento-content {
+    --background: var(--medicamento-background-color, #D9D9D9);
+}
+
+.medicamento-fecha-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1px 1px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.medicamento-lista-entradas {
+    background: transparent;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.medicamento-content-wrapper {
+    background-color: var(--medicamento-light-color);
+}
+
+.medicamento-lista-sin-datos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    margin: 20px;
+    font-family: "Roboto", sans-serif;
+    font-weight: 600;
+    color: var(--medicamento-medium-color); 
+    font-size: 1.1em;
+    line-height: 1.5;
+    background-color: var(--medicamento-light-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.medicamento-card-item {
+    --background: var(--medicamento-light-color);
+    border-radius: 16px;
+    --border-width: 0px;
+    --inner-border-width: 0px;
+    border-color: transparent;
+    margin: 0.5rem 0.3rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.medicamento-card-item ion-button {
+  --border-width: 0;
+  --box-shadow: none;
+  --background: transparent;
+  box-shadow: none;
+  border: none;
+  outline: none;
+}
+
+.add-button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.5rem;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+/* Acción Sheet (custom header size) */
+.medicamento-action-sheet-custom {
+    --header-font-size: 1.3em;
+    --header-font-weight: bold;
+}

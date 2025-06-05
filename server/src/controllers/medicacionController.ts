@@ -4,6 +4,7 @@ import { Activity } from '../models/Activity';
 import { User } from '../models/User';
 import { Resident } from '../models/Resident';
 import { AppError } from '../utils/errorHandler';
+import { Op } from 'sequelize';
 
 export const createMedicacion = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -318,3 +319,39 @@ export const updateEstadoMedicacion = async (req: Request, res: Response, next: 
     next(error);
   }
 }; 
+
+export const getMedicacionByFecha = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { fecha } = req.params; // espera formato: '2025-06-04'
+    const startDate = new Date(`${fecha}T00:00:00.000Z`);
+    const endDate = new Date(`${fecha}T23:59:59.999Z`);
+
+    const medicaciones = await Medicacion.findAll({
+      where: {
+        fecha_hora: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+      include: [
+        {
+          model: Resident,
+          attributes: ['id', 'nombre']
+        },
+        {
+          model: User,
+          attributes: ['id', 'name']
+        }
+      ],
+      order: [['fecha_hora', 'ASC']],
+    });
+
+    res.status(200).json({
+      success: true,
+      data: medicaciones,
+      count: medicaciones.length,
+    });
+  } catch (error) {
+    console.log(error)
+    next(error);
+  }
+};

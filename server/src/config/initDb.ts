@@ -3,6 +3,7 @@ import { User } from '../models/User';
 import { Activity } from '../models/Activity';
 import { Resident } from '../models/Resident';
 import { Alimentacion } from '../models/Alimentacion';
+import { Medicacion } from '../models/Medicacion';
 
 export const initDatabase = async () => {
   try {
@@ -20,7 +21,6 @@ export const initDatabase = async () => {
     await sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
 
     const adminExists = await User.findOne({ where: { email: 'admin@example.com' } });
-    const residentExists = await Resident.findOne({ where: { nombre: 'Joaquin' } });
     const alimentacionExists = await Alimentacion.findOne({ where: { tipo: 'Desayuno' } });
     if (!adminExists) {
       await User.create({
@@ -33,6 +33,7 @@ export const initDatabase = async () => {
       });
       console.log('Admin user created successfully.');
     }
+    const residentExists = await Resident.findOne({ where: { nombre: 'Joaquin' } });
     if (!residentExists) {
       await Resident.create({
         nombre: 'Joaquin',
@@ -44,17 +45,20 @@ export const initDatabase = async () => {
       });
       console.log('Resident created successfully.');
     }
-    if (!alimentacionExists) {
-    await Alimentacion.create({
-      tipo: 'Desayuno',
-      descripcion: 'Pan con mantequilla y jugo de naranja',
-      hora: '08:00:00',
-      fecha_hora: '2025-06-04 08:00:00',
-      residente_id: 1,
-      cuidador_id: 1,
-    });
-    console.log('Alimentación creada correctamente.');
-  }
+
+    const medicacionExists = await Medicacion.findOne({ where: { nombre: 'Kitadol' } });
+    if (!medicacionExists) {
+      await Medicacion.create({
+        nombre: 'Kitadol',
+        dosis: '500 gr',
+        horario: '08:00:00',
+        fecha_hora: new Date('2025-06-04T08:00:00'),
+        cuidador_id: 1,
+        residente_id: 1,
+        estado: 'Pendiente'
+      });
+      console.log('Medicacion creada exitosamente.');
+    }
     
   } catch (error) {
     console.error('Unable to initialize database:', error);

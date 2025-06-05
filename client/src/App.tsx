@@ -1,7 +1,7 @@
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuButton, IonMenuToggle, IonRouterOutlet, IonTab, IonTabBar, IonTabButton, IonTabs, IonTitle, IonToolbar, setupIonicReact} from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { home, person, chatbubbles, restaurant, medkit, book, menu, chatbubble } from 'ionicons/icons';
+import { home, person, chatbubbles, restaurant, medkit, book, menu, chatbubble, heart } from 'ionicons/icons';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -15,6 +15,8 @@ import Login from './pages/Login';
 import Alimentacion from './pages/Alimentacion';
 import Agenda from './pages/Agenda';
 import ChatList from './pages/ChatList';
+import ChatDetail from './pages/ChatDetail';
+import Medicamentos from './pages/Medicamentos';
 
 /* Styles */
 import './theme/variables.css';
@@ -39,7 +41,6 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-import ChatDetail from './pages/ChatDetail';
 
 setupIonicReact();
 
@@ -59,9 +60,8 @@ const App: React.FC = () => (
               <IonRouterOutlet>
                 <ProtectedRoute exact path="/app/home" component={Home} />
                 <ProtectedRoute exact path="/app/profile" component={Profile}/>
-                <ProtectedRoute exact path="/app/medicamentos" component={Profile}/>
+                <ProtectedRoute exact path="/app/medicamentos" component={Medicamentos}/>
                 <ProtectedRoute exact path="/app/alimentacion" component={Alimentacion}/>
-                <ProtectedRoute exact path="/app/chat" component={Profile}/> 
                 <ProtectedRoute exact path="/app/agenda" component={Agenda} />
                 <ProtectedRoute exact path="/app/chat" component={ChatList} />
                 <ProtectedRoute exact path="/app/chat/:chatId" component={ChatDetail} />
@@ -72,16 +72,10 @@ const App: React.FC = () => (
               </IonRouterOutlet>
 
               <IonTabBar slot="bottom">
-                
                 <IonTabButton tab="agenda" href="/app/agenda">
                   <IonIcon icon={book}/>
                   <IonLabel>Agenda</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="alimentacion" href="/app/alimentacion">
-                  <IonIcon icon={restaurant}/>
-                  <IonLabel>Alimentacion</IonLabel>
-                </IonTabButton>
-
                 <IonTabButton tab="home" href="/app/home">
                   <IonIcon icon={home}/>
                   <IonLabel>Home</IonLabel>
@@ -89,10 +83,6 @@ const App: React.FC = () => (
                 <IonTabButton tab="profile" href="/app/profile">
                   <IonIcon icon={person} />
                   <IonLabel>Perfil</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="chat" href="/app/chat">
-                  <IonIcon icon={chatbubble} />
-                  <IonLabel>Chat</IonLabel>
                 </IonTabButton>
               </IonTabBar>
 
