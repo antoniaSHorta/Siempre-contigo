@@ -32,7 +32,7 @@ export const AdminHome: React.FC = () => {
 
     return (
         <IonPage className="admin-home-page">
-            <Header title='Panel de Administración'></Header>
+            <Header title='Panel de Administración' grayBackground/>
             <IonContent className="admin-home-content">
                 <div className="admin-home-welcome">
                     <h2>Bienvenido, {user?.name || 'Admin'}</h2>

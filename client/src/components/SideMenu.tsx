@@ -1,8 +1,10 @@
 import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonTitle, IonToolbar } from "@ionic/react"
-import { book, medkit, restaurant, chatbubbles, home } from "ionicons/icons"
+import { book, medkit, restaurant, chatbubbles, home, lockClosed } from "ionicons/icons"
+import { useAuth } from "../contexts/AuthContext";
 
 
 const SideMenu: React.FC = () => {
+    const {isAdmin} = useAuth();
     return (
         <IonMenu 
             contentId="main-content" 
@@ -46,6 +48,12 @@ const SideMenu: React.FC = () => {
                     <IonIcon slot="start" icon={chatbubbles} />
                     <IonLabel>Chat</IonLabel>
                 </IonItem>
+                {isAdmin &&(
+                    <IonItem routerLink="/app/admin" routerDirection="none">
+                        <IonIcon slot="start" icon={lockClosed} />
+                        <IonLabel>Admin</IonLabel>
+                    </IonItem>
+                )}
                 </IonMenuToggle>
             </IonList>
             </IonContent>

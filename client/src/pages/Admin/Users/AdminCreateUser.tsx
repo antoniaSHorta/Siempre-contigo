@@ -115,7 +115,7 @@ export const AdminCreateUser: React.FC = () => {
 
     return (
         <IonPage className="admin-user-create-page">
-            <Header title='Añadir nuevo usuario'></Header>
+            <Header title='Añadir nuevo usuario' grayBackground/>
             <div className="admin-user-create-content">
                 <div className="admin-user-create-container">
                     <div className="admin-form-header-text">Crear nuevo usuario</div>

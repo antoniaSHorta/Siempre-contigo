@@ -108,7 +108,7 @@ export const AdminResidentEdit: React.FC = () => {
 
     return (
         <IonPage className="admin-user-edit-page">
-            <Header title='Editar Residente' />
+            <Header title='Editar Residente' grayBackground/>
             <div className="admin-user-edit-content">
                 <div className="admin-user-edit-container">
                     {error && (

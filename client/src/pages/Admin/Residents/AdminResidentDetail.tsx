@@ -73,7 +73,7 @@ const AdminResidentDetail: React.FC = () => {
 
     return (
         <IonPage className="admin-user-detail-page">
-            <Header title="Detalle del residente" />
+            <Header title="Detalle del residente" grayBackground/>
             <div className="admin-user-detail-content">
                 {resident && (
                     <div className="admin-user-detail-card">
