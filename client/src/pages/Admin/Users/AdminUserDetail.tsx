@@ -64,6 +64,11 @@ export const AdminUserDetail: React.FC = () => {
         }
     };
 
+    const handleReturn = () => {
+        router.push(`/app/admin/users`, 'forward');
+        window.location.reload();
+    }
+
     if (loading) return <IonLoading isOpen={true} message="Cargando..." />;
 
     return (
@@ -149,7 +154,7 @@ export const AdminUserDetail: React.FC = () => {
                         expand="block" 
                         fill="outline" 
                         color="medium" 
-                        onClick={() => router.push('/app/admin/users')}
+                        onClick={handleReturn}
                         >
                         Cancelar
                     </IonButton>

@@ -102,37 +102,52 @@ export const generatePdfReport = async (req: Request, res: Response) => {
             activities: activitiesSummary,
         });
 
+        console.log(htmlContent);
+
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
-        
 
         const pdfBuffer = await page.pdf({
+            path: 'mypdf.pdf',
             format: 'A4',
             printBackground: true,
             margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' },
         });
 
+        console.log(pdfBuffer);
+
         await Report.create({
-            fecha: new Date(), 
-            descripcion: descripcion || `Reporte generado del ${from} al ${to}`,
-            archivo_pdf: pdfBuffer,
-            residente_id: residentId,
-            emisor_id: userId, 
+            date: new Date(), 
+            description: descripcion || `Reporte generado del ${from} al ${to}`,
+            pdf: pdfBuffer,
+            residentId: residentId,
+            senderId: userId, 
         });
 
         await browser.close();
 
-        res.set({
-            'Content-Type': 'application/pdf',
-            'Content-Disposition': `attachment; filename=report_${residentId}_${from}_to_${to}.pdf`,
-            'Content-Length': pdfBuffer.length,
-        });
-
-        return res.send(pdfBuffer);
+        res.status(201).json({ message: 'PDF report generated successfully' });
     } catch (error) {
         console.error('Error generating PDF:', error);
         return res.status(500).json({ message: 'Error generating PDF report', error });
+    }
+};
+
+export const getReportPdfBase64 = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const report = await Report.findByPk(id);
+        if (!report || !report.pdf) {
+            return res.status(404).json({ message: 'PDF not found' });
+        }
+        console.log(report.pdf);
+
+        const base64 = report.pdf.toString('base64');
+        const dataUrl = `data:application/pdf;base64,${base64}`;
+        res.json({ pdfBase64: dataUrl });
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving PDF', error });
     }
 };

@@ -6,29 +6,20 @@ import {
     IonItem,
     IonLabel,
     IonIcon,
-    IonButton,
-    IonFab,
-    IonFabButton,
-    IonToast,
     IonInput,
-    IonButtons,
     IonSelect,
-    IonSelectOption
+    IonSelectOption,
+    IonToast,
+    IonAvatar
 } from '@ionic/react';
-import {
-    eyeOutline,
-    pencilOutline,
-    personRemoveOutline,
-    personAddOutline,
-    refreshOutline
-} from 'ionicons/icons';
+import { personCircleOutline } from 'ionicons/icons';
 import { useIonRouter } from '@ionic/react';
-import { IResident } from '../../../interfaces/IResident';
-import { activateResident, deleteResident, getAllResidentsInactiveAndActive, updateResident } from '../../../services/residentService'; 
-import Header from '../../../components/Header';
-import '../Styles/AdminUsers.css'; 
+import { IResident } from '../../interfaces/IResident';
+import { getAllResidents, getAllResidentsInactiveAndActive } from '../../services/residentService'; 
+import Header from '../../components/Header';
+import '../Admin/Styles/AdminUsers.css' 
 
-export const AdminResidents: React.FC = () => {
+export const ResidentSelection: React.FC = () => {
     const router = useIonRouter();
     const token = localStorage.getItem('token');
     const [residents, setResidents] = useState<IResident[]>([]);
@@ -39,20 +30,35 @@ export const AdminResidents: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const residentsPerPage = 5;
 
+    const role = localStorage.getItem('role'); 
+    const userId = Number(localStorage.getItem('userId'));
+
     useEffect(() => {
         fetchResidents();
     }, []);
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [filterState,searchName]);
+    }, [filterState, searchName]);
 
     const fetchResidents = async () => {
         try {
             setLoading(true);
-            const data = await getAllResidentsInactiveAndActive(token!); 
-            setResidents(data);
-            setCurrentPage(1);
+            const data = await getAllResidents(token!);
+
+            let filteredData = data;
+
+            if (role === 'Cuidador') {
+                filteredData = data.filter((resident: IResident) =>
+                    resident.cuidadores?.some((c: any) => c.id === userId)
+                );
+            } else if (role === 'Familiar') {
+                filteredData = data.filter((resident: IResident) =>
+                    resident.familiares?.some((f: any) => f.id === userId)
+                );
+            }
+
+            setResidents(filteredData);
         } catch (err) {
             setToastMessage('Error al cargar residentes');
         } finally {
@@ -60,70 +66,52 @@ export const AdminResidents: React.FC = () => {
         }
     };
 
-    const handleToggleStatus = async (residentId: number, isActive: boolean) => {
-        try {
-            if(isActive) await deleteResident(residentId, token!);
-            else await activateResident(residentId, token!);
-            setToastMessage(`Residente ${!isActive ? 'activado' : 'desactivado'} correctamente`);
-            fetchResidents();
-            console.log(residents)
-        } catch (err) {
-            setToastMessage('No se pudo actualizar el estado del residente');
-        }
-    };
-
-    const filteredResidents = residents.filter(resident =>{
-        const matchState = filterState === 'Todos' || resident.estado_salud==filterState;
+    const filteredResidents = residents.filter(resident => {
+        const matchState = filterState === 'Todos' || resident.estado_salud === filterState;
         const matchName = resident.nombre?.toLowerCase().includes(searchName.toLowerCase());
         return matchState && matchName;
-    }
-        
-    );
+    });
 
     const totalPages = Math.ceil(filteredResidents.length / residentsPerPage);
     const indexOfLast = currentPage * residentsPerPage;
     const indexOfFirst = indexOfLast - residentsPerPage;
     const currentResidents = filteredResidents.slice(indexOfFirst, indexOfLast);
 
-    const goToAddResident = () => router.push('/app/admin/residents/add', 'forward');
-    const goToEditResident = (id: number) => {
-        router.push(`/app/admin/residents/edit/${id}`, 'forward');
-        window.location.reload();
+    const goToResidentReports = (id: number) => {
+        router.push(`/app/reports/resident/${id}`, 'forward');
     };
-    const goToDetailResident = (id: number) => router.push(`/app/admin/residents/detail/${id}`, 'forward');
 
     return (
         <IonPage className="admin-users-page">
-            <Header title='Residentes' grayBackground/>
-            {residents.length > 0 && (
-                <div className="admin-users-filters">
-                    <IonItem className="admin-filter-item">
-                        <IonInput
-                            label="Buscar por nombre"
-                            labelPlacement="stacked"
-                            placeholder="Ej: Carmen López"
-                            value={searchName}
-                            onIonInput={(e) => setSearchName(e.detail.value!)}
-                        />
-                    </IonItem>
-                    <IonItem className="admin-filter-item">
-                        <IonSelect
+            <Header title="Seleccionar residente" grayBackground />
+
+            <div className="admin-users-filters">
+                <IonItem className="admin-filter-item">
+                    <IonInput
+                        label="Buscar por nombre"
+                        labelPlacement="stacked"
+                        placeholder="Ej: Carmen López"
+                        value={searchName}
+                        onIonInput={(e) => setSearchName(e.detail.value!)}
+                    />
+                </IonItem>
+                <IonItem className="admin-filter-item">
+                    <IonSelect
                         label="Filtrar por estado"
                         labelPlacement="stacked"
                         interface="popover"
                         value={filterState}
                         onIonChange={(e) => setFilterState(e.detail.value)}
-                        >
+                    >
                         <IonSelectOption value="Todos">Todos</IonSelectOption>
                         <IonSelectOption value="Bueno">Bueno</IonSelectOption>
                         <IonSelectOption value="Regular">Regular</IonSelectOption>
                         <IonSelectOption value="Delicado">Delicado</IonSelectOption>
                         <IonSelectOption value="Crítico">Crítico</IonSelectOption>
                         <IonSelectOption value="Recuperación">Recuperación</IonSelectOption>
-                        </IonSelect>
-                    </IonItem>
-                </div>
-            )}
+                    </IonSelect>
+                </IonItem>
+            </div>
 
             <div className="admin-users-content">
                 {loading ? (
@@ -133,35 +121,28 @@ export const AdminResidents: React.FC = () => {
                 ) : (
                     <IonList className="admin-users-list">
                         {currentResidents.map(resident => (
-                            <IonItem key={resident.id} className="admin-users-item" lines="inset">
+                            <IonItem
+                                key={resident.id}
+                                className="admin-users-item"
+                                lines="inset"
+                                button
+                                onClick={() => goToResidentReports(resident.id)}
+                            >
+                                <IonAvatar slot="start">
+                                    <IonIcon icon={personCircleOutline} style={{ fontSize: '32px' }} />
+                                </IonAvatar>
                                 <IonLabel>
                                     <h2 className="admin-users-name">{resident.nombre}</h2>
-                                    <p className="admin-users-email">Habitación: {resident.habitacion || 'N/A'}</p>
-                                    <p className="admin-users-role">Estado: {resident.estado_salud || 'N/A'}</p>
+                                    <p>Habitación: {resident.habitacion || 'N/A'}</p>
+                                    <p>Estado: {resident.estado_salud || 'N/A'}</p>
                                 </IonLabel>
-                                <IonButtons>
-                                    <IonButton className='admin-users-btn-detail' onClick={() => goToDetailResident(resident.id)}>
-                                        <IonIcon icon={eyeOutline} />
-                                    </IonButton>
-                                    <IonButton className='admin-users-btn-edit' onClick={() => goToEditResident(resident.id)}>
-                                        <IonIcon icon={pencilOutline} />
-                                    </IonButton>
-                                    <IonButton
-                                        onClick={() => handleToggleStatus(resident.id, resident.activo)}
-                                        className={`admin-users-btn-status ${resident.activo ? 'active' : 'inactive'}`}
-                                    >
-                                        <IonIcon icon={resident.activo ? personRemoveOutline : refreshOutline} />
-                                    </IonButton>
-
-                                </IonButtons>
-                                
                             </IonItem>
                         ))}
                     </IonList>
                 )}
             </div>
-            
-            {residents.length > 0 && (
+
+            {filteredResidents.length > 0 && (
                 <div className="admin-users-pagination-fixed">
                     <div className="admin-users-pagination">
                         <button
@@ -171,7 +152,6 @@ export const AdminResidents: React.FC = () => {
                         >
                             Anterior
                         </button>
-
                         {[...Array(totalPages)].map((_, index) => {
                             const pageNumber = index + 1;
                             return (
@@ -184,7 +164,6 @@ export const AdminResidents: React.FC = () => {
                                 </button>
                             );
                         })}
-
                         <button
                             disabled={currentPage === totalPages}
                             onClick={() => setCurrentPage(prev => prev + 1)}
@@ -195,12 +174,6 @@ export const AdminResidents: React.FC = () => {
                     </div>
                 </div>
             )}
-
-            <IonFab vertical="bottom" slot="fixed" className="admin-users-fab">
-                <IonFabButton onClick={goToAddResident}>
-                    <IonIcon icon={personAddOutline} />
-                </IonFabButton>
-            </IonFab>
 
             <IonToast
                 isOpen={!!toastMessage}

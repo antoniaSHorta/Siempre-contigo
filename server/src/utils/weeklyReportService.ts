@@ -3,11 +3,12 @@ import { Activity } from '../models/Activity';
 import { Alimentacion } from '../models/Alimentacion';
 import { Medicacion } from '../models/Medicacion';
 import { Report } from '../models/Report';
+import { User } from '../models/User';
 import { generateReportHtml } from '../utils/generateReportHtml';
 import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
-import { User } from '@/models/User';
+
 
 export const generateAndSaveWeeklyReports = async () => {
   const residents = await Resident.findAll();
@@ -60,11 +61,11 @@ export const generateAndSaveWeeklyReports = async () => {
     });
 
     await Report.create({
-        fecha: new Date(), 
-        descripcion: `Reporte semanal enerado del ${oneWeekAgo} al ${now}`,
-        archivo_pdf: buffer,
-        residente_id: resident.id,
-        emisor_id: admin?.id, 
+        date: new Date(), 
+        description: `Reporte semanal enerado del ${oneWeekAgo} al ${now}`,
+        pdf: buffer,
+        residentId: resident.id,
+        senderId: admin?.id, 
     });
 
     await browser.close();

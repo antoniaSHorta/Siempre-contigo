@@ -42,5 +42,13 @@ export const endpoints = {
     addFamiliares: (id:number) => `${API_URL}/residentesFamiliares/${id}/familiares`,
     updateCuidadores: (id:number) => `${API_URL}/residentesCuidadores/${id}/cuidadores`,
     updateFamiliares: (id:number) => `${API_URL}/residentesFamiliares/${id}/familiares`
-  }
+    
+  },
+  report: {
+        list: (residentId: number) => `${API_URL}/reports/resident/${residentId}`,
+        getById: (id: number) => `${API_URL}/reports/${id}`,
+        generatePdf: (residentId: number, from: string, to: string) =>
+            `${API_URL}/reports/generate/pdf/${residentId}/${from}/${to}`,
+        getPdfBase64: (id: number) => `/api/reports/${id}/pdf/base64`
+    }
 }; 

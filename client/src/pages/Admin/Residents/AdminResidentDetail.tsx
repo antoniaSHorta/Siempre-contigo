@@ -69,6 +69,11 @@ const AdminResidentDetail: React.FC = () => {
         }
     };
 
+    const handleReturn = () => {
+        router.push(`/app/admin/residents`, 'forward');
+        window.location.reload();
+    }
+
     if (loading) return <IonLoading isOpen={true} message="Cargando..." />;
 
     return (
