@@ -4,6 +4,8 @@ import { Activity } from '../models/Activity';
 import { Resident } from '../models/Resident';
 import { Alimentacion } from '../models/Alimentacion';
 import { Medicacion } from '../models/Medicacion';
+import { ResidentesCuidadores } from '../models/ResidentesCuidadores';
+import { ResidentesFamiliares } from '../models/ResidentesFamiliares';
 
 export const initDatabase = async () => {
   try {
@@ -21,7 +23,6 @@ export const initDatabase = async () => {
     await sequelize.query('SET FOREIGN_KEY_CHECKS = 1;');
 
     const adminExists = await User.findOne({ where: { email: 'admin@example.com' } });
-    const alimentacionExists = await Alimentacion.findOne({ where: { tipo: 'Desayuno' } });
     if (!adminExists) {
       await User.create({
         name: 'Admin',
@@ -59,7 +60,70 @@ export const initDatabase = async () => {
       });
       console.log('Medicacion creada exitosamente.');
     }
-    
+    const joaquinCuidadorExists = await User.findOne({where:{name:"Joaquin Cuidador1"}})
+    if (!joaquinCuidadorExists){
+      try {
+        await User.create({
+          name: 'Joaquin Cuidador',
+          email: 'joaquin@gmail.com',
+          password: 'joaquin123',
+          role: 'Cuidador',
+          isActive: true,
+          isConnected: false
+        });
+        console.log('Joaquin user created successfully.');
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    const joaquinFamiliarExists = await User.findOne({where:{name:"Joaquin Familiar"}})
+    if (!joaquinFamiliarExists){
+      try {
+        await User.create({
+          name: 'Joaquin Familiar',
+          email: 'joaquinF@gmail.com',
+          password: 'joaquin123',
+          role: 'Familiar',
+          isActive: true,
+          isConnected: false
+        });
+        console.log('Joaquin user created successfully.');
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    const relacionJRCExists = await ResidentesCuidadores.findOne({
+      where:{
+        residente_id: 1,
+        cuidador_id: 2
+      }
+    })
+    try {
+      if(!relacionJRCExists){
+        await ResidentesCuidadores.create({
+          residente_id: 1,
+          cuidador_id: 2
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    } 
+    const relacionJRFExists = await ResidentesFamiliares.findOne({
+      where:{
+        residente_id: 1,
+        familiar_id: 3
+      }
+    })
+    try {
+      if(!relacionJRFExists){
+        await ResidentesFamiliares.create({
+          residente_id: 1,
+          familiar_id: 3
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    } 
   } catch (error) {
     console.error('Unable to initialize database:', error);
     throw error;

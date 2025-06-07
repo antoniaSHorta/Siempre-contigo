@@ -168,25 +168,21 @@ export const deleteMessageHttp = async (req: Request, res: Response, next: NextF
 
 export const getAvailableContacts = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const { userId } = req.params;
-    // Asumiendo que el rol del usuario se obtiene de req.user (por ejemplo, después de la autenticación)
     const requestingUserRole = req.user?.role; 
+    
 
     if (!userId) {
-        return next(new AppError('Se requiere el ID del usuario.', 400));
+        return next(new AppError('Falta el id del suario.', 400));
     }
 
     try {
         let allContacts: User[] = [];
         let totalCount: number = 0;
 
-        // --- Caso para Administrador ---
         if (requestingUserRole === 'Admin') {
-            // Un administrador puede ver todos los usuarios con roles de 'familiar' o 'cuidador'
             const allUsers = await User.findAll({
                 where: {
-                    // Puedes añadir un filtro por tipo de usuario si tu modelo User tiene un campo 'type' o 'role'
-                    // Por ejemplo: type: { [Op.in]: ['familiar', 'cuidador'] }
-                    // Si no tienes un campo de tipo, simplemente traerá todos los usuarios
+                    type: { [Op.in]: ['familiar', 'cuidador'] }
                 },
                 attributes: ['id', 'name'],
                 order: [['name', 'ASC']]
@@ -196,56 +192,72 @@ export const getAvailableContacts = async (req: RequestWithUser, res: Response, 
             totalCount = allUsers.length;
 
         } else {
-            // --- Lógica existente para usuarios que son familiares o cuidadores ---
-            // Encontrar todos los residentes relacionados con el usuario (ya sea familiar o cuidador)
-            const residentes = await Resident.findAll({
+
+            const residentIdsFromFamiliares = await ResidentesFamiliares.findAll({
+                attributes: ['residente_id'],
+                where: { familiar_id: userId }
+            });
+            const residentIdsFromCuidadores = await ResidentesCuidadores.findAll({
+                attributes: ['residente_id'],
+                where: { cuidador_id: userId }
+            });
+
+            const uniqueResidentIds = new Set<number>();
+            residentIdsFromFamiliares.forEach(item => uniqueResidentIds.add(item.residente_id));
+            residentIdsFromCuidadores.forEach(item => uniqueResidentIds.add(item.residente_id));
+
+            const residentIdsArray = Array.from(uniqueResidentIds);
+            
+
+            if (residentIdsArray.length === 0) {
+                res.status(200).json({
+                    success: true,
+                    data: [],
+                    count: 0,
+                });
+                return;
+            }
+
+            const associatedResidents = await Resident.findAll({
+                where: {
+                    id: { [Op.in]: residentIdsArray } 
+                },
                 include: [
                     {
                         model: User,
                         as: 'familiares',
-                        through: {
-                            where: { familiar_id: userId },
-                            attributes: []
-                        },
                         attributes: ['id', 'name'],
-                        required: false // Usar required: false para LEFT JOIN y no omitir residentes que solo tienen relación con el otro tipo de usuario
+                        through: { attributes: [] }
                     },
                     {
                         model: User,
                         as: 'cuidadores',
-                        through: {
-                            where: { cuidador_id: userId },
-                            attributes: []
-                        },
                         attributes: ['id', 'name'],
-                        required: false // Usar required: false para LEFT JOIN
+                        through: { attributes: [] }
                     }
-                ],
-                // Añadir un where para asegurar que al menos una de las asociaciones exista para el userId dado
-                // Esto es crucial para que la consulta no traiga TODOS los residentes cuando el userId no es ni familiar ni cuidador de ellos
-                where: {
-                    [Op.or]: [
-                        { '$familiares.id$': { [Op.ne]: null } }, // Si hay familiares asociados
-                        { '$cuidadores.id$': { [Op.ne]: null } }  // Si hay cuidadores asociados
-                    ]
-                }
+                ]
             });
 
             const uniqueContacts: User[] = [];
-            residentes.forEach(residente => {
-                if (residente.familiares) {
+            associatedResidents.forEach(residente => {
+                if (residente.familiares && residente.familiares.length > 0) {
                     residente.familiares.forEach(familiar => {
                         if (!uniqueContacts.some(contact => contact.id === familiar.id)) {
                             uniqueContacts.push(familiar);
                         }
                     });
+                } else {
+                    console.log(`Residente no tiene familiares.`);
                 }
-                if (residente.cuidadores) {
+
+                if (residente.cuidadores && residente.cuidadores.length > 0) {
                     residente.cuidadores.forEach(cuidador => {
                         if (!uniqueContacts.some(contact => contact.id === cuidador.id)) {
                             uniqueContacts.push(cuidador);
                         }
                     });
+                } else {
+                    console.log(`Residente no tiene cuidadores.`);
                 }
             });
             
@@ -260,7 +272,7 @@ export const getAvailableContacts = async (req: RequestWithUser, res: Response, 
         });
 
     } catch (error) {
-        console.log(`Error al conseguir contactos del usuario ${userId}, error: ${error}`);
+        console.error(`Error par el usuario con id ${userId}:`, error);
         next(error);
     }
 };
