@@ -3,6 +3,10 @@ import axios from 'axios';
 import { AppError } from '../utils/errorHandler';
 import { User } from '../models/User';
 import { config } from '../config/config';
+import { Resident } from '../models/Resident';
+import { ResidentesCuidadores } from '../models/ResidentesCuidadores';
+import { ResidentesFamiliares } from '../models/ResidentesFamiliares';
+import { Op } from 'sequelize';
 
 interface RequestWithUser extends Request {
   user?: User;
@@ -162,3 +166,101 @@ export const deleteMessageHttp = async (req: Request, res: Response, next: NextF
     }
 };
 
+export const getAvailableContacts = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const { userId } = req.params;
+    // Asumiendo que el rol del usuario se obtiene de req.user (por ejemplo, después de la autenticación)
+    const requestingUserRole = req.user?.role; 
+
+    if (!userId) {
+        return next(new AppError('Se requiere el ID del usuario.', 400));
+    }
+
+    try {
+        let allContacts: User[] = [];
+        let totalCount: number = 0;
+
+        // --- Caso para Administrador ---
+        if (requestingUserRole === 'Admin') {
+            // Un administrador puede ver todos los usuarios con roles de 'familiar' o 'cuidador'
+            const allUsers = await User.findAll({
+                where: {
+                    // Puedes añadir un filtro por tipo de usuario si tu modelo User tiene un campo 'type' o 'role'
+                    // Por ejemplo: type: { [Op.in]: ['familiar', 'cuidador'] }
+                    // Si no tienes un campo de tipo, simplemente traerá todos los usuarios
+                },
+                attributes: ['id', 'name'],
+                order: [['name', 'ASC']]
+            });
+
+            allContacts = allUsers;
+            totalCount = allUsers.length;
+
+        } else {
+            // --- Lógica existente para usuarios que son familiares o cuidadores ---
+            // Encontrar todos los residentes relacionados con el usuario (ya sea familiar o cuidador)
+            const residentes = await Resident.findAll({
+                include: [
+                    {
+                        model: User,
+                        as: 'familiares',
+                        through: {
+                            where: { familiar_id: userId },
+                            attributes: []
+                        },
+                        attributes: ['id', 'name'],
+                        required: false // Usar required: false para LEFT JOIN y no omitir residentes que solo tienen relación con el otro tipo de usuario
+                    },
+                    {
+                        model: User,
+                        as: 'cuidadores',
+                        through: {
+                            where: { cuidador_id: userId },
+                            attributes: []
+                        },
+                        attributes: ['id', 'name'],
+                        required: false // Usar required: false para LEFT JOIN
+                    }
+                ],
+                // Añadir un where para asegurar que al menos una de las asociaciones exista para el userId dado
+                // Esto es crucial para que la consulta no traiga TODOS los residentes cuando el userId no es ni familiar ni cuidador de ellos
+                where: {
+                    [Op.or]: [
+                        { '$familiares.id$': { [Op.ne]: null } }, // Si hay familiares asociados
+                        { '$cuidadores.id$': { [Op.ne]: null } }  // Si hay cuidadores asociados
+                    ]
+                }
+            });
+
+            const uniqueContacts: User[] = [];
+            residentes.forEach(residente => {
+                if (residente.familiares) {
+                    residente.familiares.forEach(familiar => {
+                        if (!uniqueContacts.some(contact => contact.id === familiar.id)) {
+                            uniqueContacts.push(familiar);
+                        }
+                    });
+                }
+                if (residente.cuidadores) {
+                    residente.cuidadores.forEach(cuidador => {
+                        if (!uniqueContacts.some(contact => contact.id === cuidador.id)) {
+                            uniqueContacts.push(cuidador);
+                        }
+                    });
+                }
+            });
+            
+            allContacts = uniqueContacts;
+            totalCount = uniqueContacts.length;
+        }
+
+        res.status(200).json({
+            success: true,
+            data: allContacts,
+            count: totalCount,
+        });
+
+    } catch (error) {
+        console.log(`Error al conseguir contactos del usuario ${userId}, error: ${error}`);
+        next(error);
+    }
+};

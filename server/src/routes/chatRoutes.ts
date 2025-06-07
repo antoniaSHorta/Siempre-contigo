@@ -7,6 +7,7 @@ import {
   deleteConversation,
   deleteMessageHttp,
   updateConversationHttp,
+  getAvailableContacts,
 } from '../controllers/chatController';
 import { protect } from '../middleware/auth';
 
@@ -17,6 +18,9 @@ router.use(protect);
 // --- Rutas Generales para Conversaciones ---
 router.get('/', getConversationsHttp);
 router.post('/', createConversationHttp);
+
+// --- Rutas Para conseguir los contactos
+router.get('/availableContacts/:userId',getAvailableContacts)
 
 // --- Rutas Específicas para Mensajes ---
 // ESTAS DEBEN IR ANTES de las rutas con un solo parámetro como /:id

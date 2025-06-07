@@ -34,6 +34,41 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCrea
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     const fetchUsers = async () => {
+  //       setIsLoading(true);
+  //       setError(null);
+  //       try {
+  //         const token = localStorage.getItem("token");
+  //         const response = await axios.get(`${API_BASE_URL}/admin`, {
+  //           headers: { Authorization: `Bearer ${token}` },
+  //         });
+
+  //         const selectableUsers = response.data.users
+  //           .filter((u: any) => u.id.toString() !== currentUser?.id.toString())
+  //           .map((u: any): SelectableUser => ({
+  //               id: u.id.toString(),
+  //               name: u.name,
+  //               avatar: `https://i.pravatar.cc/150?u=${u.id}`
+  //           }));
+  //         setAllUsers(selectableUsers);
+  //       } catch (err) {
+  //         setError("No se pudo cargar la lista de usuarios.");
+  //         console.error(err);
+  //       } finally {
+  //         setIsLoading(false);
+  //       }
+  //     };
+  //     fetchUsers();
+  //   } else {
+  //       setSearchText("");
+  //       setSelectedContacts(new Set());
+  //       setIsGroupMode(false);
+  //       setGroupName("");
+  //   }
+  // }, [isOpen, currentUser]);
+  
   useEffect(() => {
     if (isOpen) {
       const fetchUsers = async () => {
@@ -41,11 +76,11 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCrea
         setError(null);
         try {
           const token = localStorage.getItem("token");
-          const response = await axios.get(`${API_BASE_URL}/admin`, {
+          const response = await axios.get(`${API_BASE_URL}/chat/availableContacts/${currentUser.id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-
-          const selectableUsers = response.data.users
+          console.log(response)
+          const selectableUsers = response.data.data
             .filter((u: any) => u.id.toString() !== currentUser?.id.toString())
             .map((u: any): SelectableUser => ({
                 id: u.id.toString(),
@@ -69,6 +104,7 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCrea
     }
   }, [isOpen, currentUser]);
   
+
   const handleContactSelect = (contactId: string) => {
     if (!isGroupMode) {
       handleCreate([contactId]);

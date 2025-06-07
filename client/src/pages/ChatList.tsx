@@ -57,7 +57,7 @@ const ChatList: React.FC = () => {
       });
       
       const talkJSConversations = response.data.data;
-
+      console.log(talkJSConversations)
       const formattedChats = Object.values(talkJSConversations).map((convo: any): Chat => {
         const otherParticipants = Object.values(convo.participants).filter((p: any) => p.id !== user.id.toString());
         

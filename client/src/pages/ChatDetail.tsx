@@ -80,7 +80,7 @@ const ChatDetail: React.FC = () => {
             });
 
             const talkJsMessages = response.data.data;
-
+            console.log(talkJsMessages)
             const formattedMessages = talkJsMessages.map((msg: any): Message => ({
                 id: msg.id,
                 text: msg.text,
