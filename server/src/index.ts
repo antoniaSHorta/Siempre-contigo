@@ -35,6 +35,8 @@ app.use('/api/reports',reportsRoutes);
 
 startWeeklyReportJob();
 
+startWeeklyReportJob();
+
 app.get('/', (req, res) => {
   res.json({ message: 'Bienvenido a Siempre Contigo API' });
 });

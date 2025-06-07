@@ -102,20 +102,30 @@ export const generatePdfReport = async (req: Request, res: Response) => {
             activities: activitiesSummary,
         });
 
+<<<<<<< HEAD
         console.log(htmlContent);
 
+=======
+>>>>>>> 003c797f0aa228765b767c48c58c9cc086b30fe7
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
+<<<<<<< HEAD
 
         const pdfBuffer = await page.pdf({
             path: 'mypdf.pdf',
+=======
+        
+
+        const pdfBuffer = await page.pdf({
+>>>>>>> 003c797f0aa228765b767c48c58c9cc086b30fe7
             format: 'A4',
             printBackground: true,
             margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' },
         });
 
+<<<<<<< HEAD
         console.log(pdfBuffer);
 
         await Report.create({
@@ -124,15 +134,34 @@ export const generatePdfReport = async (req: Request, res: Response) => {
             pdf: pdfBuffer,
             residentId: residentId,
             senderId: userId, 
+=======
+        await Report.create({
+            fecha: new Date(), 
+            descripcion: descripcion || `Reporte generado del ${from} al ${to}`,
+            archivo_pdf: pdfBuffer,
+            residente_id: residentId,
+            emisor_id: userId, 
+>>>>>>> 003c797f0aa228765b767c48c58c9cc086b30fe7
         });
 
         await browser.close();
 
+<<<<<<< HEAD
         res.status(201).json({ message: 'PDF report generated successfully' });
+=======
+        res.set({
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename=report_${residentId}_${from}_to_${to}.pdf`,
+            'Content-Length': pdfBuffer.length,
+        });
+
+        return res.send(pdfBuffer);
+>>>>>>> 003c797f0aa228765b767c48c58c9cc086b30fe7
     } catch (error) {
         console.error('Error generating PDF:', error);
         return res.status(500).json({ message: 'Error generating PDF report', error });
     }
+<<<<<<< HEAD
 };
 
 export const getReportPdfBase64 = async (req: Request, res: Response) => {
@@ -150,4 +179,6 @@ export const getReportPdfBase64 = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving PDF', error });
     }
+=======
+>>>>>>> 003c797f0aa228765b767c48c58c9cc086b30fe7
 };
