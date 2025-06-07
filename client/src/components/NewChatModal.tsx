@@ -78,8 +78,10 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCrea
   const handleContactSelect = (contactId: string) => {
     if (!isGroupMode) {
       const selectedUser = allUsers.find(u => u.id === contactId);
+      const userName = currentUser.name
+      const nombreChat = `${selectedUser} - ${userName}`
       if (selectedUser) {
-        handleCreate([contactId], selectedUser.name);
+        handleCreate([contactId], nombreChat);
       } else {
         presentToast({ message: 'Contacto no encontrado.', duration: 2000, color: 'danger' });
       }
