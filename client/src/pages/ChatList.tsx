@@ -11,7 +11,7 @@ import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { formatDistanceToNow, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
-import logo from "../assets/logo.png";
+import Header from "../components/Header";
 
 interface Chat {
   id: string;
@@ -127,14 +127,7 @@ const ChatList: React.FC = () => {
 
   return (
     <IonPage className="chat-list-page">
-      <IonHeader className="ion-no-border">
-        <IonToolbar>
-          <div className="header-content">
-            <img src={logo || "/placeholder.svg"} alt="Logo" className="header-logo" />
-            <IonTitle>Chats</IonTitle>
-          </div>
-        </IonToolbar>
-      </IonHeader>
+      <Header title="Lista de Chats"/>
 
       <IonContent className="ion-padding">
         <IonSearchbar
