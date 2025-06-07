@@ -1,7 +1,6 @@
 import path from "path";
 import { Resident } from "../models/Resident";
 import { User } from "../models/User";
-import fs from 'fs';
 
 interface ReportData {
     resident: Resident;
@@ -22,11 +21,6 @@ interface ReportData {
 export function generateReportHtml(data: ReportData): string {
     const { resident,sender, from, to, medication, nutrition, activities } = data;
 
-    const logoFilePath = path.join(__dirname, '../assets/logo.png');
-
-    const logoBase64 = fs.existsSync(logoFilePath)
-        ? `data:image/png;base64,${fs.readFileSync(logoFilePath).toString('base64')}`
-        : '';
 
     return `
     <!DOCTYPE html>
@@ -35,39 +29,11 @@ export function generateReportHtml(data: ReportData): string {
         <meta charset="UTF-8" />
         <title>Reporte del Residente ${resident.nombre}</title>
         <style>
-        @media print {
-            body {
-                margin: 160px 40px 40px 40px;
-            }
-        }
 
         body {
             font-family: Arial, sans-serif;
-            margin: 160px 40px 40px 40px;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 100px;
-            display: flex;
-            align-items: center;
-            border-bottom: 2px solid #2c3e50;
-            padding: 10px 40px;
-            background-color: #fff;
-        }
-
-        header img {
-            height: 60px;
-            margin-right: 20px;
-        }
-
-        header h1 {
-            font-size: 22px;
-            margin: 0;
-            color: #2c3e50;
+            margin: 0; /* <-- quitar márgenes */
+            padding: 0 40px 40px 40px;
         }
 
         h2 {
@@ -96,11 +62,6 @@ export function generateReportHtml(data: ReportData): string {
         </style>
     </head>
     <body>
-
-        <header>
-            <img src="${logoBase64}" alt="Logo">
-            <h1>SiempreContigo - Reporte del Residente</h1>
-        </header>
         <main>
             <h2>Información del Residente</h2>
             <p><strong>Nombre:</strong> ${resident.nombre}</p>
@@ -141,7 +102,8 @@ export function generateReportHtml(data: ReportData): string {
 
             <div class="section">
                 <h2>Alimentación</h2>
-                ${nutrition ? `<p>${nutrition}</p>` : '<p>No se encontraron registros de alimentación para este período.</p>'}
+                    ${nutrition ? `<p>${nutrition}</p>` : '<p>No se encontraron registros de alimentación para este período.</p>'}
+                </div>
             </div>
 
             <div class="section">
@@ -149,10 +111,6 @@ export function generateReportHtml(data: ReportData): string {
                 ${activities ? `<div>${activities}</div>` : '<p>No se encontraron actividades para este período.</p>'}
             </div>
         </main>
-
-        <footer>
-            <p>Reporte generado el ${new Date().toLocaleDateString('es-CL')}</p>
-        </footer>
     </body>
     </html>
     `;

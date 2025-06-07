@@ -8,6 +8,8 @@ import { generateReportHtml } from '../utils/generateReportHtml'
 import { Op } from 'sequelize';
 import { User } from '../models/User';
 import { Resident } from '../models/Resident';
+import path from 'path';
+import fs from 'fs';
 
 export const listReports = async (req: Request, res: Response) => {
     try {
@@ -45,6 +47,7 @@ export const generatePdfReport = async (req: Request, res: Response) => {
 
         const startDate = new Date(from);
         const endDate = new Date(to);
+        endDate.setUTCHours(23, 59, 59, 999); 
 
         const resident = await Resident.findByPk(residentId);
         if (!resident) return res.status(404).json({ message: 'Resident not found' });
@@ -67,6 +70,10 @@ export const generatePdfReport = async (req: Request, res: Response) => {
         const nutritionRecords = await Alimentacion.findAll({
             where: {
                 residente_id: residentId,
+                fecha_hora: { 
+                [Op.gte]: startDate,
+                [Op.lte]: endDate,
+                },
             },
             attributes: ['tipo', 'descripcion', 'hora', 'fecha_hora'],
             order: [['fecha_hora', 'ASC']],
@@ -75,6 +82,10 @@ export const generatePdfReport = async (req: Request, res: Response) => {
         const medicationRecords = await Medicacion.findAll({
             where: {
                 residente_id: residentId,
+                fecha_hora: { 
+                [Op.gte]: startDate,
+                [Op.lte]: endDate,
+                },
             },
             attributes: ['nombre', 'dosis', 'horario', 'fecha_hora', 'estado'],
             order: [['fecha_hora', 'ASC']],
@@ -89,7 +100,7 @@ export const generatePdfReport = async (req: Request, res: Response) => {
         }));
 
         const nutrition = nutritionRecords
-            .map((n) => `${n.tipo || '-'}: ${n.descripcion || '-'} (${n.hora || '-'})`)
+            .map((n) => `<strong>${n.tipo || '-'}</strong> (${n.fecha_hora?.toISOString().slice(0, 10) || '-'}): <br>${n.descripcion || '-'} a las ${n.hora}<br>`)
             .join('<br>');
 
         const activitiesSummary = activities
@@ -109,6 +120,13 @@ export const generatePdfReport = async (req: Request, res: Response) => {
             activities: activitiesSummary,
         });
 
+        const logoFilePath = path.join(__dirname, '../assets/logo.png');
+
+        const logoBase64 = fs.existsSync(logoFilePath)
+            ? `data:image/png;base64,${fs.readFileSync(logoFilePath).toString('base64')}`
+            : '';
+
+
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
@@ -117,11 +135,52 @@ export const generatePdfReport = async (req: Request, res: Response) => {
         const pdfBufferRaw = await page.pdf({
             format: 'A4',
             printBackground: true,
-            margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' },
+            displayHeaderFooter: true,
+            headerTemplate: `
+                <style>
+                    .header {
+                        font-size: 12px;
+                        width: 100%;
+                        text-align: center;
+                        padding: 10px 0;
+                        border-bottom: 1px solid #ccc;
+                        font-family: Arial, sans-serif;
+                        color: #2c3e50;
+                    }
+                    body {
+                        margin: 0;
+                        padding: 0;
+                    }
+                </style>
+                <div class="header">
+                    <img src="${logoBase64}" style="height:30px; vertical-align:middle;"/>
+                    <span>SiempreContigo - Reporte del Residente</span>
+                </div>
+                `,
+            footerTemplate: `
+                <style>
+                    .footer {
+                    font-size: 10px;
+                    width: 100%;
+                    text-align: center;
+                    border-top: 1px solid #ccc;
+                    padding: 5px 0;
+                    font-family: Arial, sans-serif;
+                    color: #555;
+                    }
+                </style>
+                <div class="footer">
+                    <span>Reporte generado el ${new Date().toLocaleDateString('es-CL')}</span>
+                    <span style="float:right;">Página <span class="pageNumber"></span> de <span class="totalPages"></span></span>
+                </div>
+                `,
+            margin: {
+                top: '120px', // espacio para header
+                bottom: '60px', // espacio para footer
+                left: '40px',
+                right: '40px',
+            }
         });
-
-        if(Buffer.isBuffer(pdfBufferRaw)) console.log("no es buffer")
-        else console.log("es buffer")
 
         const pdfBuffer = Buffer.from(pdfBufferRaw);
 
@@ -149,7 +208,6 @@ export const getReportPdfBase64 = async (req: Request, res: Response) => {
         if (!report || !report.pdf) {
             return res.status(404).json({ message: 'PDF not found' });
         }
-        console.log(report.pdf);
 
         const base64 = report.pdf.toString('base64');
         const dataUrl = `data:application/pdf;base64,${base64}`;
