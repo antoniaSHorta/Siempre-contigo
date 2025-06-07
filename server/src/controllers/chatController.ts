@@ -22,7 +22,7 @@ const talkjsAPI = axios.create({
 
 export const createConversationHttp = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const user = req.user;
-    const { title, participants: participantIds } = req.body;
+    const { title, participants: participantIds, subject } = req.body;
 
     if (!user) {
         return next(new AppError('Usuario no autenticado.', 401));
@@ -40,7 +40,7 @@ export const createConversationHttp = async (req: RequestWithUser, res: Response
             conversationUrl,
             {
                 participants: allParticipants,
-                subject: title,
+                subject: subject,
             }
         );
         res.status(201).json(conversationResponse.data);
@@ -166,6 +166,8 @@ export const deleteMessageHttp = async (req: Request, res: Response, next: NextF
     }
 };
 
+// Para conseuguir los contactos disponibles de un usuario, para familiares/cuidadores solo aparecen aquellos usuarios
+// con los que comparta residente en las tablas Residente Familiar/Cuidador
 export const getAvailableContacts = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const { userId } = req.params;
     const requestingUserRole = req.user?.role; 

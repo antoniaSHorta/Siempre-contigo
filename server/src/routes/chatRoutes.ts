@@ -17,7 +17,7 @@ router.use(protect);
 
 // --- Rutas Generales para Conversaciones ---
 router.get('/', getConversationsHttp);
-router.post('/', createConversationHttp);
+router.put('/', createConversationHttp);
 
 // --- Rutas Para conseguir los contactos
 router.get('/availableContacts/:userId',getAvailableContacts)

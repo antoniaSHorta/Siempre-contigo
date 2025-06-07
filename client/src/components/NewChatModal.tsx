@@ -33,41 +33,6 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCrea
   const [allUsers, setAllUsers] = useState<SelectableUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     const fetchUsers = async () => {
-  //       setIsLoading(true);
-  //       setError(null);
-  //       try {
-  //         const token = localStorage.getItem("token");
-  //         const response = await axios.get(`${API_BASE_URL}/admin`, {
-  //           headers: { Authorization: `Bearer ${token}` },
-  //         });
-
-  //         const selectableUsers = response.data.users
-  //           .filter((u: any) => u.id.toString() !== currentUser?.id.toString())
-  //           .map((u: any): SelectableUser => ({
-  //               id: u.id.toString(),
-  //               name: u.name,
-  //               avatar: `https://i.pravatar.cc/150?u=${u.id}`
-  //           }));
-  //         setAllUsers(selectableUsers);
-  //       } catch (err) {
-  //         setError("No se pudo cargar la lista de usuarios.");
-  //         console.error(err);
-  //       } finally {
-  //         setIsLoading(false);
-  //       }
-  //     };
-  //     fetchUsers();
-  //   } else {
-  //       setSearchText("");
-  //       setSelectedContacts(new Set());
-  //       setIsGroupMode(false);
-  //       setGroupName("");
-  //   }
-  // }, [isOpen, currentUser]);
   
   useEffect(() => {
     if (isOpen) {
@@ -76,26 +41,31 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCrea
         setError(null);
         try {
           const token = localStorage.getItem("token");
-          const response = await axios.get(`${API_BASE_URL}/chat/availableContacts/${currentUser.id}`, {
+          const response = await axios.get(`${API_BASE_URL}/chat/availableContacts/${currentUser?.id}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          console.log(response)
+          console.log("Available contacts response:", response.data);
           const selectableUsers = response.data.data
             .filter((u: any) => u.id.toString() !== currentUser?.id.toString())
             .map((u: any): SelectableUser => ({
                 id: u.id.toString(),
                 name: u.name,
-                avatar: `https://i.pravatar.cc/150?u=${u.id}`
+                avatar: `https://i.pravatar.cc/150?u=${u.id}` 
             }));
           setAllUsers(selectableUsers);
         } catch (err) {
           setError("No se pudo cargar la lista de usuarios.");
-          console.error(err);
+          console.error("Error fetching available users:", err);
         } finally {
           setIsLoading(false);
         }
       };
-      fetchUsers();
+      if (currentUser?.id) {
+          fetchUsers();
+      } else {
+          setIsLoading(false);
+          setError("ID de usuario actual no disponible.");
+      }
     } else {
         setSearchText("");
         setSelectedContacts(new Set());
@@ -107,7 +77,12 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCrea
 
   const handleContactSelect = (contactId: string) => {
     if (!isGroupMode) {
-      handleCreate([contactId]);
+      const selectedUser = allUsers.find(u => u.id === contactId);
+      if (selectedUser) {
+        handleCreate([contactId], selectedUser.name);
+      } else {
+        presentToast({ message: 'Contacto no encontrado.', duration: 2000, color: 'danger' });
+      }
     } else {
       const newSelection = new Set(selectedContacts);
       if (newSelection.has(contactId)) {
@@ -119,7 +94,7 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCrea
     }
   };
 
-  const handleCreate = async (participantIds?: string[]) => {
+  const handleCreate = async (participantIds?: string[], singleChatSubject?: string) => {
     const finalParticipantIds = participantIds || Array.from(selectedContacts);
 
     if (finalParticipantIds.length === 0) {
@@ -138,16 +113,38 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCrea
     setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${API_BASE_URL}/chat`, {
-        title: isGroup ? groupName : null,
+      
+      let chatTitle: string | null = null;
+      let chatSubject: string = 'Chat';
+
+      if (isGroup) {
+          chatTitle = groupName.trim();
+          chatSubject = groupName.trim();
+      } else {
+          chatTitle = null; 
+          chatSubject = singleChatSubject || 'Chat Individual';
+      }
+
+      console.log("Creating chat with payload:", {
+          title: chatTitle,
+          participants: allParticipants,
+          subject: chatSubject,
+      });
+
+      await axios.put(`${API_BASE_URL}/chat`, {
+        title: chatTitle,
         participants: allParticipants,
+        subject: chatSubject,
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      presentToast({ message: 'Chat creado exitosamente', duration: 2000, color: 'success' });
       onChatCreated(); 
+      onClose();
     } catch (err) {
       presentToast({ message: 'Error al crear el chat', duration: 2000, color: 'danger' });
-      console.error(err);
+      console.error("Error al crear el chat:", err);
     } finally {
       setIsLoading(false);
     }
