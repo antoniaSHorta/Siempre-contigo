@@ -1,156 +1,129 @@
-"use client"
-
-import type React from "react"
-
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonAvatar, IonLabel, IonBadge, IonIcon, IonSearchbar, IonFab, IonFabButton, useIonRouter, IonToast } from "@ionic/react"
-import { add, chatbubbleEllipses } from "ionicons/icons"
-import { useState } from "react"
-import NewChatModal from "../components/NewChatModal"
-import "./ChatList.css"
-import "../components/NewChatModal.css"
-import logo from "../assets/logo.png"
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonAvatar, IonLabel,
+  IonBadge, IonIcon, IonSearchbar, IonFab, IonFabButton, useIonRouter, IonToast, useIonViewWillEnter,
+  IonSpinner, IonText, IonButton
+} from "@ionic/react";
+import { add, chatbubbleEllipses } from "ionicons/icons";
+import NewChatModal from "../components/NewChatModal";
+import "./ChatList.css";
+import axios from "axios";
+import { useAuth } from "../contexts/AuthContext";
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
+import logo from "../assets/logo.png";
 
 interface Chat {
-  id: string
-  name: string
-  lastMessage: string
-  timestamp: string
-  unreadCount: number
-  avatar: string
-  isOnline: boolean
+  id: string;
+  name: string;
+  lastMessage: string;
+  avatar: string;
+  timestamp: string;
+  unreadCount: number;
+  isOnline: boolean;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 const ChatList: React.FC = () => {
-  const router = useIonRouter()
-  const [searchText, setSearchText] = useState("")
-  const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false)
-  const [showToast, setShowToast] = useState(false)
-  const [toastMessage, setToastMessage] = useState("")
+  const router = useIonRouter();
+  const { user, logout } = useAuth();
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState("");
+  const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
-  // Datos de ejemplo - estos vendrán del backend
-  const [chats, setChats] = useState<Chat[]>([
-    {
-      id: "1",
-      name: "María González",
-      lastMessage: "Hola, ¿cómo estás?",
-      timestamp: "10:30",
-      unreadCount: 2,
-      avatar: "https://i.pravatar.cc/150?img=1",
-      isOnline: true,
-    },
-    {
-      id: "2",
-      name: "Carlos Rodríguez",
-      lastMessage: "Perfecto, nos vemos mañana",
-      timestamp: "09:15",
-      unreadCount: 0,
-      avatar: "https://i.pravatar.cc/150?img=2",
-      isOnline: false,
-    },
-    {
-      id: "3",
-      name: "Ana Martínez",
-      lastMessage: "Gracias por la información",
-      timestamp: "Ayer",
-      unreadCount: 1,
-      avatar: "https://i.pravatar.cc/150?img=3",
-      isOnline: true,
-    },
-    {
-      id: "4",
-      name: "Luis Fernández",
-      lastMessage: "👍",
-      timestamp: "Ayer",
-      unreadCount: 0,
-      avatar: "https://i.pravatar.cc/150?img=4",
-      isOnline: false,
-    },
-    {
-      id: "5",
-      name: "Grupo Proyecto",
-      lastMessage: "Juan: Excelente trabajo equipo",
-      timestamp: "2 días",
-      unreadCount: 5,
-      avatar: "https://i.pravatar.cc/150?img=5",
-      isOnline: true,
-    },
-  ])
-
-  const filteredChats = chats.filter((chat) => chat.name.toLowerCase().includes(searchText.toLowerCase()))
-
-  const handleChatClick = (chatId: string) => {
-    router.push(`/app/chat/${chatId}`, "forward")
-  }
-
-  const handleCreateChat = (contactIds: string[], isGroup: boolean) => {
-    // Simular creación de chat
-    const newChatId = Date.now().toString()
-
-    if (isGroup) {
-      // Crear chat grupal
-      const newGroupChat: Chat = {
-        id: newChatId,
-        name: `Grupo ${contactIds.length} personas`,
-        lastMessage: "Grupo creado",
-        timestamp: "Ahora",
-        unreadCount: 0,
-        avatar: "https://i.pravatar.cc/150?img=10",
-        isOnline: true,
+  const fetchChats = useCallback(async () => {
+    if (!user) {
+        setIsLoading(false);
+        setError("Usuario no autenticado.");
+        return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+          throw new Error("No se encontró token de autenticación");
       }
+      
+      const response = await axios.get(`${API_BASE_URL}/chat`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      const talkJSConversations = response.data.data;
 
-      setChats((prev) => [newGroupChat, ...prev])
-      setToastMessage(`Grupo creado con ${contactIds.length} personas`)
-      setShowToast(true)
+      const formattedChats = Object.values(talkJSConversations).map((convo: any): Chat => {
+        const otherParticipants = Object.values(convo.participants).filter((p: any) => p.id !== user.id.toString());
+        
+        let chatName = convo.subject || "Chat Grupal";
+        let chatAvatar = `https://i.pravatar.cc/150?u=${convo.id}`;
+        let isOnline = false;
 
-      // Navegar al nuevo chat grupal
-      setTimeout(() => {
-        router.push(`/app/chat/${newChatId}`, "forward")
-      }, 1000)
-    } else {
-      // Crear chat individual
-      const contactId = contactIds[0]
-
-      // Verificar si ya existe un chat con este contacto
-      const existingChat = chats.find((chat) => chat.id === contactId)
-
-      if (existingChat) {
-        // Si ya existe, navegar al chat existente
-        router.push(`/app/chat/${existingChat.id}`, "forward")
-        setToastMessage("Chat ya existente")
-        setShowToast(true)
-      } else {
-        // Crear nuevo chat individual
-        const contactNames = [
-          "Ana Martínez",
-          "Carlos Rodríguez",
-          "Luis Fernández",
-          "Sofia García",
-          "Miguel Torres",
-          "Elena Ruiz",
-        ]
-        const contactName = contactNames[Number.parseInt(contactId) - 1] || "Nuevo contacto"
-
-        const newChat: Chat = {
-          id: contactId,
-          name: contactName,
-          lastMessage: "Chat iniciado",
-          timestamp: "Ahora",
-          unreadCount: 0,
-          avatar: `https://i.pravatar.cc/150?img=${contactId}`,
-          isOnline: true,
+        if (otherParticipants.length === 1) {
+            const other = otherParticipants[0] as any;
+            chatName = other.name || "Usuario desconocido";
+            chatAvatar = other.photoUrl || `https://i.pravatar.cc/150?u=${other.id}`;
+            isOnline = other.presence === 'online';
         }
 
-        setChats((prev) => [newChat, ...prev])
-        setToastMessage(`Chat iniciado con ${contactName}`)
-        setShowToast(true)
+        let timestamp = 'hace tiempo';
+        if (convo.lastMessage && typeof convo.lastMessage.createdAt === 'string') {
+            try {
+                timestamp = formatDistanceToNow(parseISO(convo.lastMessage.createdAt), { addSuffix: true, locale: es });
+            } catch (e) {
+                console.error("Error al parsear la fecha: ", convo.lastMessage.createdAt);
+            }
+        }
 
-        // Navegar al nuevo chat
-        setTimeout(() => {
-          router.push(`/app/chat/${contactId}`, "forward")
-        }, 1000)
+        return {
+          id: convo.id,
+          name: chatName,
+          lastMessage: convo.lastMessage?.text || "Conversación iniciada",
+          timestamp: timestamp,
+          unreadCount: convo.unreadMessageCount || 0,
+          avatar: chatAvatar,
+          isOnline: isOnline
+        };
+      });
+
+      setChats(formattedChats);
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 401) {
+        setError("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+        logout();
+      } else {
+        setError("No se pudieron cargar los chats.");
       }
+      console.error(err);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  }, [user, logout]);
+
+  useIonViewWillEnter(() => {
+    fetchChats();
+  });
+
+  const handleChatClick = (chatId: string) => {
+    router.push(`/app/chat/${chatId}`, "forward");
+  };
+  
+  const handleChatCreated = () => {
+    setIsNewChatModalOpen(false);
+    setToastMessage("Chat creado con éxito");
+    setShowToast(true);
+    fetchChats();
+  };
+
+  const filteredChats = chats.filter((chat) => 
+    chat.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <IonPage className="chat-list-page">
@@ -171,36 +144,53 @@ const ChatList: React.FC = () => {
           className="chat-searchbar"
         />
 
-        <IonList className="chat-list">
-          {filteredChats.map((chat) => (
-            <IonItem key={chat.id} button onClick={() => handleChatClick(chat.id)} className="chat-item">
-              <div className="chat-avatar-container">
-                <IonAvatar className="chat-avatar">
-                  <img src={chat.avatar || "/placeholder.svg"} alt={chat.name} />
-                </IonAvatar>
-                {chat.isOnline && <div className="online-indicator"></div>}
-              </div>
+        {isLoading && (
+            <div className="loading-container">
+                <IonSpinner name="crescent" />
+                <p>Cargando tus chats...</p>
+            </div>
+        )}
 
-              <IonLabel className="chat-label">
-                <div className="chat-header">
-                  <h2 className="chat-name">{chat.name}</h2>
-                  <span className="chat-timestamp">{chat.timestamp}</span>
-                </div>
-                <div className="chat-preview">
-                  <p className="chat-last-message">{chat.lastMessage}</p>
-                  {chat.unreadCount > 0 && <IonBadge className="unread-badge">{chat.unreadCount}</IonBadge>}
-                </div>
-              </IonLabel>
-            </IonItem>
-          ))}
-        </IonList>
+        {error && (
+            <div className="error-container">
+                <IonIcon icon={chatbubbleEllipses} className="empty-icon" />
+                <h3>Error</h3>
+                <p>{error}</p>
+                <IonButton onClick={fetchChats}>Reintentar</IonButton>
+            </div>
+        )}
 
-        {filteredChats.length === 0 && (
-          <div className="empty-state">
-            <IonIcon icon={chatbubbleEllipses} className="empty-icon" />
-            <h3>No se encontraron conversaciones</h3>
-            <p>Intenta con otros términos de búsqueda</p>
-          </div>
+        {!isLoading && !error && (
+            <IonList className="chat-list">
+                {filteredChats.length > 0 ? (
+                    filteredChats.map((chat) => (
+                        <IonItem key={chat.id} button onClick={() => handleChatClick(chat.id)} className="chat-item" lines="none">
+                            <div className="chat-avatar-container">
+                                <IonAvatar className="chat-avatar">
+                                <img src={chat.avatar} alt={chat.name} onError={(e) => (e.currentTarget.src = 'https://i.pravatar.cc/150')} />
+                                </IonAvatar>
+                                {chat.isOnline && <div className="online-indicator"></div>}
+                            </div>
+                            <IonLabel className="chat-label">
+                                <div className="chat-header">
+                                <h2 className="chat-name">{chat.name}</h2>
+                                <span className="chat-timestamp">{chat.timestamp}</span>
+                                </div>
+                                <div className="chat-preview">
+                                <p className="chat-last-message">{chat.lastMessage}</p>
+                                {chat.unreadCount > 0 && <IonBadge className="unread-badge">{chat.unreadCount}</IonBadge>}
+                                </div>
+                            </IonLabel>
+                        </IonItem>
+                    ))
+                ) : (
+                    <div className="empty-state">
+                        <IonIcon icon={chatbubbleEllipses} className="empty-icon" />
+                        <h3>No tienes conversaciones</h3>
+                        <p>Inicia un nuevo chat para comenzar</p>
+                    </div>
+                )}
+            </IonList>
         )}
 
         <IonFab vertical="bottom" horizontal="end" slot="fixed">
@@ -213,7 +203,7 @@ const ChatList: React.FC = () => {
       <NewChatModal
         isOpen={isNewChatModalOpen}
         onClose={() => setIsNewChatModalOpen(false)}
-        onCreateChat={handleCreateChat}
+        onChatCreated={handleChatCreated}
       />
 
       <IonToast
@@ -224,7 +214,7 @@ const ChatList: React.FC = () => {
         position="top"
       />
     </IonPage>
-  )
-}
+  );
+};
 
-export default ChatList
+export default ChatList;
