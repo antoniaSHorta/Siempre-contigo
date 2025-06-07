@@ -66,7 +66,6 @@ export const AdminResidents: React.FC = () => {
             else await activateResident(residentId, token!);
             setToastMessage(`Residente ${!isActive ? 'activado' : 'desactivado'} correctamente`);
             fetchResidents();
-            console.log(residents)
         } catch (err) {
             setToastMessage('No se pudo actualizar el estado del residente');
         }
@@ -115,9 +114,9 @@ export const AdminResidents: React.FC = () => {
                         onIonChange={(e) => setFilterState(e.detail.value)}
                         >
                         <IonSelectOption value="Todos">Todos</IonSelectOption>
-                        <IonSelectOption value="Bueno">Bueno</IonSelectOption>
-                        <IonSelectOption value="Regular">Regular</IonSelectOption>
-                        <IonSelectOption value="Delicado">Delicado</IonSelectOption>
+                        <IonSelectOption value="Estable">Estable</IonSelectOption>
+                        <IonSelectOption value="Requiere atención especial">Requiere atención especial</IonSelectOption>
+                        <IonSelectOption value="Requiere terapia física">Requiere terapia física</IonSelectOption>
                         <IonSelectOption value="Crítico">Crítico</IonSelectOption>
                         <IonSelectOption value="Recuperación">Recuperación</IonSelectOption>
                         </IonSelect>
@@ -127,7 +126,7 @@ export const AdminResidents: React.FC = () => {
 
             <div className="admin-users-content">
                 {loading ? (
-                    <p>Cargando residentes...</p>
+                    <p className="admin-no-users-message">Cargando residentes...</p>
                 ) : currentResidents.length === 0 ? (
                     <p className="admin-no-users-message">No hay residentes disponibles.</p>
                 ) : (
@@ -161,46 +160,34 @@ export const AdminResidents: React.FC = () => {
                 )}
             </div>
             
-            {residents.length > 0 && (
+            {(totalPages > 1 && !loading) && (
                 <div className="admin-users-pagination-fixed">
                     <div className="admin-users-pagination">
-                        <button
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage(prev => prev - 1)}
-                            className="admin-users-pagination-btn"
-                        >
-                            Anterior
-                        </button>
-
-                        {[...Array(totalPages)].map((_, index) => {
-                            const pageNumber = index + 1;
-                            return (
-                                <button
-                                    key={pageNumber}
-                                    className={`admin-users-page-number ${currentPage === pageNumber ? 'active' : ''}`}
-                                    onClick={() => setCurrentPage(pageNumber)}
-                                >
-                                    {pageNumber}
-                                </button>
-                            );
-                        })}
-
-                        <button
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage(prev => prev + 1)}
-                            className="admin-users-pagination-btn"
-                        >
-                            Siguiente
-                        </button>
+                        <IonItem className='admin-filter-item'>
+                            <IonLabel>Página</IonLabel>
+                            <IonSelect
+                                interface="popover"
+                                value={currentPage}
+                                onIonChange={(e) => setCurrentPage(Number(e.detail.value))}
+                            >
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                    <IonSelectOption key={i + 1} value={i + 1}>
+                                        {i + 1}
+                                    </IonSelectOption>
+                                ))}
+                            </IonSelect>
+                        </IonItem>
                     </div>
                 </div>
             )}
 
-            <IonFab vertical="bottom" slot="fixed" className="admin-users-fab">
-                <IonFabButton onClick={goToAddResident}>
-                    <IonIcon icon={personAddOutline} />
-                </IonFabButton>
-            </IonFab>
+            {!loading&& (
+                <IonFab vertical="bottom" slot="fixed" className="admin-users-fab">
+                    <IonFabButton onClick={goToAddResident}>
+                        <IonIcon icon={personAddOutline} />
+                    </IonFabButton>
+                </IonFab>
+            )}
 
             <IonToast
                 isOpen={!!toastMessage}

@@ -1,8 +1,11 @@
+import { IResident } from "./IResident";
+import { IUser } from "./IUser";
+
 export interface IReport {
   id: number;
   date?: string; 
   description?: string;
   pdf?: string; 
-  residentId: number;
-  senderId?: number;
+  resident: IResident;
+  sender?: IUser;
 }

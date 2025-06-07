@@ -5,11 +5,29 @@ import {
     IonLoading,
     IonButton,
     useIonRouter,
+    IonItem,
+    IonIcon,
+    IonLabel,
 } from '@ionic/react';
+
+import {
+    personCircleOutline,
+    person,
+    calendar,
+    heart,
+    home,
+    logIn,
+    statsChart,
+    chevronBack,
+    peopleOutline,
+    paperPlane,
+    book
+} from 'ionicons/icons';
 import { useParams } from 'react-router-dom';
 import { getReportById,getReportPdfBase64} from '../../services/reportService';
 import Header from '../../components/Header';
 import '../Admin/Styles/AdminEdit.css';
+import '../Admin/Styles/AdminDetail.css';
 
 import { IReport } from '../../interfaces/IReport';
 
@@ -28,6 +46,7 @@ export const ReportDetail: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+    const [numPages, setNumPages] = useState(0);
 
     const base64ToBlob =(base64Data: string, contentType = 'application/pdf'): Blob  =>{
         const byteCharacters = atob(base64Data);
@@ -40,22 +59,12 @@ export const ReportDetail: React.FC = () => {
     }
 
     useEffect(() => {
-    return () => {
-        if (pdfUrl) {
-        URL.revokeObjectURL(pdfUrl);
-        }
-    };
-    }, [pdfUrl]);
-
-    useEffect(() => {
         const fetchReport = async () => {
             try {
                 const response = await getReportById(numericId, token);
-                console.log(response.pdf.data)
                 setReport(response);
                 const base64 = await getReportPdfBase64(numericId, token);
-                console.log(base64.pdfBase64)
-                const base64String = base64.pdfBase64.split(',')[1]; // quitar el prefijo
+                const base64String = base64.pdfBase64.split(',')[1]; 
                 const blob = base64ToBlob(base64String);
                 const url = URL.createObjectURL(blob);
                 setPdfUrl(url);
@@ -71,10 +80,10 @@ export const ReportDetail: React.FC = () => {
     if (loading) return <IonLoading isOpen={true} message="Cargando reporte..." />;
 
     return (
-        <IonPage className="admin-user-edit-page">
+        <IonPage className="admin-user-detail-page">
             <Header title="Detalle del Reporte" grayBackground />
-            <div className="admin-user-edit-content">
-                <div className="admin-user-edit-container">
+            <div className="admin-user-detail-content">
+                <div className="admin-user-detail-card">
                     {error && (
                         <IonText color="danger" className="admin-user-edit-message error">
                             <p>{error}</p>
@@ -82,58 +91,79 @@ export const ReportDetail: React.FC = () => {
                     )}
 
                     {report && (
-                        <>
+                        <div className="admin-user-detail-items-container">
                             <IonText className="admin-user-edit-username">
                                 <h2>Reporte #{report.id}</h2>
                             </IonText>
                             {report.date && (
-                                <p><strong>Fecha:</strong> {new Date(report.date).toLocaleDateString()}</p>
+                                <IonItem>
+                                    <IonIcon icon={calendar} slot='start'/>
+                                    <IonLabel>
+                                        <h2>Fecha</h2>
+                                        <p>{new Date(report.date).toLocaleDateString()}</p>
+                                    </IonLabel>
+                                </IonItem>
+                                
                             )}
                             {report.description && (
-                                <p><strong>Descripción:</strong> {report.description}</p>
+                                <IonItem>
+                                    <IonIcon icon={book} slot='start'/>
+                                    <IonLabel>
+                                        <h2>Descripción</h2>
+                                        <p>{report.description}</p>
+                                    </IonLabel>
+                                </IonItem>
                             )}
-                            <p><strong>Residente ID:</strong> {report.residentId}</p>
-                            {report.senderId && (
-                                <p><strong>Remitente ID:</strong> {report.senderId}</p>
+                            <IonItem>
+                                <IonIcon icon={person} slot='start'/>
+                                <IonLabel>
+                                    <h2>Residente</h2>
+                                    <p>{report.resident?.nombre}</p>
+                                </IonLabel>
+                            </IonItem>
+                            {report.sender && (
+                                <IonItem>
+                                    <IonIcon icon={person} slot='start'/>
+                                    <IonLabel>
+                                        <h2>Remitente</h2>
+                                        <p>{report.sender?.name}</p>
+                                    </IonLabel>
+                                </IonItem>
                             )}
 
                             {pdfUrl && (
-                                <div style={{ margin: '1rem 0' }}>
-                                    <strong>Documento PDF:</strong>
-                                    <iframe
-                                        src={pdfUrl}
-                                        title="Reporte PDF"
-                                        width="100%"
-                                        height="500px"
-                                        style={{ border: '1px solid #ccc', marginTop: '0.5rem' }}
-                                    />
-                                    <IonButton
-                                    expand="block"
-                                    onClick={() => {
-                                        if (pdfUrl) {
-                                        const link = document.createElement('a');
-                                        link.href = pdfUrl;
-                                        link.download = `reporte_${report?.id}.pdf`;
-                                        document.body.appendChild(link);
-                                        link.click();
-                                        document.body.removeChild(link);
-                                        }
-                                    }}
-                                    >
-                                        Descargar PDF
-                                    </IonButton>
-                                </div>
+                                <button
+                                    className="pdf-detail-button"
+                                    onClick={() => window.open(pdfUrl, '_blank')}
+                                >
+                                    Ver PDF
+                                </button>
                             )}
-
+                            
+                            <button
+                                className="admin-user-detail-button"
+                                onClick={() => {
+                                    if (pdfUrl) {
+                                    const link = document.createElement('a');
+                                    link.href = pdfUrl;
+                                    link.download = `reporte_${report?.id}.pdf`;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    }
+                                }}
+                                >
+                                    Descargar PDF
+                            </button>
                             <IonButton
                                 expand="block"
                                 fill="outline"
                                 color="medium"
-                                onClick={() => router.push(`/app/reports/resident/${report.residentId}`)}
+                                onClick={() => router.push(`/app/reports/resident/${report.resident.id}`)}
                             >
                                 Volver
                             </IonButton>
-                        </>
+                        </div>
                     )}
                 </div>
             </div>

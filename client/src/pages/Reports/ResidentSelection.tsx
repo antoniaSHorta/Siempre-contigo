@@ -12,7 +12,7 @@ import {
     IonToast,
     IonAvatar
 } from '@ionic/react';
-import { personCircleOutline } from 'ionicons/icons';
+import { personCircleOutline,person } from 'ionicons/icons';
 import { useIonRouter } from '@ionic/react';
 import { IResident } from '../../interfaces/IResident';
 import { getAllResidents, getAllResidentsInactiveAndActive } from '../../services/residentService'; 
@@ -81,10 +81,12 @@ export const ResidentSelection: React.FC = () => {
         router.push(`/app/reports/resident/${id}`, 'forward');
     };
 
+
     return (
         <IonPage className="admin-users-page">
             <Header title="Seleccionar residente" grayBackground />
 
+            {(residents && !loading)&& (
             <div className="admin-users-filters">
                 <IonItem className="admin-filter-item">
                     <IonInput
@@ -104,18 +106,18 @@ export const ResidentSelection: React.FC = () => {
                         onIonChange={(e) => setFilterState(e.detail.value)}
                     >
                         <IonSelectOption value="Todos">Todos</IonSelectOption>
-                        <IonSelectOption value="Bueno">Bueno</IonSelectOption>
-                        <IonSelectOption value="Regular">Regular</IonSelectOption>
-                        <IonSelectOption value="Delicado">Delicado</IonSelectOption>
+                        <IonSelectOption value="Estable">Estable</IonSelectOption>
+                        <IonSelectOption value="Requiere atención especial">Requiere atención especial</IonSelectOption>
+                        <IonSelectOption value="Requiere terapia física">Requiere terapia física</IonSelectOption>
                         <IonSelectOption value="Crítico">Crítico</IonSelectOption>
                         <IonSelectOption value="Recuperación">Recuperación</IonSelectOption>
                     </IonSelect>
                 </IonItem>
             </div>
-
+            )}
             <div className="admin-users-content">
                 {loading ? (
-                    <p>Cargando residentes...</p>
+                    <p className="admin-no-users-message">Cargando residentes...</p>
                 ) : currentResidents.length === 0 ? (
                     <p className="admin-no-users-message">No hay residentes disponibles.</p>
                 ) : (
@@ -128,8 +130,8 @@ export const ResidentSelection: React.FC = () => {
                                 button
                                 onClick={() => goToResidentReports(resident.id)}
                             >
-                                <IonAvatar slot="start">
-                                    <IonIcon icon={personCircleOutline} style={{ fontSize: '32px' }} />
+                                <IonAvatar className='large-avatar'>
+                                    <IonIcon icon={personCircleOutline} className='report-avatar-icon' />
                                 </IonAvatar>
                                 <IonLabel>
                                     <h2 className="admin-users-name">{resident.nombre}</h2>
@@ -142,35 +144,23 @@ export const ResidentSelection: React.FC = () => {
                 )}
             </div>
 
-            {filteredResidents.length > 0 && (
+            {(totalPages > 1 && !loading) && (
                 <div className="admin-users-pagination-fixed">
                     <div className="admin-users-pagination">
-                        <button
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage(prev => prev - 1)}
-                            className="admin-users-pagination-btn"
-                        >
-                            Anterior
-                        </button>
-                        {[...Array(totalPages)].map((_, index) => {
-                            const pageNumber = index + 1;
-                            return (
-                                <button
-                                    key={pageNumber}
-                                    className={`admin-users-page-number ${currentPage === pageNumber ? 'active' : ''}`}
-                                    onClick={() => setCurrentPage(pageNumber)}
-                                >
-                                    {pageNumber}
-                                </button>
-                            );
-                        })}
-                        <button
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage(prev => prev + 1)}
-                            className="admin-users-pagination-btn"
-                        >
-                            Siguiente
-                        </button>
+                        <IonItem className='admin-filter-item'>
+                            <IonLabel>Página</IonLabel>
+                            <IonSelect
+                                interface="popover"
+                                value={currentPage}
+                                onIonChange={(e) => setCurrentPage(Number(e.detail.value))}
+                            >
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                    <IonSelectOption key={i + 1} value={i + 1}>
+                                        {i + 1}
+                                    </IonSelectOption>
+                                ))}
+                            </IonSelect>
+                        </IonItem>
                     </div>
                 </div>
             )}

@@ -90,7 +90,6 @@ export const AdminCreateUser: React.FC = () => {
             isActive: true,
             isConnected: false,
         };
-        console.log(newUser)
 
         await createUserAdmin(newUser, token);
         setSuccess('Usuario creado correctamente.');
@@ -105,6 +104,7 @@ export const AdminCreateUser: React.FC = () => {
 
         setTimeout(() => {
             router.push('/app/admin/users');
+            window.location.reload();
         }, 1000);
         } catch (err) {
             setError('Error al crear el usuario. Inténtalo de nuevo.');

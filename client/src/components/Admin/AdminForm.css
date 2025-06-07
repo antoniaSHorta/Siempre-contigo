@@ -91,3 +91,37 @@
     --min-height: 45px;
     --border: 1px solid #ccc;
 }
+
+.date-picker-modal-form {
+  --width: 300px; 
+  --height: 350px;
+  --border-radius: 8px; 
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+  align-items: center;
+}
+
+.date-picker-modal-form .datetime-content {
+    padding: 16px; 
+}
+
+.date-picker-modal-form ion-datetime::part(calendar-day)::after { 
+  background: var(--primary-color) !important;
+  color: white !important; 
+}
+
+.date-picker-modal-form ion-datetime::part(calendar-day):hover { 
+    background: rgba(7, 64, 123, 0.1);
+    color: var(--primary-color); 
+}
+
+.date-picker-modal-form ion-datetime::part(day-button-text) {
+    color: var(--header-text-color); 
+}
+
+.date-picker-modal-form ion-datetime::part(day-button-text).calendar-day-today { 
+    color: var(--secondary-color); 
+}
+
+.date-picker-modal-form ion-datetime::part(calendar-day-active) .day-button-text { 
+  color: white !important;
+}

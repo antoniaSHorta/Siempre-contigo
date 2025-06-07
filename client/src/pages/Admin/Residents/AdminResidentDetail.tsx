@@ -43,7 +43,6 @@ const AdminResidentDetail: React.FC = () => {
         const fetchResident = async () => {
             try {
                 const response = await getResidentById(numericId, token);
-                console.log(response)
                 setResident(response);
             } catch (err) {
                 setError('No se pudo cargar el residente.');
@@ -136,41 +135,41 @@ const AdminResidentDetail: React.FC = () => {
                             </IonItem>
 
                             <IonList>
-                                <IonListHeader>
                                     <IonLabel>
-                                        <h3>
+                                        <h2>
                                             <IonIcon icon={peopleOutline} /> Cuidadores asignados
-                                        </h3>
-                                    </IonLabel>
-                                </IonListHeader>
-                                {resident.cuidadores != null && resident.cuidadores.length > 0 ? (
-                                    resident.cuidadores.map((cuidador) => (
-                                        <IonItem key={cuidador.id}>
-                                            {cuidador.name}
-                                        </IonItem>
-                                    ))
-                                ) : (
-                                    <IonItem>No hay cuidadores asignados</IonItem>
-                                )}
+                                        </h2>
+                                    {resident.cuidadores != null && resident.cuidadores.length > 0 ? (
+                                        resident.cuidadores.map((cuidador) => (
+                                            <IonItem key={cuidador.id}>
+                                                <IonLabel>
+                                                    <p >{cuidador.name}</p>
+                                                </IonLabel>
+                                            </IonItem>
+                                        ))
+                                    ) : (
+                                        <IonItem>No hay cuidadores asignados</IonItem>
+                                    )}
+                                </IonLabel>
                             </IonList>
 
                             <IonList>
-                                <IonListHeader>
-                                    <IonLabel>
-                                        <h3>
-                                            <IonIcon icon={peopleOutline} /> Familiares asignados
-                                        </h3>
-                                    </IonLabel>
-                                </IonListHeader>
+                                <IonLabel>
+                                    <h2>
+                                        <IonIcon icon={peopleOutline} /> Familiares asignados
+                                    </h2>
                                 {resident.familiares != null && resident.familiares.length > 0 ? (
                                     resident.familiares.map((familiar) => (
                                         <IonItem key={familiar.id}>
-                                            {familiar.name}
+                                            <IonLabel>
+                                                <p >{familiar.name}</p>
+                                            </IonLabel>
                                         </IonItem>
                                     ))
                                 ) : (
                                     <IonItem>No hay familiares asignados</IonItem>
                                 )}
+                                </IonLabel>
                             </IonList>
                         </div>
 
@@ -199,7 +198,7 @@ const AdminResidentDetail: React.FC = () => {
                             expand="block"
                             fill="outline"
                             color="medium"
-                            onClick={() => router.push('/app/admin/residents')}
+                            onClick={handleReturn}
                         >
                             Cancelar
                         </IonButton>
