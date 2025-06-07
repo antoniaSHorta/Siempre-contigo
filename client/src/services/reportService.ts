@@ -51,7 +51,6 @@ export async function generatePdfReport(
             }
         );
 
-        console.log(response)
 
         return response;
     } catch (error) {

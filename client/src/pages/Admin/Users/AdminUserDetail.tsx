@@ -38,13 +38,11 @@ export const AdminUserDetail: React.FC = () => {
         const fetchUser = async () => {
             try {
                 const response = await getUserByIdAdmin(numericId, token);
-                console.log(response)
                 setUser(response.user);
             } catch (err) {
                 setError('No se pudo cargar el usuario.');
             } finally {
                 setLoading(false);
-                console.log(loading)
             }
         };
         fetchUser();

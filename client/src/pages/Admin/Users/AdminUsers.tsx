@@ -93,7 +93,10 @@ export const AdminUsers: React.FC = () => {
     });
 
     const goToAddUser = () => router.push('/app/admin/users/add', 'forward');
-    const goToEditUser = (id: number) => router.push(`/app/admin/users/edit/${id}`, 'forward');
+    const goToEditUser = (id: number) => {
+        router.push(`/app/admin/users/edit/${id}`, 'forward')
+        window.location.reload();
+    };
     const goToDetailUser = (id: number) => {
         router.push(`/app/admin/users/detail/${id}`, 'forward');
         window.location.reload();
@@ -137,7 +140,7 @@ export const AdminUsers: React.FC = () => {
             )}
             <div className="admin-users-content">
                 {loading ? (
-                    <p>Cargando usuarios...</p>
+                    <p className="admin-no-users-message">Cargando usuarios...</p>
                 ) : users.length === 0 ? (
                     <p className="admin-no-users-message">{errorMessage}</p>
                 ) : (
@@ -172,45 +175,34 @@ export const AdminUsers: React.FC = () => {
                     </>
                 )}
             </div>
-            {users.length > 0 && (
+            {(totalPages > 1 && !loading) && (
                 <div className="admin-users-pagination-fixed">
                     <div className="admin-users-pagination">
-                        <button
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage(prev => prev - 1)}
-                            className="admin-users-pagination-btn"
-                        >
-                            Anterior
-                        </button>
-
-                        {[...Array(totalPages)].map((_, index) => {
-                            const pageNumber = index + 1;
-                            return (
-                                <button
-                                    key={pageNumber}
-                                    className={`admin-users-page-number ${currentPage === pageNumber ? 'active' : ''}`}
-                                    onClick={() => setCurrentPage(pageNumber)}
-                                >
-                                    {pageNumber}
-                                </button>
-                            );
-                        })}
-
-                        <button
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage(prev => prev + 1)}
-                            className="admin-users-pagination-btn"
-                        >
-                            Siguiente
-                        </button>
+                        <IonItem className='admin-filter-item'>
+                            <IonLabel>Página</IonLabel>
+                            <IonSelect
+                                interface="popover"
+                                value={currentPage}
+                                onIonChange={(e) => setCurrentPage(Number(e.detail.value))}
+                            >
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                    <IonSelectOption key={i + 1} value={i + 1}>
+                                        {i + 1}
+                                    </IonSelectOption>
+                                ))}
+                            </IonSelect>
+                        </IonItem>
                     </div>
                 </div>
             )}
-            <IonFab vertical="bottom" slot="fixed" className="admin-users-fab">
-                    <IonFabButton onClick={goToAddUser}>
-                        <IonIcon icon={personAddOutline} />
-                    </IonFabButton>
-            </IonFab>
+            
+            {!loading&& (
+                <IonFab vertical="bottom" slot="fixed" className="admin-users-fab">
+                        <IonFabButton onClick={goToAddUser}>
+                            <IonIcon icon={personAddOutline} />
+                        </IonFabButton>
+                </IonFab>
+            )}
 
             <IonToast
                 isOpen={!!toastMessage}

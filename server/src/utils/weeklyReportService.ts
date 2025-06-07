@@ -17,6 +17,7 @@ export const generateAndSaveWeeklyReports = async () => {
   oneWeekAgo.setDate(now.getDate() - 7);
 
   const admin = await User.findOne({ where: { role: 'Admin' } });
+  if(!admin) return;
 
   for (const resident of residents) {
     const [activities, food, meds] = await Promise.all([
@@ -42,7 +43,8 @@ export const generateAndSaveWeeklyReports = async () => {
     ).join('');
 
     const html = generateReportHtml({
-        residentId: String(resident.id),
+        resident: resident,
+        sender: admin,
         from: oneWeekAgo.toISOString().slice(0, 10),
         to: now.toISOString().slice(0, 10),
         medication,
@@ -54,25 +56,22 @@ export const generateAndSaveWeeklyReports = async () => {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
-    const buffer = await page.pdf({
+    const pdfBufferRaw = await page.pdf({
       format: 'A4',
       printBackground: true,
+      margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' },
     });
+
+    const pdfBuffer = Buffer.from(pdfBufferRaw);
 
     await Report.create({
         date: new Date(), 
-        description: `Reporte semanal enerado del ${oneWeekAgo} al ${now}`,
-        pdf: buffer,
+        description: `Reporte semanal generado del ${oneWeekAgo} al ${now}`,
+        pdf: pdfBuffer,
         residentId: resident.id,
         senderId: admin?.id, 
     });
 
     await browser.close();
-
-    const pdfDir = path.resolve(__dirname, '../../pdfs');
-    if (!fs.existsSync(pdfDir)) fs.mkdirSync(pdfDir);
-
-    const filePath = path.join(pdfDir, `reporte_${resident.id}_${Date.now()}.pdf`);
-    fs.writeFileSync(filePath, buffer);
   }
 };

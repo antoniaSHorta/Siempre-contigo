@@ -44,7 +44,6 @@ export const AdminUserEdit: React.FC = () => {
             try {
                 const response = await getUserByIdAdmin(numericId, token);
                 const data = response.user;
-                console.log(data)
                 setUser(data);
                 setForm({
                     name: data.name,

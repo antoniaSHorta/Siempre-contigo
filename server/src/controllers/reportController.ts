@@ -5,6 +5,9 @@ import { Activity } from '../models/Activity';
 import { Alimentacion } from '../models/Alimentacion';
 import { Medicacion } from '../models/Medicacion';
 import { generateReportHtml } from '../utils/generateReportHtml'
+import { Op } from 'sequelize';
+import { User } from '../models/User';
+import { Resident } from '../models/Resident';
 
 export const listReports = async (req: Request, res: Response) => {
     try {
@@ -22,7 +25,12 @@ export const listReports = async (req: Request, res: Response) => {
 export const getReportById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const report = await Report.findByPk(id);
+        const report = await Report.findByPk(id, {
+            include: [
+                { model: Resident, as: 'resident', attributes: ['id', 'nombre'] },
+                { model: User, as: 'sender', attributes: ['id', 'name'] },
+            ],
+        });
         if (!report) return res.status(404).json({ message: 'Report not found' });
         res.json(report);
     } catch (error) {
@@ -38,12 +46,18 @@ export const generatePdfReport = async (req: Request, res: Response) => {
         const startDate = new Date(from);
         const endDate = new Date(to);
 
+        const resident = await Resident.findByPk(residentId);
+        if (!resident) return res.status(404).json({ message: 'Resident not found' });
+
+        const user = await User.findByPk(userId)
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
         const activities = await Activity.findAll({
             where: {
                 residente_id: residentId,
                 fecha: { 
-                $gte: startDate, 
-                $lte: endDate 
+                [Op.gte]: startDate,
+                [Op.lte]: endDate,
                 },
             },
             attributes: ['titulo', 'descripcion', 'fecha', 'lugar', 'estado', 'tipo'],
@@ -53,10 +67,6 @@ export const generatePdfReport = async (req: Request, res: Response) => {
         const nutritionRecords = await Alimentacion.findAll({
             where: {
                 residente_id: residentId,
-                fecha_hora: {
-                $gte: startDate,
-                $lte: endDate,
-                },
             },
             attributes: ['tipo', 'descripcion', 'hora', 'fecha_hora'],
             order: [['fecha_hora', 'ASC']],
@@ -65,10 +75,6 @@ export const generatePdfReport = async (req: Request, res: Response) => {
         const medicationRecords = await Medicacion.findAll({
             where: {
                 residente_id: residentId,
-                fecha_hora: {
-                $gte: startDate,
-                $lte: endDate,
-                },
             },
             attributes: ['nombre', 'dosis', 'horario', 'fecha_hora', 'estado'],
             order: [['fecha_hora', 'ASC']],
@@ -89,12 +95,13 @@ export const generatePdfReport = async (req: Request, res: Response) => {
         const activitiesSummary = activities
             .map(
                 (a) =>
-                `<strong>${a.titulo}</strong> (${a.tipo}) - ${a.fecha.toISOString().slice(0, 10)}<br>${a.descripcion || ''}<br>Status: ${a.estado}<br><br>`
+                `<strong>${a.titulo}</strong> (${a.tipo}) - ${a.fecha.toISOString().slice(0, 10)}<br>${a.descripcion || ''}<br>Estado: ${a.estado}<br><br>`
             )
             .join('');
 
         const htmlContent = generateReportHtml({
-            residentId,
+            resident: resident,
+            sender: user,
             from,
             to,
             medication,
@@ -106,15 +113,17 @@ export const generatePdfReport = async (req: Request, res: Response) => {
         const page = await browser.newPage();
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
-        
 
-        const pdfBuffer = await page.pdf({
+        const pdfBufferRaw = await page.pdf({
             format: 'A4',
             printBackground: true,
             margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' },
         });
 
-        console.log(pdfBuffer);
+        if(Buffer.isBuffer(pdfBufferRaw)) console.log("no es buffer")
+        else console.log("es buffer")
+
+        const pdfBuffer = Buffer.from(pdfBufferRaw);
 
         await Report.create({
             date: new Date(), 

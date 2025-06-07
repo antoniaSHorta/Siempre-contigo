@@ -147,6 +147,10 @@
     display: flex;
     flex-wrap: wrap;
     padding: 0.8rem 1.2rem;
+    --background-hover: transparent;
+    --background-focused: transparent;
+    --background-activated: transparent;
+    --ripple-color: transparent;
 }
 
 .admin-users-item ion-label {
@@ -285,6 +289,26 @@
 .admin-users-fab ion-fab-button:focus-visible {
     outline: 2px solid var(--admin-secondary-color);
     outline-offset: 4px;
+}
+
+.report-avatar-icon {
+    font-size: 80px !important;
+    color: var(--admin-secondary-color);
+    background-color: #fff;
+    padding: 1rem;
+    flex-shrink: 0;
+    margin-left: 0;
+    margin-right: 10px;
+    width: 40px !important;    
+    height: 40px !important;
+}
+
+.large-avatar {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    margin-left: 0;  
+    margin-right: 10px;    
 }
 
 @media (max-width: 480px) {
