@@ -19,6 +19,7 @@ import ChatDetail from './pages/ChatDetail';
 import Medicamentos from './pages/Medicamentos';
 import { AdminHome } from './pages/Admin/AdminHome';
 import { AdminUserDetail, AdminCreateUser, AdminUserEdit, AdminUsers} from './pages/Admin/Users';
+import {ResidentReportsList,ResidentSelection,ReportDetail} from './pages/Reports'
 
 
 /* Styles */
@@ -82,6 +83,9 @@ const App: React.FC = () => (
                 <ProtectedRoute exact path="/app/admin/residents/add" component={AdminCreateResident} adminOnly />
                 <ProtectedRoute exact path="/app/admin/residents/detail/:id" component={AdminResidentDetail} adminOnly />
                 <ProtectedRoute exact path="/app/admin/residents/edit/:id" component={AdminResidentEdit} adminOnly />
+                <ProtectedRoute exact path="/app/reports/residents" component={ResidentSelection}/>
+                <ProtectedRoute exact path="/app/reports/resident/:id" component={ResidentReportsList}/>
+                <ProtectedRoute exact path="/app/reports/detail/:id" component={ReportDetail}/>
                 <Route exact path="/app">
                   <Redirect to="/app/home" />
                 </Route>

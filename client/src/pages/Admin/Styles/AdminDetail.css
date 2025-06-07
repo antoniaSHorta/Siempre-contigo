@@ -87,6 +87,27 @@
     font-weight: 600;
 }
 
+.pdf-detail-button {
+    border-radius: var(--admin-btn-radius);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: none;
+    border: none;
+    text-transform: uppercase;
+    width: 100%;
+    display: block;
+    color: #fff;
+    background-color: var(--admin-primary-color);
+}
+
+.pdf-detail-button:hover {
+    background-color: #053464;
+}
+
 .admin-user-detail-button {
     border-radius: var(--admin-btn-radius);
     font-weight: 600;

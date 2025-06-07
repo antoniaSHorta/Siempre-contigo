@@ -38,13 +38,11 @@ export const AdminUserDetail: React.FC = () => {
         const fetchUser = async () => {
             try {
                 const response = await getUserByIdAdmin(numericId, token);
-                console.log(response)
                 setUser(response.user);
             } catch (err) {
                 setError('No se pudo cargar el usuario.');
             } finally {
                 setLoading(false);
-                console.log(loading)
             }
         };
         fetchUser();
@@ -63,6 +61,11 @@ export const AdminUserDetail: React.FC = () => {
             setStatusLoading(false);
         }
     };
+
+    const handleReturn = () => {
+        router.push(`/app/admin/users`, 'forward');
+        window.location.reload();
+    }
 
     if (loading) return <IonLoading isOpen={true} message="Cargando..." />;
 
@@ -149,7 +152,7 @@ export const AdminUserDetail: React.FC = () => {
                         expand="block" 
                         fill="outline" 
                         color="medium" 
-                        onClick={() => router.push('/app/admin/users')}
+                        onClick={handleReturn}
                         >
                         Cancelar
                     </IonButton>
