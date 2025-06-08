@@ -73,6 +73,12 @@ export class User extends Model {
   })
   isConnected!: boolean;
 
+  @Column({
+    type: DataType.STRING,
+    field: 'fire_base_token',
+  })
+  fire_base_token!: string;
+
   @BeforeCreate
   static async hashPasswordBeforeCreate(instance: User) {
     if (instance.changed('password')) {

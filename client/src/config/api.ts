@@ -50,5 +50,8 @@ export const endpoints = {
         generatePdf: (residentId: number, from: string, to: string) =>
             `${API_URL}/reports/generate/pdf/${residentId}/${from}/${to}`,
         getPdfBase64: (id: number) => `/api/reports/${id}/pdf/base64`
-    }
+  },
+  notifications: {
+    registerFcmToken: (id: number) => `${API_URL}/registerFcmToken/${id}`,
+  },
 }; 
