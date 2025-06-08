@@ -79,7 +79,7 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCrea
     if (!isGroupMode) {
       const selectedUser = allUsers.find(u => u.id === contactId);
       const userName = currentUser.name
-      const nombreChat = `${selectedUser} - ${userName}`
+      const nombreChat = `${selectedUser?.name} - ${userName}`
       if (selectedUser) {
         handleCreate([contactId], nombreChat);
       } else {

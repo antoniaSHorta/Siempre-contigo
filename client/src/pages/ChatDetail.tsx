@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
     IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonIcon, IonTextarea, IonAvatar,
-    IonItem, IonBackButton, IonButtons, useIonRouter, IonToast, IonSpinner
+    IonItem, IonBackButton, IonButtons, useIonRouter, IonToast, IonSpinner,
 } from "@ionic/react";
 import { send, attach, mic, ellipsisVertical } from "ionicons/icons";
 import { useParams } from "react-router-dom";
@@ -16,31 +16,32 @@ import axios from "axios";
 
 // Interfaz extendida para soportar diferentes tipos de mensajes
 interface Message {
-  id: string;
-  text?: string;
-  timestamp: string;
-  isOwn: boolean;
-  status: "sent" | "delivered" | "read";
-  type: "text" | "image" | "audio" | "document" | "video" | "location";
-  senderId: string;
-  fileUrl?: string;
-  fileName?: string;
-  fileSize?: string;
-  duration?: number;
-  thumbnailUrl?: string;
-  location?: {
-    latitude: number;
-    longitude: number;
-    address?: string;
-  };
+    id: string;
+    text?: string;
+    timestamp: string;
+    isOwn: boolean;
+    status: "sent" | "delivered" | "read";
+    type: "text" | "image" | "audio" | "document" | "video" | "location";
+    senderId: string;
+    fileUrl?: string; // URL temporal para previsualización en el frontend
+    fileName?: string;
+    fileSize?: string;
+    duration?: number; // Para audio/video
+    thumbnailUrl?: string; // Para video/imagen
+    location?: {
+        latitude: number;
+        longitude: number;
+        address?: string;
+    };
+    attachmentToken?: string; // Nuevo: para el token de adjunto de TalkJS
 }
 
 interface ChatInfo {
-  id: string;
-  name: string;
-  avatar: string;
-  isOnline: boolean;
-  lastSeen?: string;
+    id: string;
+    name: string;
+    avatar: string;
+    isOnline: boolean;
+    lastSeen?: string;
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
@@ -49,89 +50,22 @@ const ChatDetail: React.FC = () => {
     const { chatId } = useParams<{ chatId: string }>();
     const { user } = useAuth();
     const router = useIonRouter();
-    
-    // Estados principales
+
     const [messageText, setMessageText] = useState("");
     const [messages, setMessages] = useState<Message[]>([]);
     const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isSendingFile, setIsSendingFile] = useState(false);
 
-    // Estados para los modales
     const [isAttachmentModalOpen, setIsAttachmentModalOpen] = useState(false);
     const [isAudioRecorderOpen, setIsAudioRecorderOpen] = useState(false);
     const [isChatOptionsOpen, setIsChatOptionsOpen] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
-    
+
     const contentRef = useRef<HTMLIonContentElement>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null); // Referencia para el input de archivos
-
-    const fetchChatData = useCallback(async () => {
-        if (!chatId || !user) return;
-        
-        setIsLoading(true);
-        setError(null);
-        
-        try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_BASE_URL}/chat/${chatId}/messages`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            const talkJsMessages = response.data.data;
-            console.log(talkJsMessages)
-            const formattedMessages = talkJsMessages.map((msg: any): Message => ({
-                id: msg.id,
-                text: msg.text,
-                timestamp: new Date(msg.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-                isOwn: msg.senderId === user.id.toString(),
-                status: 'read', 
-                type: msg.attachment ? 'document' : 'text', // Simplificado por ahora
-                senderId: msg.senderId,
-                fileUrl: msg.attachment?.url,
-                fileName: msg.attachment?.name,
-            }));
-            
-            setMessages(formattedMessages.reverse());
-
-            const firstMessage = talkJsMessages[0];
-            if (firstMessage && firstMessage.conversation && firstMessage.conversation.participants) {
-                const otherParticipant = Object.values(firstMessage.conversation.participants).find(
-                    (p: any) => p.id !== user.id.toString()
-                ) as any;
-
-                setChatInfo({
-                    id: chatId,
-                    name: otherParticipant?.name || firstMessage.conversation.subject || "Chat", 
-                    avatar: otherParticipant?.photoUrl || `https://i.pravatar.cc/150?u=${otherParticipant?.id || chatId}`,
-                    isOnline: otherParticipant?.presence === 'online',
-                    lastSeen: otherParticipant?.lastSeen
-                });
-            } else {
-                 setChatInfo({
-                    id: chatId,
-                    name: `Chat ${chatId}`, 
-                    avatar: "https://i.pravatar.cc/150?img=1",
-                    isOnline: false,
-                });
-            }
-
-        } catch (err) {
-            setError("No se pudieron cargar los mensajes.");
-            console.error(err);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [chatId, user]);
-
-    useEffect(() => {
-        fetchChatData();
-    }, [fetchChatData]);
-
-    useEffect(() => {
-        contentRef.current?.scrollToBottom(300);
-    }, [messages]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const addOptimisticMessage = (messageData: Partial<Message>) => {
         if (!user) return;
@@ -145,32 +79,221 @@ const ChatDetail: React.FC = () => {
             ...messageData,
         } as Message;
         setMessages(prev => [...prev, newMessage]);
+        setTimeout(() => contentRef.current?.scrollToBottom(300), 50);
+        console.log("Frontend: Mensaje optimista añadido:", newMessage); // LOG AÑADIDO
     };
-    
-    const handleSendMessage = async () => {
-        if (messageText.trim() && user) {
+
+    const showNotification = (message: string) => {
+        setToastMessage(message);
+        setShowToast(true);
+    };
+
+    const fetchChatData = useCallback(async () => {
+        if (!chatId || !user) {
+            console.warn("Frontend: No chatId o user para cargar datos del chat."); // LOG AÑADIDO
+            return;
+        }
+
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const token = localStorage.getItem('token');
+            console.log("Frontend: Fetching messages for chatId:", chatId); // LOG AÑADIDO
+            const response = await axios.get(`${API_BASE_URL}/chat/${chatId}/messages`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const talkJsMessages = response.data.data;
+            console.log("Frontend: TalkJS Raw Messages Received:", talkJsMessages); // LOG AÑADIDO (detallado)
+
+            const formattedMessages = talkJsMessages.map((msg: any): Message => {
+                let messageType: Message['type'] = 'text';
+                let fileUrl: string | undefined;
+                let fileName: string | undefined;
+                let fileSize: string | undefined;
+                let duration: number | undefined;
+                let thumbnailUrl: string | undefined;
+
+                if (msg.attachment) {
+                    const attachment = msg.attachment;
+                    fileUrl = attachment.url;
+                    fileName = attachment.name;
+                    fileSize = attachment.size ? `${Math.round(attachment.size / 1024)} KB` : undefined;
+                    duration = attachment.duration;
+                    thumbnailUrl = attachment.thumbnailUrl;
+
+                    if (attachment.type === 'image' || attachment.contentType?.startsWith('image/')) {
+                        messageType = 'image';
+                    } else if (attachment.type === 'audio' || attachment.contentType?.startsWith('audio/')) {
+                        messageType = 'audio';
+                    } else if (attachment.type === 'video' || attachment.contentType?.startsWith('video/')) {
+                        messageType = 'video';
+                    } else {
+                        messageType = 'document';
+                    }
+                    console.log("Frontend: Mensaje con adjunto:", { msgId: msg.id, attachment: msg.attachment }); // LOG AÑADIDO
+                } else if (msg.custom?.location) { // Ejemplo para otros tipos si los manejas
+                    messageType = 'location';
+                }
+
+                return {
+                    id: msg.id,
+                    text: msg.text,
+                    timestamp: new Date(msg.createdAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+                    isOwn: msg.senderId === user.id.toString(),
+                    status: 'read',
+                    type: messageType,
+                    senderId: msg.senderId,
+                    fileUrl: fileUrl,
+                    fileName: fileName,
+                    fileSize: fileSize,
+                    duration: duration,
+                    thumbnailUrl: thumbnailUrl,
+                };
+            });
+
+            setMessages(formattedMessages.reverse());
+            console.log("Frontend: Mensajes formateados y establecidos:", formattedMessages.length); // LOG AÑADIDO
+
+            if (talkJsMessages.length > 0 && talkJsMessages[0].conversation && talkJsMessages[0].conversation.participants) {
+                const conversation = talkJsMessages[0].conversation;
+                const otherParticipant = Object.values(conversation.participants).find(
+                    (p: any) => p.id !== user.id.toString()
+                ) as any;
+
+                setChatInfo({
+                    id: chatId,
+                    name: otherParticipant?.name || conversation.subject || "Chat",
+                    avatar: otherParticipant?.photoUrl || `https://i.pravatar.cc/150?u=${otherParticipant?.id || chatId}`,
+                    isOnline: otherParticipant?.presence === 'online',
+                    lastSeen: otherParticipant?.lastSeen,
+                });
+                console.log("Frontend: Chat info establecido:", chatInfo); // LOG AÑADIDO
+            } else {
+                setChatInfo({
+                    id: chatId,
+                    name: `Chat ${chatId}`,
+                    avatar: "https://i.pravatar.cc/150?img=1",
+                    isOnline: false,
+                });
+                console.warn("Frontend: No se encontraron mensajes o participantes, usando info de chat por defecto."); // LOG AÑADIDO
+            }
+
+        } catch (err) {
+            setError("No se pudieron cargar los mensajes.");
+            console.error("Frontend: Error fetching chat data:", err); // LOG AÑADIDO
+        } finally {
+            setIsLoading(false);
+        }
+    }, [chatId, user]);
+
+    useEffect(() => {
+        fetchChatData();
+    }, [fetchChatData]);
+
+    useEffect(() => {
+        contentRef.current?.scrollToBottom(300);
+    }, [messages]);
+
+    const handleSendMessage = async (text?: string, attachmentToken?: string, fileType?: Message['type']) => {
+        if (!user) {
+            showNotification("Usuario no autenticado.");
+            return;
+        }
+
+        if (!text && !attachmentToken) {
+            showNotification("El mensaje o el adjunto son requeridos.");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const payload: { text?: string; attachmentToken?: string; type?: Message['type'] } = {};
+
+            if (attachmentToken) {
+                payload.attachmentToken = attachmentToken;
+                payload.type = fileType;
+            }
+            else if (text) {
+                payload.text = text;
+            }
+            
+
+            console.log("Frontend: Enviando mensaje a backend:", payload); // LOG AÑADIDO
+            await axios.post(
+                `${API_BASE_URL}/chat/${chatId}/messages`,
+                payload,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            console.log("Frontend: Mensaje enviado exitosamente a backend."); // LOG AÑADIDO
+
+            fetchChatData(); // Reload messages to get the official TalkJS message with attachment info
+
+        } catch (error) {
+            console.error("Frontend: Error al enviar el mensaje:", error); // LOG AÑADIDO
+            showNotification("No se pudo enviar el mensaje.");
+        }
+    };
+
+    const handleSendTextMessage = () => {
+        if (messageText.trim()) {
             const currentMessage = messageText;
             addOptimisticMessage({ text: currentMessage, type: 'text' });
             setMessageText("");
-
-            try {
-                const token = localStorage.getItem('token');
-                await axios.post(
-                    `${API_BASE_URL}/chat/${chatId}/messages`,
-                    { text: currentMessage },
-                    { headers: { Authorization: `Bearer ${token}` } }
-                );
-            } catch (error) {
-                console.error("Error al enviar el mensaje:", error);
-                setError("No se pudo enviar el mensaje.");
-            }
+            handleSendMessage(currentMessage);
         }
     };
-    
+
+    const uploadFileToBackend = async (file: File, messageType: Message['type']) => {
+        if (!user) {
+            showNotification("Usuario no autenticado.");
+            return null;
+        }
+
+        setIsSendingFile(true);
+        showNotification("Subiendo archivo...");
+        console.log("Frontend: Iniciando subida de archivo a backend:", file.name, file.type); // LOG AÑADIDO
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const token = localStorage.getItem('token');
+            const response = await axios.post(
+                `${API_BASE_URL}/chat/upload`,
+                formData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    onUploadProgress: (progressEvent) => {
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+                        console.log(`Frontend: Subiendo: ${percentCompleted}%`); // LOG AÑADIDO
+                    }
+                }
+            );
+
+            const attachmentToken = response.data.data.attachmentToken;
+            console.log("Frontend: Archivo subido exitosamente al backend. Token de adjunto recibido:", attachmentToken); // LOG AÑADIDO
+            showNotification("Archivo subido exitosamente.");
+            return attachmentToken;
+
+        } catch (error) {
+            console.error("Frontend: Error al subir archivo al backend:", error); // LOG AÑADIDO
+            showNotification("Error al subir el archivo.");
+            return null;
+        } finally {
+            setIsSendingFile(false);
+        }
+    };
+
     const handleAttachmentSelect = (type: "gallery" | "document" | "audio" | "video" | "location") => {
         setIsAttachmentModalOpen(false);
+        console.log("Frontend: Opción de adjunto seleccionada:", type); // LOG AÑADIDO
 
-        switch(type) {
+        switch (type) {
             case 'gallery':
             case 'document':
                 fileInputRef.current?.setAttribute('accept', type === 'gallery' ? 'image/*' : '*/*');
@@ -180,71 +303,133 @@ const ChatDetail: React.FC = () => {
                 setIsAudioRecorderOpen(true);
                 break;
             default:
-                setShowToast(true);
-                setToastMessage(`Funcionalidad para '${type}' no implementada.`);
+                showNotification(`Funcionalidad para '${type}' no implementada.`);
         }
     };
 
-    const handleFileSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileSelected = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
+            console.log("Frontend: Archivo seleccionado:", file.name, file.type, file.size); // LOG AÑADIDO
+            const messageType: Message['type'] = file.type.startsWith('image/') ? 'image' : (file.type.startsWith('video/') ? 'video' : 'document');
+
             addOptimisticMessage({
-                type: file.type.startsWith('image/') ? 'image' : 'document',
+                type: messageType,
                 fileName: file.name,
-                fileSize: `${Math.round(file.size / 1024)} KB`,
-                fileUrl: URL.createObjectURL(file)
+                fileSize: `${(file.size / 1024).toFixed(0)} KB`,
+                fileUrl: URL.createObjectURL(file),
             });
-            // TODO: Subir el archivo al backend
+
+            const attachmentToken = await uploadFileToBackend(file, messageType);
+
+            if (attachmentToken) {
+                const messageTextForAttachment = `[${messageType === 'image' ? 'Imagen' : messageType === 'video' ? 'Video' : 'Documento'}: ${file.name}]`;
+                console.log("Frontend: Enviando mensaje con token de adjunto:", attachmentToken); // LOG AÑADIDO
+
+                // --- POSIBLE FIX: ADD A SMALL DELAY HERE ---
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Uncomment this line to test with a delay
+
+                handleSendMessage(messageTextForAttachment, attachmentToken, messageType);
+            }
         }
-        if(fileInputRef.current) {
+        if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
     };
-    
-    const handleSendAudio = (audioData: { duration: number; size: string; url: string }) => {
+
+    const handleSendAudio = async (audioData: { blob: Blob; duration: number; size: string; url: string }) => {
         setIsAudioRecorderOpen(false);
-        addOptimisticMessage({ 
+        console.log("Frontend: Datos de audio recibidos:", audioData.duration, audioData.size); // LOG AÑADIDO
+
+        const audioFile = new File([audioData.blob], `audio-${Date.now()}.webm`, { type: audioData.blob.type });
+
+        addOptimisticMessage({
             type: 'audio',
             duration: audioData.duration,
             fileSize: audioData.size,
-            fileUrl: audioData.url
+            fileUrl: audioData.url,
         });
-        // TODO: Subir el archivo de audio al backend
+
+        const attachmentToken = await uploadFileToBackend(audioFile, 'audio');
+
+        if (attachmentToken) {
+            const messageTextForAudio = `[Audio: ${audioData.duration}s]`;
+            console.log("Frontend: Enviando mensaje de audio con token de adjunto:", attachmentToken); // LOG AÑADIDO
+
+            // --- POSIBLE FIX: ADD A SMALL DELAY HERE ---
+            await new Promise(resolve => setTimeout(resolve, 500)); // Uncomment this line to test with a delay
+
+            handleSendMessage(messageTextForAudio, attachmentToken, 'audio');
+        }
     };
 
-    const handleDeleteMessage = (messageId: string) => {
-        setMessages(prevMessages => prevMessages.filter(msg => msg.id !== messageId));
-        setShowToast(true);
-        setToastMessage("Mensaje eliminado.");
-        // TODO: Llamada al backend para eliminar el mensaje de TalkJS
+    const handleDeleteMessage = async (messageId: string) => {
+        try {
+            const token = localStorage.getItem('token');
+            console.log("Frontend: Intentando eliminar mensaje:", messageId); // LOG AÑADIDO
+            await axios.delete(`${API_BASE_URL}/chat/messages/${messageId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setMessages(prevMessages => prevMessages.filter(msg => msg.id !== messageId));
+            showNotification("Mensaje eliminado.");
+            console.log("Frontend: Mensaje eliminado exitosamente:", messageId); // LOG AÑADIDO
+        } catch (error) {
+            console.error("Frontend: Error al eliminar el mensaje:", error); // LOG AÑADIDO
+            showNotification("No se pudo eliminar el mensaje.");
+        }
     };
 
-    const handleClearChat = () => {
+    const handleClearChat = async () => {
         setMessages([]);
-        setToastMessage("Conversación limpiada.");
-        setShowToast(true);
+        showNotification("Conversación limpiada (localmente).");
+        setIsChatOptionsOpen(false);
+        console.log("Frontend: Chat limpiado localmente."); // LOG AÑADIDO
     };
-    
-    const handleDeleteChat = () => {
-        setToastMessage("Chat eliminado.");
-        setShowToast(true);
-        router.push('/app/chat', 'back');
+
+    const handleDeleteChat = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            console.log("Frontend: Intentando eliminar chat:", chatId); // LOG AÑADIDO
+            await axios.delete(`${API_BASE_URL}/chat/${chatId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            showNotification("Chat eliminado.");
+            router.push('/app/chat', 'back');
+            console.log("Frontend: Chat eliminado exitosamente."); // LOG AÑADIDO
+        } catch (error) {
+            console.error("Frontend: Error al eliminar el chat:", error); // LOG AÑADIDO
+            showNotification("No se pudo eliminar el chat.");
+        }
     };
-    
+
     const handleBlockContact = () => {
-        setToastMessage("Contacto bloqueado.");
-        setShowToast(true);
-        router.push('/app/chat', 'back');
+        showNotification("Funcionalidad de bloqueo no implementada.");
+        setIsChatOptionsOpen(false);
+        console.log("Frontend: Bloquear contacto no implementado."); // LOG AÑADIDO
     };
 
     if (isLoading) {
-        return <IonPage><IonContent className="ion-text-center ion-padding"><IonSpinner name="crescent" /></IonContent></IonPage>;
+        return (
+            <IonPage>
+                <IonContent className="ion-text-center ion-padding">
+                    <IonSpinner name="crescent" />
+                    <p>Cargando mensajes...</p>
+                </IonContent>
+            </IonPage>
+        );
     }
 
     if (error) {
-        return <IonPage><IonContent className="ion-text-center ion-padding"><p>{error}</p></IonContent></IonPage>;
+        return (
+            <IonPage>
+                <IonContent className="ion-text-center ion-padding">
+                    <p className="error-message">{error}</p>
+                    <IonButton onClick={fetchChatData}>Reintentar</IonButton>
+                </IonContent>
+            </IonPage>
+        );
     }
-    
+
     return (
         <IonPage className="chat-detail-page">
             <IonHeader className="ion-no-border">
@@ -259,7 +444,7 @@ const ChatDetail: React.FC = () => {
                             </IonAvatar>
                             <div className="header-details">
                                 <IonTitle className="chat-title">{chatInfo.name}</IonTitle>
-                                <span className="chat-status">{chatInfo.isOnline ? "En línea" : "Desconectado"}</span>
+                                <span className="chat-status">{chatInfo.isOnline ? "En línea" : chatInfo.lastSeen ? `Visto por última vez: ${new Date(chatInfo.lastSeen).toLocaleTimeString()}` : "Desconectado"}</span>
                             </div>
                         </div>
                     )}
@@ -273,6 +458,9 @@ const ChatDetail: React.FC = () => {
 
             <IonContent ref={contentRef} className="chat-content">
                 <div className="messages-container">
+                    {messages.length === 0 && !isLoading && (
+                        <p className="no-messages-text">No hay mensajes en esta conversación aún. ¡Sé el primero en saludar!</p>
+                    )}
                     {messages.map((message) => (
                         <div key={message.id} className={`message ${message.isOwn ? "message-own" : "message-other"}`}>
                             <MessageBubble message={message} onDeleteMessage={handleDeleteMessage} />
@@ -280,10 +468,10 @@ const ChatDetail: React.FC = () => {
                     ))}
                 </div>
             </IonContent>
-            
+
             <div className="message-input-container">
-                 <IonItem className="message-input-item">
-                    <IonButton fill="clear" slot="start" className="attachment-button" onClick={() => setIsAttachmentModalOpen(true)}>
+                <IonItem className="message-input-item">
+                    <IonButton fill="clear" slot="start" className="attachment-button" onClick={() => setIsAttachmentModalOpen(true)} disabled={isSendingFile}>
                         <IonIcon icon={attach} />
                     </IonButton>
                     <IonTextarea
@@ -293,9 +481,14 @@ const ChatDetail: React.FC = () => {
                         className="message-textarea"
                         autoGrow
                         rows={1}
+                        disabled={isSendingFile}
                     />
-                    {messageText.trim() ? (
-                        <IonButton fill="clear" slot="end" className="send-button" onClick={handleSendMessage}>
+                    {isSendingFile ? (
+                        <IonButton fill="clear" slot="end">
+                            <IonSpinner name="dots" />
+                        </IonButton>
+                    ) : messageText.trim() ? (
+                        <IonButton fill="clear" slot="end" className="send-button" onClick={handleSendTextMessage}>
                             <IonIcon icon={send} />
                         </IonButton>
                     ) : (
@@ -305,9 +498,9 @@ const ChatDetail: React.FC = () => {
                     )}
                 </IonItem>
             </div>
-            
+
             <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileSelected} />
-            
+
             <AttachmentModal
                 isOpen={isAttachmentModalOpen}
                 onClose={() => setIsAttachmentModalOpen(false)}
@@ -319,7 +512,7 @@ const ChatDetail: React.FC = () => {
                 onClose={() => setIsAudioRecorderOpen(false)}
                 onSendAudio={handleSendAudio}
             />
-            
+
             {chatInfo && (
                 <ChatOptionsModal
                     isOpen={isChatOptionsOpen}
@@ -330,7 +523,7 @@ const ChatDetail: React.FC = () => {
                     onBlockContact={handleBlockContact}
                 />
             )}
-            
+
             <IonToast
                 isOpen={showToast}
                 onDidDismiss={() => setShowToast(false)}

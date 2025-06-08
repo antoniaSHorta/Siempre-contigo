@@ -8,8 +8,11 @@ import {
   deleteMessageHttp,
   updateConversationHttp,
   getAvailableContacts,
+  upload,
+  uploadFile,
 } from '../controllers/chatController';
 import { protect } from '../middleware/auth';
+import { cleanupTempFile } from '../middleware/tempFile';
 
 const router = express.Router();
 
@@ -27,6 +30,8 @@ router.get('/availableContacts/:userId',getAvailableContacts)
 router.get('/:conversationId/messages', getMessagesFromConversation); 
 router.post('/:conversationId/messages', sendMessageHttp); 
 router.delete('/:conversationId/messages/:messageId', deleteMessageHttp); // Ruta específica para eliminar un mensaje
+// archuivos
+router.post('/upload', upload.single('file'), cleanupTempFile, uploadFile);
 
 // --- Rutas para una Conversación Específica ---
 // ESTAS VAN AL FINAL para no interceptar las rutas más específicas de arriba.
