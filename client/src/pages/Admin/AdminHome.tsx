@@ -76,7 +76,7 @@ export const AdminHome: React.FC = () => {
                             </IonCardTitle>
                         </IonCardHeader>
                         <IonCardContent>
-                            Crear pautas de medicamentos.
+                            Crear, editar o eliminar pautas de medicamentos.
                         </IonCardContent>
                     </IonCard>
 

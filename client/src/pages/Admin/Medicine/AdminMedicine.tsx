@@ -16,23 +16,20 @@ import {
     IonInput,
     IonSelect,
     IonSelectOption,
-    useIonViewWillEnter
+    useIonViewWillEnter,
+    IonAlert // Import IonAlert for confirmation
 } from '@ionic/react';
 import {
     heartOutline,
-    heartDislikeOutline,
     addCircleOutline,
-    refreshOutline,
-    eyeOffOutline,
-    eyeOutline,
-    pencilOutline,
+    closeCircleOutline,
+    pencilOutline, // Icon for delete
 } from 'ionicons/icons';
 import { useIonRouter } from '@ionic/react';
 import { IMedicine } from '../../../interfaces/IMedicine';
 import '../Styles/AdminUsers.css';
 import Header from '../../../components/Header';
 import axios from 'axios';
-import { de } from 'date-fns/locale';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5173/api';
 
@@ -45,7 +42,7 @@ export const AdminMedicine: React.FC = () => {
     const token = localStorage.getItem('token');
     const router = useIonRouter();
     const [medicines, setMedicines] = useState<IMedicine[]>([]);
-    const [residents, setResidents] = useState<ResidentOption[]>([]); // State for residents to populate filter
+    const [residents, setResidents] = useState<ResidentOption[]>([]);
     const [loading, setLoading] = useState(true);
     const [toastMessage, setToastMessage] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -53,6 +50,8 @@ export const AdminMedicine: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState('No hay medicamentos registrados.');
     const [filterResident, setFilterResident] = useState<number | 'Todos'>('Todos');
     const [searchName, setSearchName] = useState<string>('');
+    const [showAlert, setShowAlert] = useState(false); // State for IonAlert
+    const [medicineToDeleteId, setMedicineToDeleteId] = useState<number | null>(null); // State to store ID of medicine to delete
 
     useIonViewWillEnter(() => {
         fetchData();
@@ -112,30 +111,35 @@ export const AdminMedicine: React.FC = () => {
         }
     };
 
-    // Assuming IMedicine has an 'isActive' property to toggle status
-    const handleToggleStatus = async (medicineId: number, isActive: boolean) => {
+    const handleDeleteClick = (medicineId: number) => {
+        setMedicineToDeleteId(medicineId);
+        setShowAlert(true); // Show the confirmation alert
+    };
+
+    const deleteMedicine = async () => {
+        if (medicineToDeleteId === null) return;
+
         try {
+            const token = localStorage.getItem('token');
             if (!token) {
                 setToastMessage('No hay sesión activa para realizar esta acción.');
                 return;
             }
-            // Assuming an endpoint to toggle medicine status
-            // And that your API expects an 'isActive' boolean in the request body
-            await axios.patch(`${API_BASE_URL}/medicacion/${medicineId}/status`, { isActive: !isActive }, {
+
+            await axios.delete(`${API_BASE_URL}/medicacion/${medicineToDeleteId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setToastMessage(`Medicamento ${!isActive ? 'activado' : 'desactivado'} correctamente`);
-            // Optimistically update UI
-            setMedicines(prevMedicines =>
-                prevMedicines.map(medicine =>
-                    medicine.id === medicineId ? { ...medicine, isActive: !isActive } : medicine
-                )
-            );
+
+            setToastMessage('Medicación eliminada con éxito.');
+            fetchData(); // Re-fetch data to update the list
         } catch (err: any) {
-            console.error('Error al actualizar el estado del medicamento:', err);
-            setToastMessage(`No se pudo actualizar el estado del medicamento: ${err.response?.data?.message || err.message || 'Error desconocido'}`);
+            console.error('Error al eliminar medicación:', err);
+            setToastMessage(`No se pudo eliminar la medicación: ${err.response?.data?.message || err.message || 'Error desconocido'}`);
+        } finally {
+            setMedicineToDeleteId(null); // Reset the ID
+            setShowAlert(false); // Hide the alert
         }
     };
 
@@ -161,7 +165,6 @@ export const AdminMedicine: React.FC = () => {
     return (
         <IonPage className="admin-users-page">
             <Header title='Medicamentos' grayBackground />
-            {/* Only show filters if there are medicines to display */}
             {medicines.length > 0 && (
                 <div className="admin-users-filters">
                     <IonItem className="admin-filter-item">
@@ -195,7 +198,7 @@ export const AdminMedicine: React.FC = () => {
             <IonContent className="admin-users-content">
                 {loading ? (
                     <p className="admin-no-users-message">Cargando medicamentos...</p>
-                ) : medicines.length === 0 && !loading ? ( // Display error message only if no medicines and not loading
+                ) : medicines.length === 0 && !loading ? (
                     <p className="admin-no-users-message">{errorMessage}</p>
                 ) : (
                     <>
@@ -214,7 +217,9 @@ export const AdminMedicine: React.FC = () => {
                                         <IonButton className="admin-users-btn-edit" onClick={() => goToEditMedicine(medicine.id)}>
                                             <IonIcon icon={pencilOutline} />
                                         </IonButton>
-
+                                        <IonButton className="admin-users-btn-edit" onClick={() => handleDeleteClick(medicine.id)}>
+                                            <IonIcon icon={closeCircleOutline} color='danger' />
+                                        </IonButton>
                                     </IonButtons>
                                 </IonItem>
                             ))}
@@ -258,6 +263,26 @@ export const AdminMedicine: React.FC = () => {
                 duration={2000}
                 onDidDismiss={() => setToastMessage('')}
                 position="bottom"
+            />
+
+            <IonAlert
+                isOpen={showAlert}
+                onDidDismiss={() => setShowAlert(false)}
+                header={'Confirmar Eliminación'}
+                message={'¿Estás seguro de que quieres eliminar esta medicación? Esta acción no se puede deshacer.'}
+                buttons={[
+                    {
+                        text: 'Cancelar',
+                        role: 'cancel',
+                        handler: () => {
+                            setMedicineToDeleteId(null);
+                        },
+                    },
+                    {
+                        text: 'Eliminar',
+                        handler: deleteMedicine,
+                    },
+                ]}
             />
         </IonPage>
     );
