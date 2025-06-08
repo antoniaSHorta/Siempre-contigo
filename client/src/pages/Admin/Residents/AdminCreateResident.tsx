@@ -76,7 +76,6 @@ export const AdminCreateResident: React.FC = () => {
             await addResidentCuidadores(newResidentId, form.cuidadores || [], token!);
             await addResidentFamiliares(newResidentId, form.familiares || [], token!);
             
-            console.log("hola")
 
             setSuccess('Residente creado correctamente.');
             setTimeout(() => {

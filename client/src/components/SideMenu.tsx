@@ -1,5 +1,5 @@
 import { IonContent, IonHeader, IonIcon, IonItem, IonLabel, IonList, IonMenu, IonMenuToggle, IonTitle, IonToolbar } from "@ionic/react"
-import { book, medkit, restaurant, chatbubbles, home, lockClosed } from "ionicons/icons"
+import { book, medkit, restaurant, chatbubbles, home, lockClosed, documentTextOutline } from "ionicons/icons"
 import { useAuth } from "../contexts/AuthContext";
 
 
@@ -47,6 +47,10 @@ const SideMenu: React.FC = () => {
                 <IonItem routerLink="/app/chat" routerDirection="none">
                     <IonIcon slot="start" icon={chatbubbles} />
                     <IonLabel>Chat</IonLabel>
+                </IonItem>
+                <IonItem routerLink="/app/reports/residents" routerDirection="none">
+                    <IonIcon slot="start" icon={documentTextOutline} />
+                    <IonLabel>Reportes</IonLabel>
                 </IonItem>
                 {isAdmin &&(
                     <IonItem routerLink="/app/admin" routerDirection="none">
