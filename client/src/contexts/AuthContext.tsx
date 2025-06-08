@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { endpoints } from '../config/api';
 import axios from 'axios';
+import { getFcmToken } from '../config/firebase';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -46,11 +47,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const login = (token: string, userData: any) => {
+  const login = async (token: string, userData: any) => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
     setIsAuthenticated(true);
     setUser(userData);
+
+    if (!userData.fire_base_token) {
+      const fcmToken = await getFcmToken();
+      try {
+        const tokenResponse = await axios.put(
+          endpoints.notifications.registerFcmToken(userData.id), {
+            token: fcmToken,
+          }, {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!tokenResponse.data.success) {
+          throw new Error(tokenResponse.data.message || 'FCM token no pudo ser registrado');
+        }
+
+        console.log("FCM token registrado exitosamente: " + fcmToken);
+      } catch (error: any) {
+        throw new Error(error.response.data.message || 'FCM token no pudo ser registrado');
+      }
+    }
   };
 
   const logout = async () => {
