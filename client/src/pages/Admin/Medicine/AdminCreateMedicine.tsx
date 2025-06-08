@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IonPage, IonContent, IonButton, useIonToast } from '@ionic/react';
+import { IonPage, IonContent, IonButton, useIonToast, useIonRouter, IonLabel } from '@ionic/react';
 import Header from '../../../components/Header';
 import AdminMedicineForm from '../../../components/Medicacion/AdminMedicineForm'
 import { MedicineFormFields } from '../../../components/Medicacion/AdminMedicineForm';
@@ -22,6 +22,7 @@ interface CuidadorOption {
 const AdminCreateMedicine: React.FC = () => {
     const { user } = useAuth(); // Obtén el usuario autenticado
     const [presentToast] = useIonToast();
+    const router = useIonRouter();
 
     // Estado del formulario de medicación
     const [medicineForm, setMedicineForm] = useState({
@@ -175,7 +176,10 @@ const AdminCreateMedicine: React.FC = () => {
         }
     };
 
-    // Asegúrate de que user?.role sea 'admin' o 'Admin' según lo que uses en tu backend
+    const handleGoBack = () => {
+        router.goBack();
+    };
+
     const isCurrentUserAdmin = user?.role === 'admin' || user?.role === 'Admin';
 
     return (
@@ -190,12 +194,13 @@ const AdminCreateMedicine: React.FC = () => {
                         cuidadores={cuidadores}
                         isAdmin={isCurrentUserAdmin}
                         error={formError}
-                        // isEdit={false} // Si este formulario es solo para crear, no necesitas isEdit
+                        //isEdit={false} // Si este formulario es solo para crear, no necesitas isEdit
                     />
                     <IonButton expand="block" type="submit" className="ion-margin-top" disabled={isSubmitting}>
                         {isSubmitting ? 'Guardando...' : 'Crear Medicación'}
                     </IonButton>
                 </form>
+            <IonButton expand="block" color={'light'} onClick={handleGoBack}> <IonLabel>Volver</IonLabel></IonButton>
             </IonContent>
         </IonPage>
     );

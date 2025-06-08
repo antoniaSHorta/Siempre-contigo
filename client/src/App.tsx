@@ -79,7 +79,7 @@ const App: React.FC = () => (
                 <ProtectedRoute exact path="/app/chat/:chatId" component={ChatDetail} />
                 <ProtectedRoute exact path="/app/admin" component={AdminHome} adminOnly/>
                 <ProtectedRoute exact path="/app/admin/medicine" component={AdminMedicine} adminOnly/>
-                <ProtectedRoute exact path="/app/admin/medicine/add" component={AdminCreateMedicine} adminOnly />
+                <ProtectedRoute exact path="/app/admin/medicines/add" component={AdminCreateMedicine} adminOnly />
                 <ProtectedRoute exact path="/app/admin/users" component={AdminUsers} adminOnly/>
                 <ProtectedRoute exact path="/app/admin/users/add" component={AdminCreateUser} adminOnly/>
                 <ProtectedRoute exact path="/app/admin/users/detail/:id" component={AdminUserDetail} adminOnly/>
