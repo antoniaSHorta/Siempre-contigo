@@ -1,4 +1,6 @@
-import { Table, Column, Model, DataType, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, BeforeCreate, BeforeUpdate, BelongsToMany } from 'sequelize-typescript';
+import { Notificacion } from './Notificacion';
+import { NotificacionUser } from './NotificacionUser';
 import bcrypt from 'bcryptjs';
 
 @Table({
@@ -78,6 +80,9 @@ export class User extends Model {
     field: 'fire_base_token',
   })
   fire_base_token!: string;
+
+  @BelongsToMany(() => Notificacion, () => NotificacionUser)
+  notificaciones!: Notificacion[];
 
   @BeforeCreate
   static async hashPasswordBeforeCreate(instance: User) {

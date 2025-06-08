@@ -6,6 +6,8 @@ import { Resident } from '../models/Resident';
 import { AppError } from '../utils/errorHandler';
 import { Op } from 'sequelize';
 
+import { createNotification } from './notificationController';
+
 export const createMedicacion = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { nombre, dosis, horario, fecha_hora, cuidador_id, residente_id, estado } = req.body;
@@ -17,8 +19,9 @@ export const createMedicacion = async (req: Request, res: Response, next: NextFu
       }
     }
 
+    let residente: Resident | null = null;
     if (residente_id) {
-      const residente = await Resident.findByPk(residente_id);
+      residente = await Resident.findByPk(residente_id);
       if (!residente) {
         return next(new AppError('Residente no encontrado', 404));
       }
@@ -54,6 +57,12 @@ export const createMedicacion = async (req: Request, res: Response, next: NextFu
         lugar: 'Habitación',
         estado: 'Pendiente'
       });
+    }
+
+    if (residente){
+      const familiares = await residente.$get('familiares');
+      // console.log(familiares);
+      createNotification(`Medicamento: ${residente.nombre}`, `${residente.nombre} ha consumido sus ${dosis} ${nombre}`, familiares, fecha_hora);
     }
 
     res.status(201).json({

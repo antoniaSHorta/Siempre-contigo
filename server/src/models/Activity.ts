@@ -1,6 +1,7 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { User } from './User';
 import { Resident } from './Resident';
+import { Notificacion } from './Notificacion';
 
 @Table({
   tableName: 'actividad',
@@ -50,6 +51,13 @@ export class Activity extends Model {
     allowNull: false,
   })
   tipo!: string;
+
+  @ForeignKey(() => Notificacion)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  notificacion_id!: number;
 
   @ForeignKey(() => Resident)
   @Column({

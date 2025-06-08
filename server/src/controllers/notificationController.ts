@@ -11,8 +11,11 @@ export const createNotification = async (titulo: string, contenido: string, dest
       fecha_programada: fecha_programada,
       titulo: titulo,
       contenido: contenido,
-      destinatarios: destinatarios,
     });
+
+    await notif.$set('destinatarios', destinatarios);
+
+    // console.log(`Notificacion registrada '${titulo}' para ${fecha_programada}`)
 
     return notif;
 }
@@ -55,13 +58,16 @@ export const updateNotification = async (id: number, titulo: string, contenido: 
 
 export const sendNotification = async (notif: Notificacion) => {
   try {
-    notif.destinatarios.forEach(user => {
+    const destinatarios = await notif.$get('destinatarios');
+    for (const user of destinatarios) {
       if (user) {
         if (user.fire_base_token) {
           firebaseNotification(user.fire_base_token, { title: notif.titulo, body: notif.contenido });
+        } else {
+          console.log("User doesn't have a firebase token");
         }
       }
-    });
+    }
 
     await notif.update({ leida: true });
 

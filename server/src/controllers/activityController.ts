@@ -5,6 +5,7 @@ import { Resident } from '../models/Resident';
 import { Alimentacion } from '../models/Alimentacion';
 import { Medicacion } from '../models/Medicacion';
 import { AppError } from '../utils/errorHandler';
+import { createNotification, updateNotification } from './notificationController'
 
 export const createActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -15,6 +16,14 @@ export const createActivity = async (req: Request, res: Response, next: NextFunc
       return next(new AppError('No autenticado', 401));
     }
 
+    const resident = await Resident.findByPk(residente_id, { include: ['familiares'] });
+    if (!resident) {
+      return next(new AppError('Residente no existe', 404));
+    }
+
+    const familiares = await resident.$get('familiares');
+    const newNotif = await createNotification(`Actividad realizada: ${titulo}`, descripcion || '', familiares, new Date(fecha));
+
     const activity = await Activity.create({
       fecha: new Date(fecha),
       titulo,
@@ -23,7 +32,8 @@ export const createActivity = async (req: Request, res: Response, next: NextFunc
       residente_id,
       lugar,
       estado: estado || 'Pendiente',
-      cuidador_id: requestWithUser.user.id
+      cuidador_id: requestWithUser.user.id,
+      notificacion_id: newNotif.id,
     });
 
     // Si es una actividad de alimentación, crear también el registro en la tabla alimentacion
@@ -118,6 +128,32 @@ export const getActivityById = async (req: Request, res: Response, next: NextFun
   }
 };
 
+const notifyActivityUpdate = async (original: Activity, updated: Activity) => {
+  let body: string = "Se han cambiado los siguientes elementos:\n";
+
+  for (const key of Object.keys(updated)) {
+    const oldValue = (original as Record<string, any>)[key];
+    const newValue = (updated as Record<string, any>)[key];
+
+    const hasChanged =
+      oldValue !== newValue &&
+      !(Number.isNaN(oldValue) && Number.isNaN(newValue));
+
+    if (hasChanged) {
+      body += `  • "${key}": ${oldValue} → ${newValue}\n`;
+    }
+  }
+
+  const originalResidente = await (original as any).$get('residente');
+  const updatedResidente = await (updated as any).$get('residente');
+
+  const originalFamiliares = await originalResidente.$get('familiares');
+  const updatedFamiliares = await updatedResidente.$get('familiares');
+
+  createNotification(`Cambio en actividad ${original.fecha} ${original.tipo}`, body, originalFamiliares);
+  updateNotification(original.notificacion_id, `Actividad realizada: ${updated.titulo}`, updated.descripcion || '', updatedFamiliares, new Date(updated.fecha));
+}
+
 export const updateActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { fecha, titulo, descripcion, tipo, residente_id, lugar, estado } = req.body;
@@ -135,7 +171,7 @@ export const updateActivity = async (req: Request, res: Response, next: NextFunc
 
     const oldTipo = activity.tipo;
 
-    await activity.update({
+    const updated = await activity.update({
       fecha: fecha ? new Date(fecha) : activity.fecha,
       titulo: titulo || activity.titulo,
       descripcion: descripcion || activity.descripcion,
@@ -225,6 +261,8 @@ export const updateActivity = async (req: Request, res: Response, next: NextFunc
         );
       }
     }
+
+    notifyActivityUpdate(activity, updated);
 
     res.status(200).json({
       success: true,

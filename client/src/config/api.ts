@@ -52,6 +52,6 @@ export const endpoints = {
         getPdfBase64: (id: number) => `/api/reports/${id}/pdf/base64`
   },
   notifications: {
-    registerFcmToken: (id: number) => `${API_URL}/registerFcmToken/${id}`,
+    registerFcmToken: (id: number) => `${API_URL}/notificaciones/registerFcmToken/${id}`,
   },
 }; 

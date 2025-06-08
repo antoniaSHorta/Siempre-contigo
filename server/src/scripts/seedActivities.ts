@@ -105,6 +105,10 @@ async function seedActivities() {
       { individualHooks: true }
     );
 
+    for (const residente of residentes) {
+      await residente.$set("familiares", [admin.id, familiar.id]);
+    }
+
     const today = new Date();
     const activities = [];
 
