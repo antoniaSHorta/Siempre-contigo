@@ -16,7 +16,7 @@ import Alimentacion from './pages/Alimentacion';
 import Agenda from './pages/Agenda';
 import ChatList from './pages/ChatList';
 import ChatDetail from './pages/ChatDetail';
-import Medicamentos from './pages/Medicamentos';
+import Medicamentos from './pages/Medicacion/Medicamentos';
 import { AdminHome } from './pages/Admin/AdminHome';
 import { AdminUserDetail, AdminCreateUser, AdminUserEdit, AdminUsers} from './pages/Admin/Users';
 import {ResidentReportsList,ResidentSelection,ReportDetail} from './pages/Reports'
@@ -47,6 +47,7 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import { AdminCreateResident, AdminResidentEdit, AdminResidents } from './pages/Admin/Residents';
 import AdminResidentDetail from './pages/Admin/Residents/AdminResidentDetail';
+import AdminMedicinePage from './pages/Medicacion/AdminMedicinePage';
 
 setupIonicReact();
 
@@ -75,6 +76,7 @@ const App: React.FC = () => (
                 <ProtectedRoute exact path="/app/chat" component={ChatList} />
                 <ProtectedRoute exact path="/app/chat/:chatId" component={ChatDetail} />
                 <ProtectedRoute exact path="/app/admin" component={AdminHome} adminOnly/>
+                <ProtectedRoute exact path="/app/admin/medicine" component={AdminMedicinePage} adminOnly/>
                 <ProtectedRoute exact path="/app/admin/users" component={AdminUsers} adminOnly/>
                 <ProtectedRoute exact path="/app/admin/users/add" component={AdminCreateUser} adminOnly/>
                 <ProtectedRoute exact path="/app/admin/users/detail/:id" component={AdminUserDetail} adminOnly/>

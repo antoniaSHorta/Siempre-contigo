@@ -1,17 +1,19 @@
-import { IonButton, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, IonText, useIonAlert, useIonToast, IonSpinner } from '@ionic/react';
-import Header from '../components/Header';
-import FechaWrapper from '../components/FechaWrapper';
-import { MedicacionInterface } from '../types/medicamento';
+import { IonButton, IonContent, IonIcon, IonItem, IonLabel, IonList, IonPage, IonText, useIonAlert, useIonToast, IonSpinner, useIonRouter } from '@ionic/react';
+import Header from '../../components/Header';
+import FechaWrapper from '../../components/FechaWrapper';
+import { MedicacionInterface } from '../../types/medicamento';
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import MedicamentoCard from '../components/MedicamentoCard';
+import { useAuth } from '../../contexts/AuthContext';
+import MedicamentoCard from '../../components/Medicacion/MedicamentoCard';
 import './Medicamentos.css';
 import { addCircle, body, chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import axios from 'axios';
+import { getAllUsersAdmin } from '../../services/adminService';
+import { IUser } from '../../interfaces/IUser';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5173/api';
 
-interface residentInterface{
+interface userInterface{
     id: number,
     nombre: string
 }
@@ -19,10 +21,12 @@ interface residentInterface{
 const Medicamentos: React.FC = () => {
     const [fechaActual, setFechaActual] = useState(new Date());
     const [listaMedicamento, setListaMedicamento] = useState<MedicacionInterface[]>([]);
-    const [residents, setResidents] = useState<Array<residentInterface>>([]);
+    const [residents, setResidents] = useState<Array<userInterface>>([]);
+    const [cuidadores, setCuidadores] = useState<Array<IUser>>([])
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const router = useIonRouter();
     const [presentAlert] = useIonAlert();
     const [presentToast] = useIonToast();
     const { user } = useAuth();
@@ -72,6 +76,24 @@ const Medicamentos: React.FC = () => {
     
         fetchResidents();
     }, []);
+
+    if (user.role === 'Admin'){
+        useEffect(() => {
+                const fetchUsers = async () => {
+                    try {
+                        const token = localStorage.getItem('token') || '';
+                        const response = await getAllUsersAdmin(token);
+                        const users: IUser[] = response.users;
+        
+                        setCuidadores(users.filter(u  => u.isActive && u.role === 'Cuidador'));
+                    } catch (err) {
+                        setError('Error al cargar cuidadores y familiares.');
+                    } 
+                };
+        
+                fetchUsers();
+            }, []);
+    }
 
     // Función para cargar las Medicamentoes
     const fetchMedicaciones = useCallback(async () => {
@@ -297,7 +319,7 @@ const Medicamentos: React.FC = () => {
     };
 
     // Funcionalidad para agregar una entrada
-    const handleAddEntry = (residents: Array<residentInterface>) => {
+    const handleAddEntry = (residents: Array<userInterface>) => {
 
         const now = new Date();
         const currentHour = String(now.getHours()).padStart(2, '0');
@@ -533,7 +555,7 @@ const Medicamentos: React.FC = () => {
                             </IonList>
                         ) : (
                             <IonList className='medicamento-lista-entradas'>
-                                <IonText className='Medicamento-lista-sin-datos'>
+                                <IonText className='medicamento-lista-sin-datos'>
                                     No hay registros de Medicación para esta fecha.
                                 </IonText>
                                 <IonItem className="medicamento-card-item">
@@ -544,6 +566,14 @@ const Medicamentos: React.FC = () => {
                                     </IonButton>
                                 </IonItem>
                             </IonList>
+                        )}
+                        {user.role === 'Admin' && (
+                            
+                            <IonButton className="add-button-content"
+                                onClick={() => router.push('/app/admin/medicine', 'forward')}>
+                                <IonLabel className="add-label">Vista admin</IonLabel>
+                            </IonButton>
+                                
                         )}
                     </div>
                 </IonContent>
