@@ -1,5 +1,5 @@
 import React from "react";
-import { MedicacionInterface } from "../types/medicamento";
+import { MedicacionInterface } from "../../types/medicamento";
 import './MedicamentoCard.css';
 import { IonItem, IonLabel, IonButton, IonIcon, useIonActionSheet } from "@ionic/react";
 import { createOutline, ellipsisVertical, restaurantOutline, trashOutline } from "ionicons/icons";

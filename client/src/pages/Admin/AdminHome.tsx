@@ -12,7 +12,7 @@ import {
     IonIcon,
     IonButtons,
 } from '@ionic/react';
-import { chevronBackOutline, peopleOutline } from 'ionicons/icons';
+import { chevronBackOutline, heartCircleOutline, peopleOutline } from 'ionicons/icons';
 import { useIonRouter } from '@ionic/react';
 import { useAuth } from '../../contexts/AuthContext';
 import './AdminHome.css';
@@ -29,6 +29,10 @@ export const AdminHome: React.FC = () => {
     const goToResidents = () => {
         router.push('/app/admin/residents', 'forward');
     };
+
+    const goToMedicine = () => {
+         router.push('/app/admin/medicine', 'forward');
+    }
 
     return (
         <IonPage className="admin-home-page">
@@ -61,6 +65,18 @@ export const AdminHome: React.FC = () => {
                         </IonCardHeader>
                         <IonCardContent>
                             Crear, editar o desactivar residentes.
+                        </IonCardContent>
+                    </IonCard>
+
+                    <IonCard button onClick={goToMedicine} className="admin-home-card">
+                        <IonCardHeader>
+                            <IonCardTitle>
+                                <IonIcon icon={heartCircleOutline} />
+                                Gestión de Medicina
+                            </IonCardTitle>
+                        </IonCardHeader>
+                        <IonCardContent>
+                            Crear pautas de medicamentos.
                         </IonCardContent>
                     </IonCard>
                 </div>

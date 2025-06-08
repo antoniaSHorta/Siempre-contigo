@@ -9,7 +9,7 @@ import { Op } from 'sequelize';
 export const createMedicacion = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { nombre, dosis, horario, fecha_hora, cuidador_id, residente_id, estado } = req.body;
-
+    console.log({ nombre, dosis, horario, fecha_hora, cuidador_id, residente_id, estado })
     if (cuidador_id) {
       const cuidador = await User.findByPk(cuidador_id);
       if (!cuidador) {
