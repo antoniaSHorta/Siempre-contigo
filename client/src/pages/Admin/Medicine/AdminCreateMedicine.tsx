@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { IonPage, IonContent, IonButton, useIonToast } from '@ionic/react';
-import Header from '../../components/Header';
-import AdminMedicineForm from '../../components/Medicacion/AdminMedicineForm'
-import { MedicineFormFields } from '../../components/Medicacion/AdminMedicineForm';
-import { useAuth } from '../../contexts/AuthContext'; 
+import Header from '../../../components/Header';
+import AdminMedicineForm from '../../../components/Medicacion/AdminMedicineForm'
+import { MedicineFormFields } from '../../../components/Medicacion/AdminMedicineForm';
+import { useAuth } from '../../../contexts/AuthContext'; 
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5173/api';
@@ -19,7 +19,7 @@ interface CuidadorOption {
     nombre: string;
 }
 
-const AdminMedicinePage: React.FC = () => {
+const AdminCreateMedicine: React.FC = () => {
     const { user } = useAuth(); // Obtén el usuario autenticado
     const [presentToast] = useIonToast();
 
@@ -201,4 +201,4 @@ const AdminMedicinePage: React.FC = () => {
     );
 };
 
-export default AdminMedicinePage;
+export default AdminCreateMedicine;

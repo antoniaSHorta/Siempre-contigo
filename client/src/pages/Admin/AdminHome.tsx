@@ -79,6 +79,7 @@ export const AdminHome: React.FC = () => {
                             Crear pautas de medicamentos.
                         </IonCardContent>
                     </IonCard>
+
                 </div>
             </IonContent>
         </IonPage>
