@@ -238,6 +238,7 @@ export const getAvailableContacts = async (req: RequestWithUser, res: Response, 
     const { userId } = req.params;
     const requestingUserRole = req.user?.role; 
     
+    console.log(requestingUserRole)
 
     if (!userId) {
         return next(new AppError('Falta el id del suario.', 400));
@@ -250,7 +251,7 @@ export const getAvailableContacts = async (req: RequestWithUser, res: Response, 
         if (requestingUserRole === 'Admin') {
             const allUsers = await User.findAll({
                 where: {
-                    type: { [Op.in]: ['familiar', 'cuidador'] }
+                    role: { [Op.in]: ['familiar', 'cuidador'] }
                 },
                 attributes: ['id', 'name'],
                 order: [['name', 'ASC']]
