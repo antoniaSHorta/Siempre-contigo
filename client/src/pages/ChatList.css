@@ -10,30 +10,6 @@
   --ion-color-medium: var(--primary-color);
 }
 
-.chat-list-page ion-header ion-toolbar {
-  --background: var(--background-color);
-  --color: var(--header-text-color);
-  --min-height: 79px;
-  padding: 0 16px;
-  position: relative;
-}
-
-.chat-list-page .header-content {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  gap: 16px;
-}
-
-.chat-list-page .header-logo {
-  width: auto;
-  height: 80px;
-  min-width: 100px;
-  max-width: 180px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
 .chat-list-page ion-title {
   font-family: "Poppins", sans-serif;
   font-weight: 700;
@@ -194,20 +170,6 @@
 }
 
 @media (max-width: 768px) {
-  .chat-list-page ion-header ion-toolbar {
-    --min-height: 60px;
-    padding: 0 12px;
-  }
-
-  .chat-list-page .header-content {
-    gap: 12px;
-  }
-
-  .chat-list-page .header-logo {
-    height: 25px;
-    min-width: 90px;
-    max-width: 140px;
-  }
 
   .chat-list-page ion-title {
     font-size: 24px;
@@ -219,20 +181,6 @@
 }
 
 @media (max-width: 480px) {
-  .chat-list-page ion-header ion-toolbar {
-    --min-height: 50px;
-    padding: 0 8px;
-  }
-
-  .chat-list-page .header-content {
-    gap: 8px;
-  }
-
-  .chat-list-page .header-logo {
-    height: 20px;
-    min-width: 70px;
-    max-width: 120px;
-  }
 
   .chat-list-page ion-title {
     font-size: 20px;

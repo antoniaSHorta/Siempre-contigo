@@ -6,6 +6,10 @@ import { IonActionSheet, IonAlert, IonModal, IonHeader, IonToolbar, IonTitle, Io
 import { informationCircle, search, notifications, notificationsOff, trash, ban, close, person } from "ionicons/icons"
 import { useState } from "react"
 import ChatSearchModal from "./ChatSearchModal"
+import './ChatOptionsModal.css'
+import axios from "axios"
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 interface ChatOptionsModalProps {
   isOpen: boolean
@@ -87,20 +91,23 @@ const ChatOptionsModal: React.FC<ChatOptionsModalProps> = ({
     // API call: DELETE /api/chats/{chatId}/messages
   }
 
-  const handleDeleteChat = () => {
+  const handleDeleteChat = async () => {
     setShowDeleteAlert(false)
     onClose()
 
     // Simular eliminación del chat
-    if (onDeleteChat) {
-      onDeleteChat()
+    try {
+          const token = localStorage.getItem('token');
+          const response = await axios.delete(`${API_BASE_URL}//chat/${chatInfo.id}`,{
+              headers: {
+                  Authorization: `Bearer ${token}`,
+              },
+          });
+          console.log("Delete chat:", chatInfo.id)
+        }
+    catch(error){
+      console.log(error)
     }
-
-    showToastMessage("Chat eliminado", "danger")
-
-    // Aquí se conectaría con el backend
-    console.log("Delete chat:", chatInfo.id)
-    // API call: DELETE /api/chats/{chatId}
   }
 
   const handleBlockContact = () => {
@@ -187,7 +194,7 @@ const ChatOptionsModal: React.FC<ChatOptionsModalProps> = ({
           </IonToolbar>
         </IonHeader>
 
-        <IonContent className="contact-info-content">
+        <IonContent className="contact-info-content" >
           <div className="contact-header">
             <IonAvatar className="contact-avatar">
               <img src={chatInfo.avatar || "/placeholder.svg"} alt={chatInfo.name} />

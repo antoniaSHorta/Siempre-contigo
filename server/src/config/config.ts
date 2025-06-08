@@ -13,4 +13,10 @@ export const config = {
   dbUser: process.env.DB_USER || 'root',
   dbPassword: process.env.DB_PASSWORD || '',
   dbName: process.env.DB_NAME || 'siempre_contigo',
-}; 
+  
+  talkjs: {
+    appId: process.env.TALKJS_APP_ID,
+    secretKey: process.env.TALKJS_SECRET,
+    url: `https://api.talkjs.com/v1/${process.env.TALKJS_APP_ID}`
+  }
+};

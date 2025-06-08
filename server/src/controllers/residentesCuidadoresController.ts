@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Resident } from '../models/Resident';
+import { ResidentesCuidadores } from '../models/ResidentesCuidadores';
 import { User } from '../models/User';
 
 export const asignarCuidadores = async (req: Request, res: Response) => {
@@ -7,11 +8,17 @@ export const asignarCuidadores = async (req: Request, res: Response) => {
         const { residenteId } = req.params;
         const { cuidadores } = req.body;
         
-
         const residente = await Resident.findByPk(residenteId);
         if (!residente) {
             return res.status(404).json({ mensaje: 'Residente no encontrado' });
         }
+        console.log(req.body)
+        const relacion = await ResidentesCuidadores.findOne({
+            where:{
+                residenteId : residenteId,
+                  
+            }
+        })
 
         const cuidadoresExistentes = await User.findAll({
             where: { id: cuidadores },
@@ -57,7 +64,8 @@ export const actualizarCuidadores = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const { cuidadores } = req.body; 
-
+        console.log(id)
+        console.log(cuidadores)
         const residente = await Resident.findByPk(id);
         if (!residente) {
             return res.status(404).json({ mensaje: 'Residente no encontrado' });

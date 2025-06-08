@@ -1,131 +1,173 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
+import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonIcon, IonSearchbar, IonList, IonItem, IonLabel, IonAvatar, IonCheckbox, IonFab, IonFabButton, IonBadge, IonSpinner, IonText, useIonToast, IonInput } from "@ionic/react";
+import { close, checkmark, people, person } from "ionicons/icons";
+import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import axios from "axios";
 
-import { IonModal, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonIcon, IonSearchbar, IonList, IonItem, IonLabel, IonAvatar, IonCheckbox, IonFab, IonFabButton, IonBadge } from "@ionic/react"
-import { close, checkmark, people, person } from "ionicons/icons"
-import { useState } from "react"
-
-interface Contact {
-  id: string
-  name: string
-  email?: string
-  phone?: string
-  avatar: string
-  isOnline: boolean
-  lastSeen?: string
+interface SelectableUser {
+  id: string;
+  name: string;
+  avatar: string;
 }
 
 interface NewChatModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onCreateChat: (contactIds: string[], isGroup: boolean) => void
+  isOpen: boolean;
+  onClose: () => void;
+  onChatCreated: () => void;
 }
 
-const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onCreateChat }) => {
-  const [searchText, setSearchText] = useState("")
-  const [selectedContacts, setSelectedContacts] = useState<string[]>([])
-  const [isGroupMode, setIsGroupMode] = useState(false)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
-  // Datos de ejemplo - estos vendrán del backend
-  const [contacts] = useState<Contact[]>([
-    {
-      id: "1",
-      name: "Ana Martínez",
-      email: "ana@example.com",
-      phone: "+1234567890",
-      avatar: "https://i.pravatar.cc/150?img=3",
-      isOnline: true,
-    },
-    {
-      id: "2",
-      name: "Carlos Rodríguez",
-      email: "carlos@example.com",
-      phone: "+1234567891",
-      avatar: "https://i.pravatar.cc/150?img=2",
-      isOnline: false,
-      lastSeen: "Hace 2 horas",
-    },
-    {
-      id: "3",
-      name: "Luis Fernández",
-      email: "luis@example.com",
-      phone: "+1234567892",
-      avatar: "https://i.pravatar.cc/150?img=4",
-      isOnline: true,
-    },
-    {
-      id: "4",
-      name: "Sofia García",
-      email: "sofia@example.com",
-      phone: "+1234567893",
-      avatar: "https://i.pravatar.cc/150?img=5",
-      isOnline: false,
-      lastSeen: "Hace 1 día",
-    },
-    {
-      id: "5",
-      name: "Miguel Torres",
-      email: "miguel@example.com",
-      phone: "+1234567894",
-      avatar: "https://i.pravatar.cc/150?img=6",
-      isOnline: true,
-    },
-    {
-      id: "6",
-      name: "Elena Ruiz",
-      email: "elena@example.com",
-      phone: "+1234567895",
-      avatar: "https://i.pravatar.cc/150?img=7",
-      isOnline: false,
-      lastSeen: "Hace 3 días",
-    },
-  ])
+const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onChatCreated }) => {
+  const { user: currentUser } = useAuth();
+  const [presentToast] = useIonToast();
 
-  const filteredContacts = contacts.filter((contact) => contact.name.toLowerCase().includes(searchText.toLowerCase()))
+  const [searchText, setSearchText] = useState("");
+  const [selectedContacts, setSelectedContacts] = useState<Set<string>>(new Set());
+  const [isGroupMode, setIsGroupMode] = useState(false);
+  const [groupName, setGroupName] = useState("");
+
+  const [allUsers, setAllUsers] = useState<SelectableUser[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    if (isOpen) {
+      const fetchUsers = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get(`${API_BASE_URL}/chat/availableContacts/${currentUser?.id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          console.log("Available contacts response:", response.data);
+          const selectableUsers = response.data.data
+            .filter((u: any) => u.id.toString() !== currentUser?.id.toString())
+            .map((u: any): SelectableUser => ({
+                id: u.id.toString(),
+                name: u.name,
+                avatar: `https://i.pravatar.cc/150?u=${u.id}` 
+            }));
+          setAllUsers(selectableUsers);
+        } catch (err) {
+          setError("No se pudo cargar la lista de usuarios.");
+          console.error("Error fetching available users:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      if (currentUser?.id) {
+          fetchUsers();
+      } else {
+          setIsLoading(false);
+          setError("ID de usuario actual no disponible.");
+      }
+    } else {
+        setSearchText("");
+        setSelectedContacts(new Set());
+        setIsGroupMode(false);
+        setGroupName("");
+    }
+  }, [isOpen, currentUser]);
+  
 
   const handleContactSelect = (contactId: string) => {
-    if (isGroupMode) {
-      setSelectedContacts((prev) =>
-        prev.includes(contactId) ? prev.filter((id) => id !== contactId) : [...prev, contactId],
-      )
+    if (!isGroupMode) {
+      const selectedUser = allUsers.find(u => u.id === contactId);
+      const userName = currentUser.name
+      const nombreChat = `${selectedUser?.name} - ${userName}`
+      if (selectedUser) {
+        handleCreate([contactId], nombreChat);
+      } else {
+        presentToast({ message: 'Contacto no encontrado.', duration: 2000, color: 'danger' });
+      }
     } else {
-      onCreateChat([contactId], false)
-      handleClose()
+      const newSelection = new Set(selectedContacts);
+      if (newSelection.has(contactId)) {
+        newSelection.delete(contactId);
+      } else {
+        newSelection.add(contactId);
+      }
+      setSelectedContacts(newSelection);
     }
-  }
+  };
 
-  const handleCreateGroup = () => {
-    if (selectedContacts.length >= 2) {
-      onCreateChat(selectedContacts, true)
-      handleClose()
+  const handleCreate = async (participantIds?: string[], singleChatSubject?: string) => {
+    const finalParticipantIds = participantIds || Array.from(selectedContacts);
+
+    if (finalParticipantIds.length === 0) {
+      presentToast({ message: 'Selecciona al menos un contacto', duration: 2000, color: 'warning' });
+      return;
     }
-  }
+    
+    const allParticipants = [currentUser!.id.toString(), ...finalParticipantIds];
+    const isGroup = allParticipants.length > 2;
+    
+    if (isGroup && !groupName.trim()) {
+       presentToast({ message: 'Por favor, ingresa un nombre para el grupo', duration: 2000, color: 'warning' });
+       return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      
+      let chatTitle: string | null = null;
+      let chatSubject: string = 'Chat';
 
-  const handleClose = () => {
-    setSearchText("")
-    setSelectedContacts([])
-    setIsGroupMode(false)
-    onClose()
-  }
+      if (isGroup) {
+          chatTitle = groupName.trim();
+          chatSubject = groupName.trim();
+      } else {
+          chatTitle = null; 
+          chatSubject = singleChatSubject || 'Chat Individual';
+      }
 
-  const toggleGroupMode = () => {
-    setIsGroupMode(!isGroupMode)
-    setSelectedContacts([])
-  }
+      console.log("Creating chat with payload:", {
+          title: chatTitle,
+          participants: allParticipants,
+          subject: chatSubject,
+      });
+
+      await axios.put(`${API_BASE_URL}/chat`, {
+        title: chatTitle,
+        participants: allParticipants,
+        subject: chatSubject,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      presentToast({ message: 'Chat creado exitosamente', duration: 2000, color: 'success' });
+      onChatCreated(); 
+      onClose();
+    } catch (err) {
+      presentToast({ message: 'Error al crear el chat', duration: 2000, color: 'danger' });
+      console.error("Error al crear el chat:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const filteredContacts = allUsers.filter(contact => 
+    contact.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
-    <IonModal isOpen={isOpen} onDidDismiss={handleClose}>
+    <IonModal isOpen={isOpen} onDidDismiss={onClose}>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>{isGroupMode ? "Nuevo grupo" : "Nuevo chat"}</IonTitle>
+          <IonTitle>{isGroupMode ? "Nuevo Grupo" : "Nuevo Chat"}</IonTitle>
           <IonButtons slot="start">
-            <IonButton fill="clear" onClick={handleClose}>
+            <IonButton fill="clear" onClick={onClose}>
               <IonIcon icon={close} />
             </IonButton>
           </IonButtons>
-          <IonButtons slot="end">
-            <IonButton fill="clear" onClick={toggleGroupMode}>
+           <IonButtons slot="end">
+            <IonButton fill="clear" onClick={() => setIsGroupMode(!isGroupMode)}>
               <IonIcon icon={isGroupMode ? person : people} />
             </IonButton>
           </IonButtons>
@@ -140,65 +182,53 @@ const NewChatModal: React.FC<NewChatModalProps> = ({ isOpen, onClose, onCreateCh
             placeholder="Buscar contactos..."
             className="contact-searchbar"
           />
-
           {isGroupMode && (
             <div className="group-mode-info">
-              <p>Selecciona al menos 2 contactos para crear un grupo</p>
-              {selectedContacts.length > 0 && (
-                <IonBadge color="primary">{selectedContacts.length} seleccionados</IonBadge>
-              )}
+              <IonItem>
+                  <IonInput
+                    value={groupName}
+                    onIonChange={e => setGroupName(e.detail.value!)}
+                    placeholder="Nombre del Grupo"
+                  />
+              </IonItem>
+              {selectedContacts.size > 0 && <IonBadge color="primary">{selectedContacts.size} seleccionados</IonBadge>}
             </div>
           )}
         </div>
+        
+        {isLoading && <IonSpinner />}
+        {error && <IonText color="danger" className="ion-padding">{error}</IonText>}
 
-        <IonList className="contacts-list">
-          {filteredContacts.map((contact) => (
-            <IonItem key={contact.id} button onClick={() => handleContactSelect(contact.id)} className="contact-item">
-              {isGroupMode && (
-                <IonCheckbox
-                  slot="start"
-                  checked={selectedContacts.includes(contact.id)}
-                  onIonChange={() => handleContactSelect(contact.id)}
-                />
-              )}
-
-              <div className="contact-avatar-container">
-                <IonAvatar className="contact-avatar">
-                  <img src={contact.avatar || "/placeholder.svg"} alt={contact.name} />
-                </IonAvatar>
-              </div>
-
-              <IonLabel className="contact-label">
-                <div className="contact-info">
-                  <h2 className="contact-name">{contact.name}</h2>
-                  <span className={`contact-status ${contact.isOnline ? "" : "offline"}`}>
-                    {contact.isOnline ? "En línea" : contact.lastSeen || "Desconectado"}
-                  </span>
-                </div>
-                {contact.email && <p className="contact-email">{contact.email}</p>}
-              </IonLabel>
-            </IonItem>
-          ))}
-        </IonList>
-
-        {filteredContacts.length === 0 && (
-          <div className="empty-contacts">
-            <IonIcon icon={people} className="empty-icon" />
-            <h3>No se encontraron contactos</h3>
-            <p>Intenta con otros términos de búsqueda</p>
-          </div>
+        {!isLoading && !error && (
+            <IonList className="contacts-list">
+              {filteredContacts.map((contact) => (
+                <IonItem key={contact.id} button={!isGroupMode} onClick={() => handleContactSelect(contact.id)} className="contact-item">
+                  {isGroupMode && (
+                    <IonCheckbox
+                      slot="start"
+                      checked={selectedContacts.has(contact.id)}
+                      onIonChange={() => handleContactSelect(contact.id)}
+                    />
+                  )}
+                  <IonAvatar className="contact-avatar">
+                    <img src={contact.avatar} alt={contact.name} />
+                  </IonAvatar>
+                  <IonLabel className="contact-label">{contact.name}</IonLabel>
+                </IonItem>
+              ))}
+            </IonList>
         )}
 
-        {isGroupMode && selectedContacts.length >= 2 && (
+        {isGroupMode && (
           <IonFab vertical="bottom" horizontal="end" slot="fixed">
-            <IonFabButton className="create-group-fab" onClick={handleCreateGroup}>
+            <IonFabButton className="create-group-fab" onClick={() => handleCreate()} disabled={selectedContacts.size === 0}>
               <IonIcon icon={checkmark} />
             </IonFabButton>
           </IonFab>
         )}
       </IonContent>
     </IonModal>
-  )
-}
+  );
+};
 
-export default NewChatModal
+export default NewChatModal;

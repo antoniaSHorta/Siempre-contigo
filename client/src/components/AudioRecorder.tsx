@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 
 import { IonButton, IonIcon, IonItem, IonLabel, IonProgressBar, IonAlert } from "@ionic/react"
@@ -9,7 +7,7 @@ import { useState, useEffect, useRef } from "react"
 interface AudioRecorderProps {
   isOpen: boolean
   onClose: () => void
-  onSendAudio: (audioData: { duration: number; size: string; url: string }) => void
+  onSendAudio: (audioData: { blob: Blob; duration: number; size: string; url: string }) => void
 }
 
 const AudioRecorder: React.FC<AudioRecorderProps> = ({ isOpen, onClose, onSendAudio }) => {
@@ -23,6 +21,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ isOpen, onClose, onSendAu
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
   const audioUrlRef = useRef<string>("")
+  const audioBlobRef = useRef<Blob | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -34,45 +33,55 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ isOpen, onClose, onSendAu
         URL.revokeObjectURL(audioUrlRef.current)
         audioUrlRef.current = ""
       }
+      audioBlobRef.current = null; // Limpiar el Blob también
     }
   }, [isOpen])
 
   const startRecording = async () => {
     try {
+      // Solicitar acceso al micrófono
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      // Crear MediaRecorder
       const mediaRecorder = new MediaRecorder(stream)
       mediaRecorderRef.current = mediaRecorder
-      audioChunksRef.current = []
+      audioChunksRef.current = [] // Reiniciar chunks de audio
 
+      // Manejar datos disponibles (chunks de audio)
       mediaRecorder.ondataavailable = (event) => {
         audioChunksRef.current.push(event.data)
       }
 
+      // Manejar el final de la grabación
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" })
-        audioUrlRef.current = URL.createObjectURL(audioBlob)
+        // Crear el Blob final a partir de los chunks
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" }) // O "audio/mpeg", "audio/webm" dependiendo del navegador/formato
+        audioBlobRef.current = audioBlob; // Guardar el Blob
+        audioUrlRef.current = URL.createObjectURL(audioBlob) // Crear URL para reproducción local
         setHasRecording(true)
+        // Detener las pistas de la transmisión (liberar el micrófono)
         stream.getTracks().forEach((track) => track.stop())
       }
 
-      mediaRecorder.start()
+      mediaRecorder.start() // Iniciar grabación
       setIsRecording(true)
       setRecordingTime(0)
 
+      // Iniciar contador de tiempo
       intervalRef.current = setInterval(() => {
         setRecordingTime((prev) => prev + 1)
       }, 1000)
     } catch (error) {
       console.error("Error accessing microphone:", error)
-      setShowAlert(true)
+      setShowAlert(true) // Mostrar alerta si falla el acceso al micrófono
     }
   }
 
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop()
+      mediaRecorderRef.current.stop() // Detener la grabación
       setIsRecording(false)
 
+      // Detener el contador de tiempo
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
         intervalRef.current = null
@@ -94,24 +103,25 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ isOpen, onClose, onSendAu
 
   const deleteRecording = () => {
     if (audioUrlRef.current) {
-      URL.revokeObjectURL(audioUrlRef.current)
+      URL.revokeObjectURL(audioUrlRef.current) // Liberar la URL del objeto
       audioUrlRef.current = ""
     }
+    audioBlobRef.current = null; // Eliminar el Blob
     setHasRecording(false)
     setRecordingTime(0)
   }
 
   const sendRecording = () => {
-    if (hasRecording) {
-      // Simulación de grabar audio
+    if (hasRecording && audioBlobRef.current) { // Asegurarse de que el Blob exista
       const audioData = {
+        blob: audioBlobRef.current, // Pasar el Blob real
         duration: recordingTime,
-        size: `${Math.round(recordingTime * 8)} KB`, // Tamaño aproximado
-        url: audioUrlRef.current, // Esta sería una URL del servidor
+        size: `${Math.round(audioBlobRef.current.size / 1024)} KB`, // Calcular tamaño real del Blob
+        url: audioUrlRef.current, // URL temporal para previsualización
       }
 
-      onSendAudio(audioData)
-      onClose()
+      onSendAudio(audioData) // Llamar al callback con los datos de audio
+      onClose() // Cerrar el modal
     }
   }
 
@@ -121,7 +131,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ isOpen, onClose, onSendAu
     return `${mins}:${secs.toString().padStart(2, "0")}`
   }
 
-  if (!isOpen) return null
+  if (!isOpen) return null // No renderizar si no está abierto
 
   return (
     <div className="audio-recorder-overlay">
@@ -212,4 +222,4 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ isOpen, onClose, onSendAu
   )
 }
 
-export default AudioRecorder
+export default AudioRecorder;

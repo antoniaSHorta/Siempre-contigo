@@ -15,6 +15,9 @@ import { handleError } from './utils/errorHandler';
 import { initDatabase } from './config/initDb';
 import {startWeeklyReportJob} from './jobs/reportJob'
 
+// --- SOLUCIÓN: Paso 1 - Importar las rutas del chat ---
+import chatRoutes from './routes/chatRoutes';
+
 dotenv.config();
 
 const app = express();
@@ -23,6 +26,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// --- Registrar todas las rutas de la API ---
 app.use('/api/users', userRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/residents', residentRoutes);
@@ -37,6 +41,10 @@ startWeeklyReportJob();
 
 startWeeklyReportJob();
 
+// --- SOLUCIÓN: Paso 2 - Usar las rutas del chat con el prefijo /api/chat ---
+app.use('/api/chat', chatRoutes);
+
+
 app.get('/', (req, res) => {
   res.json({ message: 'Bienvenido a Siempre Contigo API' });
 });
@@ -49,14 +57,13 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 const startServer = async () => {
   try {
     await initDatabase();
-
     app.listen(config.port, () => {
-      console.log(`Server is running on port ${config.port}`);
+      console.log(`Servidor corriendo en el puerto ${config.port}`);
     });
   } catch (error) {
-    console.error('Unable to start server:', error);
+    console.error('No se pudo iniciar el servidor:', error);
     process.exit(1);
   }
 };
 
-startServer(); 
+startServer();
