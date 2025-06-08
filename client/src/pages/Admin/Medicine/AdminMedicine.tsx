@@ -23,6 +23,9 @@ import {
     heartDislikeOutline,
     addCircleOutline,
     refreshOutline,
+    eyeOffOutline,
+    eyeOutline,
+    pencilOutline,
 } from 'ionicons/icons';
 import { useIonRouter } from '@ionic/react';
 import { IMedicine } from '../../../interfaces/IMedicine';
@@ -33,11 +36,9 @@ import { de } from 'date-fns/locale';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5173/api';
 
-// Define the interface for a Resident option, as it's used in the filter
 interface ResidentOption {
     id: number;
     nombre: string;
-    // Add other relevant properties if needed, e.g., 'rut', 'email'
 }
 
 export const AdminMedicine: React.FC = () => {
@@ -210,13 +211,9 @@ export const AdminMedicine: React.FC = () => {
                                         </p>
                                     </IonLabel>
                                     <IonButtons>
-                                        <IonButton className="admin-users-btn-detail" onClick={() => goToDetailMedicine(medicine.id)}>
-                                            <IonIcon icon={heartOutline} />
-                                        </IonButton>
                                         <IonButton className="admin-users-btn-edit" onClick={() => goToEditMedicine(medicine.id)}>
-                                            <IonIcon icon={heartOutline} />
+                                            <IonIcon icon={pencilOutline} />
                                         </IonButton>
-                                        {/* Conditionally render the toggle status button if 'isActive' exists in IMedicine */}
 
                                     </IonButtons>
                                 </IonItem>
@@ -226,7 +223,7 @@ export const AdminMedicine: React.FC = () => {
                 )}
             </IonContent>
 
-            {(totalPages > 1 && !loading && filteredMedicines.length > 0) && ( // Only show pagination if there are filtered items
+            {(totalPages > 1 && !loading && filteredMedicines.length > 0) && (
                 <div className="admin-users-pagination-fixed">
                     <div className="admin-users-pagination">
                         <IonItem className='admin-filter-item'>

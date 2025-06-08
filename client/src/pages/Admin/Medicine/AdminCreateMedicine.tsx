@@ -194,7 +194,7 @@ const AdminCreateMedicine: React.FC = () => {
                         cuidadores={cuidadores}
                         isAdmin={isCurrentUserAdmin}
                         error={formError}
-                        //isEdit={false} // Si este formulario es solo para crear, no necesitas isEdit
+                        isEdit={true}
                     />
                     <IonButton expand="block" type="submit" className="ion-margin-top" disabled={isSubmitting}>
                         {isSubmitting ? 'Guardando...' : 'Crear Medicación'}

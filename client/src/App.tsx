@@ -50,6 +50,7 @@ import AdminResidentDetail from './pages/Admin/Residents/AdminResidentDetail';
 import { } from './pages/Admin/Medicine';
 import AdminMedicine from './pages/Admin/Medicine/AdminMedicine';
 import AdminCreateMedicine from './pages/Admin/Medicine/AdminCreateMedicine';
+import AdminEditMedicine from './pages/Admin/Medicine/AdminEditMedicine';
 
 setupIonicReact();
 
@@ -62,9 +63,6 @@ const App: React.FC = () => (
 
         <IonRouterOutlet id="main-content" aria-hidden="false">
           <Route exact path="/login" component={Login} />
-
-          
-          
 
           <Route path="/app">
             <IonTabs>
@@ -80,6 +78,7 @@ const App: React.FC = () => (
                 <ProtectedRoute exact path="/app/admin" component={AdminHome} adminOnly/>
                 <ProtectedRoute exact path="/app/admin/medicine" component={AdminMedicine} adminOnly/>
                 <ProtectedRoute exact path="/app/admin/medicines/add" component={AdminCreateMedicine} adminOnly />
+                <ProtectedRoute exact path="/app/admin/medicines/edit/:id" component={AdminEditMedicine} adminOnly />
                 <ProtectedRoute exact path="/app/admin/users" component={AdminUsers} adminOnly/>
                 <ProtectedRoute exact path="/app/admin/users/add" component={AdminCreateUser} adminOnly/>
                 <ProtectedRoute exact path="/app/admin/users/detail/:id" component={AdminUserDetail} adminOnly/>
