@@ -39,7 +39,164 @@
 .action-button {
   flex: 1;
   --border-color: #07407b;
+  --color: #07407b;/* General Page Styling */
+.chat-detail-page {
+  --background: #f0f2f5; /* Light gray background for the entire page */
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; /* Modern, clean font */
+}
+
+/* Header Styling */
+.ion-no-border {
+  --border-width: 0; /* Remove default header border */
+}
+
+.chat-detail-page ion-toolbar {
+  --background: white; /* White background for the toolbar */
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+}
+
+.chat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Space between avatar and text */
+  flex-grow: 1; /* Allows header info to take available space */
+  padding-left: 8px; /* Slight padding to align with back button */
+}
+
+.header-avatar {
+  width: 44px; /* Slightly larger avatar in header */
+  height: 44px;
+  border-radius: 50%; /* Ensures perfect circle */
+  overflow: hidden; /* Important for img inside avatar */
+  flex-shrink: 0; /* Prevent avatar from shrinking */
+}
+
+.header-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image fills the avatar space correctly */
+}
+
+.header-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.2; /* Adjust line height for better spacing */
+}
+
+.chat-title {
+  font-size: 18px; /* Clear and readable title */
+  font-weight: 600; /* Bolder for prominence */
+  color: #07407b; /* Deep blue for main text */
+  padding: 0;
+  margin: 0;
+  text-align: left; /* Align text to the left */
+}
+
+.chat-status {
+  font-size: 13px; /* Smaller font for status */
+  color: #666; /* Softer gray for secondary text */
+  margin-top: 2px; /* Small space above status */
+  text-align: left;
+}
+
+/* Back Button and Options Button */
+ion-back-button {
+  --color: #07407b; /* Icon color for back button */
+}
+
+ion-buttons[slot="end"] ion-button {
+  --color: #07407b; /* Icon color for options button */
+}
+
+/* Message Content Area */
+.chat-content {
+  --background: #e5eaf0; /* Slightly different background for message area to distinguish */
+  padding-top: 16px; /* Padding for the top of the chat area */
+  padding-bottom: 16px; /* Padding for the bottom of the chat area */
+}
+
+.messages-container {
+  padding: 0 12px; /* Horizontal padding for message bubbles */
+}
+
+.no-messages-text {
+  text-align: center;
+  color: #888;
+  margin-top: 40px;
+  font-style: italic;
+  font-size: 15px;
+}
+
+/* Message Bubble Styling (from MessageBubble component, but setting up the container) */
+.message {
+  display: flex;
+  margin-bottom: 10px; /* Space between messages */
+}
+
+.message-own {
+  justify-content: flex-end; /* Align own messages to the right */
+}
+
+.message-other {
+  justify-content: flex-start; /* Align other messages to the left */
+}
+
+/* Message Input Area */
+.message-input-container {
+  background: white;
+  padding: 8px 10px; /* Padding around the input area */
+  border-top: 1px solid #e0e0e0; /* Subtle border at the top */
+  display: flex;
+  align-items: flex-end; /* Align items to the bottom when textarea expands */
+}
+
+.message-input-item {
+  --background: #f8f8f8; /* Light background for the input field */
+  --border-radius: 20px; /* Rounded corners for the input item */
+  padding: 6px 4px;
+  flex-grow: 1;
+  display: flex; /* Ensure inner elements are flexed */
+  align-items: center; /* Vertically center content */
+}
+
+.message-textarea {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  width: 100%;
+  resize: none; /* Prevent manual resizing */
+  font-size: 16px;
+  color: #333;
+}
+
+.attachment-button,
+.send-button,
+.mic-button {
+  --color: #07407b; /* Consistent button icon color */
+  font-size: 24px; /* Larger icons */
+  width: 48px; /* Ensure circular touch target */
+  height: 48px;
+  margin: 0 4px;
+}
+
+.send-button {
+  --color: var(--ion-color-primary, #07407b); /* Use primary color if defined, otherwise default */
+}
+
+/* Spinner for file sending */
+ion-spinner {
   --color: #07407b;
+}
+
+/* Error Message Styling */
+.error-message {
+  color: #dc3545; /* Red for errors */
+  font-weight: 500;
+}
 }
 
 .contact-danger-zone {

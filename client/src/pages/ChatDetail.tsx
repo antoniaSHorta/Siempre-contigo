@@ -411,7 +411,8 @@ const ChatDetail: React.FC = () => {
     if (isLoading) {
         return (
             <IonPage>
-                <IonContent className="ion-text-center ion-padding">
+                <IonContent className="contact-info-content" 
+                style={{ '--background': '#ffffff' }}>
                     <IonSpinner name="crescent" />
                     <p>Cargando mensajes...</p>
                 </IonContent>

@@ -6,6 +6,7 @@ import { IonActionSheet, IonAlert, IonModal, IonHeader, IonToolbar, IonTitle, Io
 import { informationCircle, search, notifications, notificationsOff, trash, ban, close, person } from "ionicons/icons"
 import { useState } from "react"
 import ChatSearchModal from "./ChatSearchModal"
+import './ChatOptionsModal.css'
 import axios from "axios"
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
@@ -193,7 +194,7 @@ const ChatOptionsModal: React.FC<ChatOptionsModalProps> = ({
           </IonToolbar>
         </IonHeader>
 
-        <IonContent className="contact-info-content">
+        <IonContent className="contact-info-content" >
           <div className="contact-header">
             <IonAvatar className="contact-avatar">
               <img src={chatInfo.avatar || "/placeholder.svg"} alt={chatInfo.name} />
