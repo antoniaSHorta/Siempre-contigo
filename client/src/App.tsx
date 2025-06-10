@@ -95,25 +95,17 @@ const App: React.FC = () => (
               </IonRouterOutlet>
 
               <IonTabBar slot="bottom">
-                <IonTabButton tab="agenda" href="/app/agenda">
-                  <IonIcon icon={book}/>
-                  <IonLabel>Agenda</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="alimentacion" href="/app/alimentacion">
-                  <IonIcon icon={restaurant}/>
-                  <IonLabel>Alimentacion</IonLabel>
-                </IonTabButton>
                 <IonTabButton tab="profile" href="/app/profile">
                   <IonIcon icon={person} />
                   <IonLabel>Perfil</IonLabel>
                 </IonTabButton>
+                <IonTabButton tab="agenda" href="/app/agenda">
+                  <IonIcon icon={book}/>
+                  <IonLabel>Agenda</IonLabel>
+                </IonTabButton>
                 <IonTabButton tab="chat" href="/app/chat">
                   <IonIcon icon={chatbubble} />
                   <IonLabel>Chat</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="medicacion" href="/app/medicamentos">
-                  <IonIcon icon={heart} />
-                  <IonLabel>Medicamentos</IonLabel>
                 </IonTabButton>
               </IonTabBar>
 
