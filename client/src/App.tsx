@@ -9,7 +9,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import SideMenu from './components/SideMenu'
 
 /* Pages */
-import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Alimentacion from './pages/Alimentacion';
@@ -68,7 +67,6 @@ const App: React.FC = () => (
             <IonTabs>
 
               <IonRouterOutlet>
-                <ProtectedRoute exact path="/app/home" component={Home} />
                 <ProtectedRoute exact path="/app/profile" component={Profile}/>
                 <ProtectedRoute exact path="/app/medicamentos" component={Medicamentos}/>
                 <ProtectedRoute exact path="/app/alimentacion" component={Alimentacion}/>
@@ -105,10 +103,6 @@ const App: React.FC = () => (
                   <IonIcon icon={restaurant}/>
                   <IonLabel>Alimentacion</IonLabel>
                 </IonTabButton>
-                <IonTabButton tab="home" href="/app/home">
-                  <IonIcon icon={home}/>
-                  <IonLabel>Home</IonLabel>
-                </IonTabButton>
                 <IonTabButton tab="profile" href="/app/profile">
                   <IonIcon icon={person} />
                   <IonLabel>Perfil</IonLabel>
@@ -127,7 +121,7 @@ const App: React.FC = () => (
           </Route>
 
           <Route exact path="/">
-            <Redirect to="/app/home"/>
+            <Redirect to="/app/agenda"/>
           </Route>
         </IonRouterOutlet>
       </IonReactRouter>

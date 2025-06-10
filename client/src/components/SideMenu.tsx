@@ -20,12 +20,6 @@ const SideMenu: React.FC = () => {
             <IonContent>
             <IonList>
                 <IonMenuToggle autoHide={false}>
-                <IonItem routerLink="/app/home" routerDirection="none">
-                    <IonIcon slot="start" icon={home} />
-                    <IonLabel>Home</IonLabel>
-                </IonItem>
-                </IonMenuToggle>
-                <IonMenuToggle autoHide={false}>
                 <IonItem routerLink="/app/agenda" routerDirection="none">
                     <IonIcon slot="start" icon={book} />
                     <IonLabel>Agenda</IonLabel>

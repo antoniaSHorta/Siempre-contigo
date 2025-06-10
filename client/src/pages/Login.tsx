@@ -17,7 +17,7 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/app/home', 'root', 'replace');
+      router.push('/app/agenda', 'root', 'replace');
     }
   }, [isAuthenticated, router]);
 
