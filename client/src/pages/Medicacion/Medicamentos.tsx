@@ -545,26 +545,33 @@ const Medicamentos: React.FC = () => {
                                         onDeleteClick={handleDeleteClick}
                                     />
                                 ))}
-                                <IonItem className="medicamento-card-item">
-                                    <IonButton fill="clear" className="add-button-content"
-                                        onClick={() => handleAddEntry(residents)}>
-                                        <IonIcon icon={addCircle} slot="start" className="add-icon" />
-                                        <IonLabel className="add-label">Agregar Nueva Entrada</IonLabel>
-                                    </IonButton>
-                                </IonItem>
+                                {user.role === 'Admin' && (
+                                    <IonItem className="medicamento-card-item">
+                                        <IonButton fill="clear" className="add-button-content"
+                                            onClick={() => handleAddEntry(residents)}>
+                                            <IonIcon icon={addCircle} slot="start" className="add-icon" />
+                                            <IonLabel className="add-label">Agregar Nueva Entrada</IonLabel>
+                                        </IonButton>
+                                    </IonItem>
+                                    )
+                                }
                             </IonList>
                         ) : (
                             <IonList className='medicamento-lista-entradas'>
                                 <IonText className='medicamento-lista-sin-datos'>
                                     No hay registros de Medicación para esta fecha.
                                 </IonText>
-                                <IonItem className="medicamento-card-item">
-                                    <IonButton fill="clear" className="add-button-content"
-                                        onClick={() => handleAddEntry(residents)}>
-                                        <IonIcon icon={addCircle} slot="start" className="add-icon" />
-                                        <IonLabel className="add-label">Agregar Nueva Entrada</IonLabel>
-                                    </IonButton>
-                                </IonItem>
+                                {user.role === 'Admin' && (
+                                    <IonItem className="medicamento-card-item">
+                                        <IonButton fill="clear" className="add-button-content"
+                                            onClick={() => handleAddEntry(residents)}>
+                                            <IonIcon icon={addCircle} slot="start" className="add-icon" />
+                                            <IonLabel className="add-label">Agregar Nueva Entrada</IonLabel>
+                                        </IonButton>
+                                    </IonItem>
+                                    )
+                                }
+                                
                             </IonList>
                         )}
                         {user.role === 'Admin' && (
