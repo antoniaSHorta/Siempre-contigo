@@ -131,7 +131,10 @@ export const AdminUserDetail: React.FC = () => {
 
                     <button
                         className="admin-user-detail-button"
-                        onClick={() => router.push(`/app/admin/users/edit/${numericId}`)}
+                        onClick={() => {
+                            router.push(`/app/admin/users/edit/${numericId}`);
+                            window.location.reload();
+                        }}
                     >
                         Editar Usuario
                     </button>

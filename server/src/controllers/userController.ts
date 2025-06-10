@@ -54,6 +54,10 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       return next(new AppError('Credenciales inválidas', 401));
     }
 
+    if(user.isActive!){
+      return next(new AppError('Este usuario no esta activo en el sistema', 401));
+    }
+
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {

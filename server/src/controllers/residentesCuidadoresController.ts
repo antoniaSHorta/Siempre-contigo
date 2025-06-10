@@ -12,13 +12,6 @@ export const asignarCuidadores = async (req: Request, res: Response) => {
         if (!residente) {
             return res.status(404).json({ mensaje: 'Residente no encontrado' });
         }
-        console.log(req.body)
-        const relacion = await ResidentesCuidadores.findOne({
-            where:{
-                residenteId : residenteId,
-                  
-            }
-        })
 
         const cuidadoresExistentes = await User.findAll({
             where: { id: cuidadores },

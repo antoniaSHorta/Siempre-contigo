@@ -26,6 +26,8 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
                 name: newUser.name,
                 email: newUser.email,
                 role: newUser.role,
+                phone: newUser.phone,
+                location: newUser.location
             },
         });
     } catch (error) {

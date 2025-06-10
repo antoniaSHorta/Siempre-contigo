@@ -30,7 +30,6 @@ export const AdminUserEdit: React.FC = () => {
     const [form, setForm] = useState({
         name: '',
         email: '',
-        password: '',
         role: '',
         phone: '',
         location: ''
@@ -48,7 +47,6 @@ export const AdminUserEdit: React.FC = () => {
                 setForm({
                     name: data.name,
                     email: data.email,
-                    password: '',
                     role: data.role,
                     phone: data.phone,
                     location: data.location
@@ -79,11 +77,6 @@ export const AdminUserEdit: React.FC = () => {
 
         if (!validateEmail(form.email)) {
             setError('Email no es válido.');
-            return;
-        }
-
-        if (form.password && form.password.length < 6) {
-            setError('La contraseña debe tener al menos 6 caracteres.');
             return;
         }
 
@@ -138,7 +131,10 @@ export const AdminUserEdit: React.FC = () => {
                                 expand="block" 
                                 fill="outline" 
                                 color="medium" 
-                                onClick={() => router.push('/app/admin/users')}
+                                onClick={() => {
+                                    router.push('/app/admin/users');
+                                    window.location.reload();
+                                }}
                                 >
                                 Cancelar
                             </IonButton>
