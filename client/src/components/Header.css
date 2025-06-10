@@ -1,3 +1,7 @@
+.mish {
+    border-bottom: 1px solid #bbb;
+}
+
 .header-content {
     display: flex;
     align-items: center;

@@ -113,7 +113,7 @@ export const AdminUsers: React.FC = () => {
 
     return (
         <IonPage className="admin-users-page">
-            <Header title='Usuarios' grayBackground/>
+            <Header title='Usuarios'/>
             {users.length > 0 && (
                 <div className="admin-users-filters">
                 <IonItem className="admin-filter-item">

@@ -71,7 +71,7 @@ export const AdminUserDetail: React.FC = () => {
 
     return (
         <IonPage className="admin-user-detail-page">
-            <Header title='Detalle del usuario' grayBackground/>
+            <Header title='Detalle del usuario'/>
             <div className="admin-user-detail-content">
                 {user && (
                 <div className='admin-user-detail-card'>

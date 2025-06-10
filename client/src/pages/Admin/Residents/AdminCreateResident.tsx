@@ -93,7 +93,7 @@ export const AdminCreateResident: React.FC = () => {
 
     return (
         <IonPage className="admin-user-edit-page">
-            <Header title='Crear nuevo residente' grayBackground/>
+            <Header title='Crear nuevo residente'/>
             <div className="admin-user-edit-content">
                 <div className="admin-user-edit-container">
                     <div className="admin-form-header-text">Crear nuevo residente</div>
