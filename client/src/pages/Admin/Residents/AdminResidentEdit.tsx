@@ -135,7 +135,10 @@ export const AdminResidentEdit: React.FC = () => {
                                 expand="block"
                                 fill="outline"
                                 color="medium"
-                                onClick={() => router.push('/app/admin/residents')}
+                                onClick={() => {
+                                    router.push('/app/admin/residents')
+                                    window.location.reload();
+                                }}
                             >
                                 Cancelar
                             </IonButton>

@@ -177,7 +177,10 @@ const AdminResidentDetail: React.FC = () => {
 
                         <button
                             className="admin-user-detail-button"
-                            onClick={() => router.push(`/app/admin/residents/edit/${numericId}`)}
+                            onClick={() => {
+                                router.push(`/app/admin/residents/edit/${numericId}`)
+                                window.location.reload();
+                            }}
                         >
                             Editar Residente
                         </button>

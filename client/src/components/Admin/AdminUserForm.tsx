@@ -15,7 +15,6 @@ interface UserFormProps {
     form: {
         name: string;
         email: string;
-        password: string;
         role: string;
         phone: string;
         location: string;
@@ -50,17 +49,6 @@ const AdminUserForm: React.FC<UserFormProps> = ({ form, onChange, error ,isEdit}
                         required
                         type="email"
                         autocomplete="email"
-                    />
-                </IonItem>
-
-                <IonItem>
-                    <IonLabel position="floating">Contraseña</IonLabel>
-                    <IonInput
-                        value={form.password}
-                        onIonChange={e => onChange('password', e.detail.value!)}
-                        required
-                        type="password"
-                        autocomplete="new-password"
                     />
                 </IonItem>
 

@@ -82,7 +82,6 @@ const ResidentForm: React.FC<ResidentFormProps> = ({ form, onChange, cuidadoresD
                         onIonChange={e => onChange('estado_salud', e.detail.value!)}
                         interface="popover"
                     >
-                        <IonSelectOption value="Todos">Todos</IonSelectOption>
                         <IonSelectOption value="Estable">Estable</IonSelectOption>
                         <IonSelectOption value="Requiere atención especial">Requiere atención especial</IonSelectOption>
                         <IonSelectOption value="Requiere terapia física">Requiere terapia física</IonSelectOption>

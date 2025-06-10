@@ -84,12 +84,18 @@ export const AdminResidents: React.FC = () => {
     const indexOfFirst = indexOfLast - residentsPerPage;
     const currentResidents = filteredResidents.slice(indexOfFirst, indexOfLast);
 
-    const goToAddResident = () => router.push('/app/admin/residents/add', 'forward');
+    const goToAddResident = () => {
+        router.push('/app/admin/residents/add', 'forward')
+        window.location.reload();
+    };
     const goToEditResident = (id: number) => {
         router.push(`/app/admin/residents/edit/${id}`, 'forward');
         window.location.reload();
     };
-    const goToDetailResident = (id: number) => router.push(`/app/admin/residents/detail/${id}`, 'forward');
+    const goToDetailResident = (id: number) => {
+        router.push(`/app/admin/residents/detail/${id}`, 'forward')
+        window.location.reload();
+    };
 
     return (
         <IonPage className="admin-users-page">

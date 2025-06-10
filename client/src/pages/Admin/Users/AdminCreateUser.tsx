@@ -132,7 +132,10 @@ export const AdminCreateUser: React.FC = () => {
                         expand="block" 
                         fill="outline" 
                         color="medium" 
-                        onClick={() => router.push('/app/admin/users')}
+                        onClick={() => {
+                            router.push('/app/admin/users');
+                            window.location.reload();
+                        }}
                         >
                         Cancelar
                     </IonButton>

@@ -92,7 +92,10 @@ export const AdminUsers: React.FC = () => {
         return matchRole && matchName;
     });
 
-    const goToAddUser = () => router.push('/app/admin/users/add', 'forward');
+    const goToAddUser = () => {
+        router.push('/app/admin/users/add', 'forward');
+        window.location.reload();
+    };
     const goToEditUser = (id: number) => {
         router.push(`/app/admin/users/edit/${id}`, 'forward')
         window.location.reload();
