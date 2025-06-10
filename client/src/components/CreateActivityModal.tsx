@@ -1,8 +1,10 @@
-import { IonModal, IonHeader, IonToolbar,  IonContent, IonItem, IonLabel, IonInput, IonButton, IonIcon, IonSelect, IonSelectOption } from '@ionic/react';
+import { IonModal, IonHeader, IonToolbar, IonContent, IonItem, IonLabel, IonInput, IonButton, IonIcon, IonSelect, IonSelectOption } from '@ionic/react';
 import { close } from 'ionicons/icons';
 import React, { useState, useEffect } from 'react';
 import './CreateActivityModal.css';
-import { parse } from 'date-fns';
+import { parse, format } from 'date-fns';
+import { es } from 'date-fns/locale';
+
 import { ActivityInput, ACTIVITY_TYPES, ACTIVITY_LOCATIONS, ACTIVITY_STATUSES } from '../types/activity';
 
 interface CreateActivityModalProps {
@@ -110,12 +112,10 @@ const CreateActivityModal: React.FC<CreateActivityModalProps> = ({ isOpen, onClo
 
     try {
       const combinedDateTimeString = `${activityDate} ${activityTime}`;
-      const activityDateTime = parse(combinedDateTimeString, 'dd/MM/yyyy hh:mm a', new Date());
+      const activityDateTime = parse(combinedDateTimeString, 'yyyy-MM-dd HH:mm', new Date());
 
       if (isNaN(activityDateTime.getTime())) {
-        setError('Fecha u hora inválida.');
-        setIsSubmitting(false);
-        return;
+        throw new Error('Fecha u hora inválida. Por favor, verifique los valores ingresados.');
       }
 
       const token = localStorage.getItem('token');
@@ -136,7 +136,6 @@ const CreateActivityModal: React.FC<CreateActivityModalProps> = ({ isOpen, onClo
       }
 
       const userData = await userResponse.json();
-      console.log('User data response:', userData); 
 
       let cuidadorId;
       if (userData && userData.user && userData.user.id) {
@@ -155,7 +154,8 @@ const CreateActivityModal: React.FC<CreateActivityModalProps> = ({ isOpen, onClo
         fecha: activityDateTime,
         cuidador_id: cuidadorId
       };
-
+      console.log('newActivityData:', newActivityData);
+      
       await onSave(newActivityData);
       
       resetForm();
@@ -221,22 +221,22 @@ const CreateActivityModal: React.FC<CreateActivityModalProps> = ({ isOpen, onClo
             <IonItem className="create-activity-item">
               <IonLabel className="form-label">Fecha:</IonLabel>
               <IonInput
-                type="text"
+                type="date"
                 value={activityDate}
-                onIonChange={e => handleDateChange(e.detail.value!)}
+                onIonChange={e => handleDateChange(e.detail.value!.toString())}
                 required
-                placeholder="dd/mm/yyyy"
+                placeholder="DD/MM/YYYY" 
               />
             </IonItem>
 
             <IonItem className="create-activity-item">
               <IonLabel className="form-label">Hora:</IonLabel>
               <IonInput
-                type="text"
+                type="time"
                 value={activityTime}
-                onIonChange={e => handleTimeChange(e.detail.value!)}
+                onIonChange={e => handleTimeChange(e.detail.value!.toString())}
                 required
-                placeholder="hh:mm a.m o p.m"
+                placeholder="HH:MM" 
               />
             </IonItem>
 
@@ -304,4 +304,4 @@ const CreateActivityModal: React.FC<CreateActivityModalProps> = ({ isOpen, onClo
   );
 };
 
-export default CreateActivityModal; 
+export default CreateActivityModal;
