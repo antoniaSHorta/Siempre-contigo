@@ -20,13 +20,14 @@
   --color: var(--primary-color);
 }
 
+/*
 .profile-page ion-header ion-toolbar {
   --background: var(--background-color);
   --color: var(--header-text-color);
   --min-height: 79px;
   padding: 0 16px;
   position: relative;
-}
+} */
 
 .profile-page .header-content {
   display: flex;
@@ -163,6 +164,7 @@
   --color: var(--primary-color);
 }
 
+/*
 @media (max-width: 768px) {
   .profile-page ion-header ion-toolbar {
     --min-height: 60px;
@@ -212,4 +214,4 @@
     left: 50%;
     transform: translateX(-50%);
   }
-} 
+} */

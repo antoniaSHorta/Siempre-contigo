@@ -9,6 +9,7 @@ import { es } from 'date-fns/locale';
 import CreateActivityModal from '../components/CreateActivityModal';
 import ActivityModal from '../components/ActivityModal';
 import { Activity, ActivityInput, ACTIVITY_TYPES, ACTIVITY_LOCATIONS, ACTIVITY_STATUSES } from '../types/activity';
+import Header from '../components/Header';
 
 const Agenda: React.FC = () => {
   const [currentView, setCurrentView] = useState<'daily' | 'weekly' | 'monthly'>('daily');
@@ -348,14 +349,7 @@ const Agenda: React.FC = () => {
 
   return (
     <IonPage className="agenda-page">
-      <IonHeader className="ion-no-border">
-        <IonToolbar>
-          <div className="header-content">
-            <img src={logo} alt="Logo" className="header-logo" />
-            <IonTitle>Agenda</IonTitle>
-          </div>
-        </IonToolbar>
-      </IonHeader>
+      <Header title='Agenda'/>
       <IonContent className="ion-padding">
         <IonSegment value={currentView} onIonChange={(e) => handleViewChange(e.detail.value as 'daily' | 'weekly' | 'monthly')}>
           <IonSegmentButton value="daily">

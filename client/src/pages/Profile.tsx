@@ -6,6 +6,7 @@ import EditProfileModal, { ProfileData } from '../components/EditProfileModal';
 import ChangePasswordModal, { PasswordData } from '../components/ChangePasswordModal';
 import './Profile.css';
 import logo from '../assets/logo.png';
+import Header from '../components/Header';
 
 const Profile: React.FC = () => {
   const { logout, user, updateProfile, updatePassword } = useAuth();
@@ -69,14 +70,7 @@ const Profile: React.FC = () => {
 
   return (
     <IonPage className="profile-page">
-      <IonHeader className="ion-no-border">
-        <IonToolbar>
-          <div className="header-content">
-            <img src={logo} alt="Logo" className="header-logo" />
-            <IonTitle>Perfil</IonTitle>
-          </div>
-        </IonToolbar>
-      </IonHeader>
+      <Header title='Perfil'/>
       <IonContent className="ion-padding">
         <div className="profile-header">
           <IonAvatar className="profile-avatar">
