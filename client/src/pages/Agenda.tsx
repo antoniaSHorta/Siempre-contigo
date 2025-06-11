@@ -11,8 +11,10 @@ import ActivityModal from '../components/ActivityModal';
 import { Activity, ActivityInput, ACTIVITY_TYPES, ACTIVITY_LOCATIONS, ACTIVITY_STATUSES } from '../types/activity';
 import Header from '../components/Header';
 import { getResidentsByRole } from '../services/residentService';
+import { useAuth } from '../contexts/AuthContext';
 
 const Agenda: React.FC = () => {
+  const {isAdmin,user} = useAuth();
   const [currentView, setCurrentView] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -370,10 +372,13 @@ const Agenda: React.FC = () => {
           </IonSegmentButton>
         </IonSegment>
 
-        <IonButton expand="block" className="create-activity-button" onClick={() => setIsCreateModalOpen(true)}>
-           <IonIcon icon={add} slot="start" />
-           Crear Actividad
-        </IonButton>
+        {
+        user.role !== 'Familiar' && (
+          <IonButton expand="block" className="create-activity-button" onClick={() => setIsCreateModalOpen(true)}>
+            <IonIcon icon={add} slot="start" />
+            Crear Actividad
+          </IonButton>
+        )}
 
         <div className="agenda-filters">
           <IonItem>

@@ -4,7 +4,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 
 const SideMenu: React.FC = () => {
-    const {isAdmin} = useAuth();
+    const {isAdmin,user} = useAuth();
     return (
         <IonMenu 
             contentId="main-content" 
@@ -25,18 +25,22 @@ const SideMenu: React.FC = () => {
                     <IonLabel>Agenda</IonLabel>
                 </IonItem>
                 </IonMenuToggle>
-                <IonMenuToggle autoHide={false}>
-                <IonItem routerLink="/app/medicamentos" routerDirection="none">
-                    <IonIcon slot="start" icon={medkit} />
-                    <IonLabel>Medicamentos</IonLabel>
-                </IonItem>
-                </IonMenuToggle>
-                <IonMenuToggle autoHide={false}>
-                <IonItem routerLink="/app/alimentacion" routerDirection="none">
-                    <IonIcon slot="start" icon={restaurant} />
-                    <IonLabel>Alimentacion</IonLabel>
-                </IonItem>
-                </IonMenuToggle>
+                {user?.role !== 'Familiar' &&(
+                    <IonMenuToggle autoHide={false}>
+                    <IonItem routerLink="/app/medicamentos" routerDirection="none">
+                        <IonIcon slot="start" icon={medkit} />
+                        <IonLabel>Medicamentos</IonLabel>
+                    </IonItem>
+                    </IonMenuToggle>
+                )}
+                {user?.role !== 'Familiar' &&(
+                    <IonMenuToggle autoHide={false}>
+                    <IonItem routerLink="/app/alimentacion" routerDirection="none">
+                        <IonIcon slot="start" icon={restaurant} />
+                        <IonLabel>Alimentacion</IonLabel>
+                    </IonItem>
+                    </IonMenuToggle>
+                )}
                 <IonMenuToggle autoHide={false}>
                 <IonItem routerLink="/app/chat" routerDirection="none">
                     <IonIcon slot="start" icon={chatbubbles} />

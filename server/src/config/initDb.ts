@@ -6,6 +6,7 @@ import { Alimentacion } from '../models/Alimentacion';
 import { Medicacion } from '../models/Medicacion';
 import { ResidentesCuidadores } from '../models/ResidentesCuidadores';
 import { ResidentesFamiliares } from '../models/ResidentesFamiliares';
+import { setHours, setMinutes, addDays, format } from 'date-fns';
 
 export const initDatabase = async () => {
   try {
@@ -60,6 +61,89 @@ export const initDatabase = async () => {
       });
       console.log('Medicacion creada exitosamente.');
     }
+
+    const today = new Date();
+
+    const createActivity = (
+      titulo: string,
+      descripcion: string,
+      fecha: Date,
+      tipo: string,
+      residente_id: number,
+      lugar: string,
+      estado: string,
+      cuidador_id: number
+    ) => ({
+      titulo,
+      descripcion,
+      fecha,
+      tipo,
+      residente_id,
+      lugar,
+      estado,
+      cuidador_id,
+    });
+
+    
+
+   const activities = [
+      createActivity(
+        "Cita Oftalmológica",
+        "Revisión anual de la vista",
+        setHours(setMinutes(addDays(today, 1), 30), 10),
+        "Cita",
+        1,
+        "Hospital",
+        "Pendiente",
+        1
+      ),
+      createActivity(
+        "Almuerzo Familiar",
+        "Visita de hijos y nietos",
+        setHours(setMinutes(addDays(today, 1), 0), 13),
+        "Recreacional",
+        1,
+        "Interno",
+        "Pendiente",
+        1
+      ),
+      createActivity(
+        "Paseo por el Jardín",
+        "Actividad física suave",
+        setHours(setMinutes(addDays(today, 3), 0), 16),
+        "Paseo",
+        1,
+        "Exterior",
+        "Pendiente",
+        1
+      ),
+      createActivity(
+        "Aspirina Matutina",
+        "100mg después del desayuno",
+        setHours(setMinutes(addDays(today, 1), 0), 9),
+        "Medicamento",
+        1,
+        "Habitación",
+        "Pendiente",
+        1
+      ),
+    ];
+
+    Medicacion.create(
+      {
+        nombre: 'Aspirina Matutina',
+        dosis: '100mg después del desayuno',
+        horario: format(setHours(setMinutes(addDays(today, 1), 0), 9), 'HH:mm'),
+        fecha_hora: new Date('2025-06-11T08:00:00'),
+        cuidador_id: 1,
+        residente_id: 1,
+        estado: 'Pendiente'
+      }
+    )
+
+  await Activity.bulkCreate(activities);
+  console.log('Activities created successfully.');
+
     const joaquinCuidadorExists = await User.findOne({where:{name:"Joaquin Cuidador1"}})
     if (!joaquinCuidadorExists){
       try {
