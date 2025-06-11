@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import './ActivityModal.css';
 import { format, parse } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Activity, ActivityInput, ACTIVITY_TYPES, ACTIVITY_LOCATIONS, ACTIVITY_STATUSES } from '../types/activity';
+import { Activity, ActivityInput, ACTIVITY_TYPES, ACTIVITY_LOCATIONS, ACTIVITY_STATUSES, ACTIVITY_TYPES_FOR_CREATION } from '../types/activity';
 
 interface ActivityModalProps {
   isOpen: boolean;
@@ -221,15 +221,18 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
             </div>
 
             <div className="activity-actions">
-              <IonButton 
-                expand="block" 
-                onClick={onEdit} 
-                className="edit-button"
-                disabled={isSubmitting}
-              >
-                <IonIcon icon={create} slot="start" />
-                Editar
-              </IonButton>
+              {(activity?.tipo != 'Medicamento' && activity?.tipo != 'Alimentacion') && (
+                <IonButton 
+                  expand="block" 
+                  onClick={onEdit} 
+                  className="edit-button"
+                  disabled={isSubmitting}
+                >
+                  <IonIcon icon={create} slot="start" />
+                  Editar
+                </IonButton>
+              )}
+              
               <IonButton 
                 expand="block" 
                 fill="outline" 
@@ -271,7 +274,7 @@ const ActivityModal: React.FC<ActivityModalProps> = ({
                   onIonChange={e => handleInputChange('tipo', e.detail.value!)}
                   interface="popover"
                 >
-                  {ACTIVITY_TYPES.map(type => (
+                  {ACTIVITY_TYPES_FOR_CREATION.map(type => (
                     <IonSelectOption key={type} value={type}>
                       {type}
                     </IonSelectOption>

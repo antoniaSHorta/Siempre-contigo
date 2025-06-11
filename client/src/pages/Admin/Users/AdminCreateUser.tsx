@@ -93,6 +93,7 @@ export const AdminCreateUser: React.FC = () => {
 
         await createUserAdmin(newUser, token);
         setSuccess('Usuario creado correctamente.');
+        setLoading(false);
         setForm({
             name: '',
             email: '',
@@ -133,6 +134,7 @@ export const AdminCreateUser: React.FC = () => {
                         fill="outline" 
                         color="medium" 
                         onClick={() => {
+                            setLoading(false);
                             router.push('/app/admin/users');
                             window.location.reload();
                         }}

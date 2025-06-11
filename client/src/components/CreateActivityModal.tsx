@@ -5,7 +5,7 @@ import './CreateActivityModal.css';
 import { parse, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-import { ActivityInput, ACTIVITY_TYPES, ACTIVITY_LOCATIONS, ACTIVITY_STATUSES } from '../types/activity';
+import { ActivityInput, ACTIVITY_TYPES,ACTIVITY_TYPES_FOR_CREATION, ACTIVITY_LOCATIONS, ACTIVITY_STATUSES } from '../types/activity';
 
 interface CreateActivityModalProps {
   isOpen: boolean;
@@ -212,7 +212,7 @@ const CreateActivityModal: React.FC<CreateActivityModalProps> = ({ isOpen, onClo
                 onIonChange={e => handleInputChange('tipo', e.detail.value!)}
                 interface="popover"
               >
-                {ACTIVITY_TYPES.map(type => (
+                {ACTIVITY_TYPES_FOR_CREATION.map(type => (
                   <IonSelectOption key={type} value={type}>{type}</IonSelectOption>
                 ))}
               </IonSelect>

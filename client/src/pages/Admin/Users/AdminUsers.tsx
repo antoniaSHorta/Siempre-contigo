@@ -93,14 +93,17 @@ export const AdminUsers: React.FC = () => {
     });
 
     const goToAddUser = () => {
+        setLoading(false);
         router.push('/app/admin/users/add', 'forward');
         window.location.reload();
     };
     const goToEditUser = (id: number) => {
+        setLoading(false);
         router.push(`/app/admin/users/edit/${id}`, 'forward')
         window.location.reload();
     };
     const goToDetailUser = (id: number) => {
+        setLoading(false);
         router.push(`/app/admin/users/detail/${id}`, 'forward');
         window.location.reload();
     }

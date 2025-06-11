@@ -62,6 +62,9 @@ export const generatePdfReport = async (req: Request, res: Response) => {
                 [Op.gte]: startDate,
                 [Op.lte]: endDate,
                 },
+                tipo:{
+                    [Op.notIn]: ['Medicamento', 'Alimentacion']
+                }
             },
             attributes: ['titulo', 'descripcion', 'fecha', 'lugar', 'estado', 'tipo'],
             order: [['fecha', 'ASC']],

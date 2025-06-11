@@ -85,14 +85,17 @@ export const AdminResidents: React.FC = () => {
     const currentResidents = filteredResidents.slice(indexOfFirst, indexOfLast);
 
     const goToAddResident = () => {
+        setLoading(false);
         router.push('/app/admin/residents/add', 'forward')
         window.location.reload();
     };
     const goToEditResident = (id: number) => {
+        setLoading(false);
         router.push(`/app/admin/residents/edit/${id}`, 'forward');
         window.location.reload();
     };
     const goToDetailResident = (id: number) => {
+        setLoading(false);
         router.push(`/app/admin/residents/detail/${id}`, 'forward')
         window.location.reload();
     };

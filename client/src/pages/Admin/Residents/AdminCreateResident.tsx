@@ -78,6 +78,7 @@ export const AdminCreateResident: React.FC = () => {
             
 
             setSuccess('Residente creado correctamente.');
+            setLoading(false);
             setTimeout(() => {
                 router.push('/app/admin/residents');
                 window.location.reload();
@@ -122,6 +123,7 @@ export const AdminCreateResident: React.FC = () => {
                         fill="outline"
                         color="medium"
                         onClick={() => {
+                            setLoading(false);
                             router.push('/app/admin/residents');
                             window.location.reload();
                         }}

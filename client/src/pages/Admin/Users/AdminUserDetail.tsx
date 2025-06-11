@@ -63,6 +63,7 @@ export const AdminUserDetail: React.FC = () => {
     };
 
     const handleReturn = () => {
+        setLoading(false);
         router.push(`/app/admin/users`, 'forward');
         window.location.reload();
     }
@@ -132,6 +133,7 @@ export const AdminUserDetail: React.FC = () => {
                     <button
                         className="admin-user-detail-button"
                         onClick={() => {
+                            setLoading(false);
                             router.push(`/app/admin/users/edit/${numericId}`);
                             window.location.reload();
                         }}

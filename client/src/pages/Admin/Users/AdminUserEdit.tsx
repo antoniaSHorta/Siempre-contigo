@@ -91,9 +91,10 @@ export const AdminUserEdit: React.FC = () => {
         try {
             await updateUserAdmin(numericId, form, token);
             setSuccess('Usuario actualizado correctamente.');
+            setLoading(false);
             setTimeout(() => {
                 router.push('/app/admin/users');
-            window.location.reload();
+                window.location.reload();
         }, 1000);
         } catch (err) {
             setError('Error al actualizar el usuario.');
@@ -132,6 +133,7 @@ export const AdminUserEdit: React.FC = () => {
                                 fill="outline" 
                                 color="medium" 
                                 onClick={() => {
+                                    setLoading(false);
                                     router.push('/app/admin/users');
                                     window.location.reload();
                                 }}

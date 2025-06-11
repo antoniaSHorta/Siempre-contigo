@@ -50,7 +50,8 @@ export const ResidentReportsList: React.FC = () => {
         try {
             setLoading(true);
             const data = await listReportsByResident(residentId, token!);
-            setReports(data);
+            const sortedData = data.sort((a: IReport, b: IReport) => a.id - b.id);
+            setReports(sortedData);
         } catch (error) {
             setToastMessage('Error al cargar reportes del residente');
         } finally {
@@ -58,8 +59,8 @@ export const ResidentReportsList: React.FC = () => {
         }
     };
 
-    const goToReportDetail = (reportId: number) => {
-        router.push(`/app/reports/detail/${reportId}`, 'forward');
+    const goToReportDetail = (reportId: number, reportIndex: number) => {
+        router.push(`/app/reports/detail/${reportId}?index=${reportIndex}`, 'forward');
     };
 
     const formatDate = (date: Date) => {
@@ -119,6 +120,7 @@ export const ResidentReportsList: React.FC = () => {
         currentPage * itemsPerPage
     );
 
+    console.log(reports)
 
     return (
         <IonPage className="admin-users-page">
@@ -246,7 +248,7 @@ export const ResidentReportsList: React.FC = () => {
                                 key={report.id}
                                 className="admin-users-item"
                                 button
-                                onClick={() => goToReportDetail(report.id)}
+                                onClick={() => goToReportDetail(report.id, index + 1 + (currentPage - 1) * itemsPerPage)}
                             >
                                 <IonAvatar className='large-avatar'>
                                     <IonIcon icon={documentTextOutline} className='report-avatar-icon' />

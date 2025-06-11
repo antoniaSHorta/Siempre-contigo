@@ -95,6 +95,7 @@ export const AdminResidentEdit: React.FC = () => {
             ])
             
             setSuccess('Residente actualizado correctamente.');
+            setLoading(false);
             setTimeout(() => {
                 router.push('/app/admin/residents');
                 window.location.reload();
@@ -136,6 +137,7 @@ export const AdminResidentEdit: React.FC = () => {
                                 fill="outline"
                                 color="medium"
                                 onClick={() => {
+                                    setLoading(false);
                                     router.push('/app/admin/residents')
                                     window.location.reload();
                                 }}

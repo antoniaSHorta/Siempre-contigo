@@ -23,7 +23,7 @@ import {
     paperPlane,
     book
 } from 'ionicons/icons';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { getReportById,getReportPdfBase64} from '../../services/reportService';
 import Header from '../../components/Header';
 import '../Admin/Styles/AdminEdit.css';
@@ -41,6 +41,9 @@ export const ReportDetail: React.FC = () => {
     const numericId = Number(id);
     const token = localStorage.getItem('token') || '';
     const router = useIonRouter();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const index = queryParams.get('index');
 
     const [report, setReport] = useState<IReport | null>(null);
     const [loading, setLoading] = useState(true);
@@ -93,7 +96,7 @@ export const ReportDetail: React.FC = () => {
                     {report && (
                         <div className="admin-user-detail-items-container">
                             <IonText className="admin-user-edit-username">
-                                <h2>Reporte #{report.id}</h2>
+                                <h2>Reporte #{index}</h2>
                             </IonText>
                             {report.date && (
                                 <IonItem>
