@@ -159,6 +159,8 @@ export const updateActivity = async (req: Request, res: Response, next: NextFunc
     const { fecha, titulo, descripcion, tipo, residente_id, lugar, estado } = req.body;
     const requestWithUser = req as Request & { user?: any };
 
+    console.log(req.body)
+
     if (!requestWithUser.user?.id) {
       return next(new AppError('No autenticado', 401));
     }

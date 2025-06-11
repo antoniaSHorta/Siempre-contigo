@@ -18,6 +18,7 @@ import { IResident } from '../../interfaces/IResident';
 import { getAllResidents, getAllResidentsInactiveAndActive } from '../../services/residentService'; 
 import Header from '../../components/Header';
 import '../Admin/Styles/AdminUsers.css' 
+import { useAuth } from '../../contexts/AuthContext';
 
 export const ResidentSelection: React.FC = () => {
     const router = useIonRouter();
@@ -30,8 +31,7 @@ export const ResidentSelection: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const residentsPerPage = 5;
 
-    const role = localStorage.getItem('role'); 
-    const userId = Number(localStorage.getItem('userId'));
+    const { user } = useAuth();
 
     useEffect(() => {
         fetchResidents();
@@ -48,13 +48,17 @@ export const ResidentSelection: React.FC = () => {
 
             let filteredData = data;
 
+            const role = user.role;
+
+            const userId = user.id;
+
             if (role === 'Cuidador') {
                 filteredData = data.filter((resident: IResident) =>
                     resident.cuidadores?.some((c: any) => c.id === userId)
                 );
             } else if (role === 'Familiar') {
                 filteredData = data.filter((resident: IResident) =>
-                    resident.familiares?.some((f: any) => f.id === userId)
+                    resident.familiares?.some((c: any) => c.id === userId)
                 );
             }
 

@@ -257,6 +257,10 @@ const Medicamentos: React.FC = () => {
                             position: 'top',
                         });
                         fetchMedicaciones();
+                        setIsLoading(false)
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
                         } catch (err: any) {
                         console.error('Error updating medicación:', err);
                         presentToast({
@@ -303,6 +307,10 @@ const Medicamentos: React.FC = () => {
                                 position: 'top',
                             });
                             fetchMedicaciones();
+                            setIsLoading(false)
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
                         } catch (err: any) {
                             console.error('Error deleting Medicamento:', err);
                             presentToast({
@@ -459,7 +467,12 @@ const Medicamentos: React.FC = () => {
                                 color: 'success',
                                 position: 'top',
                             });
+                            
                             fetchMedicaciones();
+                            setIsLoading(false)
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
                         } catch (err: any) {
                             console.error('Error adding Medicamento or finding resident:', err);
                             let errorMessage = 'Error al agregar entrada de Medicación.';

@@ -69,7 +69,7 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
-        const { name, email, password, role } = req.body;
+        const { name, email, role,phone, location } = req.body;
 
         const user = await User.findByPk(id);
         if (!user) {
@@ -82,8 +82,9 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 
         if (name) user.name = name;
         if (email) user.email = email;
-        if (password) user.password = password; 
         if (role) user.role = role;
+        if (phone) user.phone = phone;
+        if (location) user.location = location;
 
         await user.save();
 
@@ -95,6 +96,8 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                phone: user.phone,
+                location: user.location
             },
         });
     } catch (error) {

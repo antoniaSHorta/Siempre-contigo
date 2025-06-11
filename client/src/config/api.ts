@@ -34,6 +34,7 @@ export const endpoints = {
     list: `${API_URL}/residents`,
     listAll: `${API_URL}/residents/activeAndInactive`,
     getById: (id: number) => `${API_URL}/residents/${id}`,
+    getByRole: `${API_URL}/residents/by-role`,
     create: `${API_URL}/residents`,
     update: (id: number) => `${API_URL}/residents/${id}`,
     active: (id: number) => `${API_URL}/residents/active/${id}`,

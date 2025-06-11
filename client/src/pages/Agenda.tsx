@@ -10,6 +10,7 @@ import CreateActivityModal from '../components/CreateActivityModal';
 import ActivityModal from '../components/ActivityModal';
 import { Activity, ActivityInput, ACTIVITY_TYPES, ACTIVITY_LOCATIONS, ACTIVITY_STATUSES } from '../types/activity';
 import Header from '../components/Header';
+import { getResidentsByRole } from '../services/residentService';
 
 const Agenda: React.FC = () => {
   const [currentView, setCurrentView] = useState<'daily' | 'weekly' | 'monthly'>('daily');
@@ -110,11 +111,32 @@ const Agenda: React.FC = () => {
     return weeksArray;
   }, [daysInMonth]);
 
+  useEffect(() => {
+    const fetchResidents = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No hay sesión activa');
+          return;
+        }
+        const data = await getResidentsByRole(token)
+
+        setResidents(data.map((resident: any) => ({
+          id: resident.id,
+          nombre: resident.nombre
+        })));
+      } catch (error) {
+        console.error('Error fetching residents:', error);
+      }
+    };
+
+    fetchResidents();
+  }, []);
+
   const fetchActivities = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('No hay sesión activa');
+      if (!token || residents.length === 0) {
         return;
       }
 
@@ -129,10 +151,17 @@ const Agenda: React.FC = () => {
       }
 
       const data = await response.json();
-      setActivities(data.data.map((activity: any) => ({
-        ...activity,
-        fecha: new Date(activity.fecha)
-      })));
+
+      const residentIds = residents.map(r => r.id);
+
+      const filtered = data.data
+        .filter((activity: Activity) => residentIds.includes(activity.residente_id))
+        .map((activity: Activity) => ({
+          ...activity,
+          fecha: new Date(activity.fecha)
+        }));
+
+      setActivities(filtered);
     } catch (error) {
       console.error('Error fetching activities:', error);
     }
@@ -140,39 +169,7 @@ const Agenda: React.FC = () => {
 
   useEffect(() => {
     fetchActivities();
-  }, []);
-
-  useEffect(() => {
-    const fetchResidents = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.error('No hay sesión activa');
-          return;
-        }
-
-        const response = await fetch('/api/residents/', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Error al cargar los residentes');
-        }
-
-        const data = await response.json();
-        setResidents(data.data.map((resident: any) => ({
-          id: resident.id,
-          nombre: resident.nombre
-        })));
-      } catch (error) {
-        console.error('Error fetching residents:', error);
-      }
-    };
-
-    fetchResidents();
-  }, []);
+  }, [residents]);
 
   const handleCreateActivity = async (activityData: ActivityInput) => {
     try {
@@ -347,6 +344,16 @@ const Agenda: React.FC = () => {
   const locations = ['all', ...ACTIVITY_LOCATIONS];
   const statuses = ['all', ...ACTIVITY_STATUSES];
 
+  const clearFilters = () => {
+    setFilterDate(undefined);
+    setFilterType('all');
+    setFilterLocation('all');
+    setFilterStatus('all');
+    setFilterResident('all');
+  };
+
+  const noActivities = activities.length === 0;
+
   return (
     <IonPage className="agenda-page">
       <Header title='Agenda'/>
@@ -461,129 +468,139 @@ const Agenda: React.FC = () => {
 
         </div>
 
-        <div className="agenda-activities">
-          {currentView === 'daily' && (
-            <div className="daily-view">
-              <div className="daily-header">
-                <IonButton fill="clear" onClick={handlePreviousDay}>
-                  <IonIcon icon={chevronBackOutline} />
-                </IonButton>
-                <div className="current-day">
-                  {format(currentDay, 'EEEE, dd MMMM yyyy', { locale: es })}
-                </div>
-                <IonButton fill="clear" onClick={handleNextDay}>
-                  <IonIcon icon={chevronForwardOutline} />
-                </IonButton>
-              </div>
-
-              <div className="daily-list">
-                {timeSlots.map((time, timeIndex) => (
-                  <div key={timeIndex} className="daily-time-slot">
-                    <div className="daily-time-label">{time}</div>
-                    <div className="daily-activities-for-time">
-                      {getActivitiesForTimeSlot(currentDay, time).map(activity => 
-                        renderActivityBlock(activity)
-                      )}
-                    </div>
+        <IonButton expand ="block" className='clear-filter-activity-button' onClick={clearFilters}>
+          Limpiar filtros
+        </IonButton>
+        
+        {noActivities ? (
+          <div className="no-activities-message" style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <p>No hay actividades cargadas para mostrar.</p>
+          </div>
+        ): (
+          <div className="agenda-activities">
+            {currentView === 'daily' && (
+              <div className="daily-view">
+                <div className="daily-header">
+                  <IonButton fill="clear" onClick={handlePreviousDay}>
+                    <IonIcon icon={chevronBackOutline} />
+                  </IonButton>
+                  <div className="current-day">
+                    {format(currentDay, 'EEEE, dd MMMM yyyy', { locale: es })}
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-          {currentView === 'weekly' && (
-            <div className="weekly-view">
-              <div className="weekly-header">
-                <IonButton fill="clear" onClick={handlePreviousWeek}>
-                  <IonIcon icon={chevronBackOutline} />
-                </IonButton>
-                <div className="current-week">
-                  {format(startOfWeek(currentDay, { weekStartsOn: 1 }), 'dd MMM', { locale: es })} - 
-                  {format(endOfWeek(currentDay, { weekStartsOn: 1 }), 'dd MMM yyyy', { locale: es })}
+                  <IonButton fill="clear" onClick={handleNextDay}>
+                    <IonIcon icon={chevronForwardOutline} />
+                  </IonButton>
                 </div>
-                <IonButton fill="clear" onClick={handleNextWeek}>
-                  <IonIcon icon={chevronForwardOutline} />
-                </IonButton>
-              </div>
 
-              <div className="weekly-grid">
-                <div className="weekly-time-header">Horas</div>
-                {daysOfWeek.map((dayName, dayIndex) => {
-                  const currentDate = addDays(startOfWeek(currentDay, { weekStartsOn: 1 }), dayIndex);
-                  return (
-                    <div key={dayIndex} className="weekly-day-header">
-                      <div className="day-name">{dayName}</div>
-                      <div className="day-date">{format(currentDate, 'dd', { locale: es })}</div>
+                <div className="daily-list">
+                  {timeSlots.map((time, timeIndex) => (
+                    <div key={timeIndex} className="daily-time-slot">
+                      <div className="daily-time-label">{time}</div>
+                      <div className="daily-activities-for-time">
+                        {getActivitiesForTimeSlot(currentDay, time).map(activity => 
+                          renderActivityBlock(activity)
+                        )}
+                      </div>
                     </div>
-                  );
-                })}
-                
-                {timeSlots.map((time, timeIndex) => (
-                  <React.Fragment key={timeIndex}>
-                    <div className="weekly-time-slot">
-                      {time}
-                    </div>
-                    {daysOfWeek.map((_, dayIndex) => {
-                      const currentDate = addDays(startOfWeek(currentDay, { weekStartsOn: 1 }), dayIndex);
-                      const activitiesForSlot = getActivitiesForTimeSlot(currentDate, time);
-                      return (
-                        <div key={`${timeIndex}-${dayIndex}`} className="weekly-activity-cell">
-                          <div className="weekly-activities-container">
-                            {activitiesForSlot.map(activity =>
+                  ))}
+                </div>
+              </div>
+            )}
+            {currentView === 'weekly' && (
+              <div className="weekly-view">
+                <div className="weekly-header">
+                  <IonButton fill="clear" onClick={handlePreviousWeek}>
+                    <IonIcon icon={chevronBackOutline} />
+                  </IonButton>
+                  <div className="current-week">
+                    {format(startOfWeek(currentDay, { weekStartsOn: 1 }), 'dd MMM', { locale: es })} - 
+                    {format(endOfWeek(currentDay, { weekStartsOn: 1 }), 'dd MMM yyyy', { locale: es })}
+                  </div>
+                  <IonButton fill="clear" onClick={handleNextWeek}>
+                    <IonIcon icon={chevronForwardOutline} />
+                  </IonButton>
+                </div>
+
+                <div className="weekly-grid">
+                  <div className="weekly-time-header">Horas</div>
+                  {daysOfWeek.map((dayName, dayIndex) => {
+                    const currentDate = addDays(startOfWeek(currentDay, { weekStartsOn: 1 }), dayIndex);
+                    return (
+                      <div key={dayIndex} className="weekly-day-header">
+                        <div className="day-name">{dayName}</div>
+                        <div className="day-date">{format(currentDate, 'dd', { locale: es })}</div>
+                      </div>
+                    );
+                  })}
+                  
+                  {timeSlots.map((time, timeIndex) => (
+                    <React.Fragment key={timeIndex}>
+                      <div className="weekly-time-slot">
+                        {time}
+                      </div>
+                      {daysOfWeek.map((_, dayIndex) => {
+                        const currentDate = addDays(startOfWeek(currentDay, { weekStartsOn: 1 }), dayIndex);
+                        const activitiesForSlot = getActivitiesForTimeSlot(currentDate, time);
+                        return (
+                          <div key={`${timeIndex}-${dayIndex}`} className="weekly-activity-cell">
+                            <div className="weekly-activities-container">
+                              {activitiesForSlot.map(activity =>
+                                renderActivityBlock(activity)
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            )}
+            {currentView === 'monthly' && (
+              <div className="monthly-view">
+                <div className="monthly-header">
+                  <IonButton fill="clear" onClick={handlePreviousMonth}>
+                    <IonIcon icon={chevronBackOutline} />
+                  </IonButton>
+                  <div className="current-month-year">
+                    {format(currentMonth, 'MMMM yyyy', { locale: es })}
+                  </div>
+                  <IonButton fill="clear" onClick={handleNextMonth}>
+                    <IonIcon icon={chevronForwardOutline} />
+                  </IonButton>
+                </div>
+
+                <div className="monthly-grid">
+                  <div className="monthly-grid-header">
+                    {daysOfWeek.map((day, index) => (
+                      <div key={index} className="monthly-day-label">{day}</div>
+                    ))}
+                  </div>
+
+                  {weeks.map((week, weekIndex) => (
+                    <div key={weekIndex} className="monthly-week-row">
+                      {week.map((day, dayIndex) => (
+                        <div 
+                          key={`${weekIndex}-${dayIndex}`} 
+                          className={`monthly-day-cell ${
+                            !isSameMonth(day, currentMonth) ? 'outside-month' : ''
+                          } ${isToday(day) ? 'today' : ''}`}
+                        >
+                          <div className="day-number">{format(day, 'd')}</div>
+                          <div className="activities">
+                            {getActivitiesForDay(day).map(activity =>
                               renderActivityBlock(activity)
                             )}
                           </div>
                         </div>
-                      );
-                    })}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          )}
-          {currentView === 'monthly' && (
-            <div className="monthly-view">
-              <div className="monthly-header">
-                <IonButton fill="clear" onClick={handlePreviousMonth}>
-                  <IonIcon icon={chevronBackOutline} />
-                </IonButton>
-                <div className="current-month-year">
-                  {format(currentMonth, 'MMMM yyyy', { locale: es })}
-                </div>
-                <IonButton fill="clear" onClick={handleNextMonth}>
-                  <IonIcon icon={chevronForwardOutline} />
-                </IonButton>
-              </div>
-
-              <div className="monthly-grid">
-                <div className="monthly-grid-header">
-                  {daysOfWeek.map((day, index) => (
-                    <div key={index} className="monthly-day-label">{day}</div>
+                      ))}
+                    </div>
                   ))}
                 </div>
-
-                {weeks.map((week, weekIndex) => (
-                  <div key={weekIndex} className="monthly-week-row">
-                    {week.map((day, dayIndex) => (
-                      <div 
-                        key={`${weekIndex}-${dayIndex}`} 
-                        className={`monthly-day-cell ${
-                          !isSameMonth(day, currentMonth) ? 'outside-month' : ''
-                        } ${isToday(day) ? 'today' : ''}`}
-                      >
-                        <div className="day-number">{format(day, 'd')}</div>
-                        <div className="activities">
-                          {getActivitiesForDay(day).map(activity =>
-                            renderActivityBlock(activity)
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         <CreateActivityModal
           isOpen={isCreateModalOpen}

@@ -44,6 +44,17 @@ export async function getResidentById(id: number, token: string) {
   }
 }
 
+export const getResidentsByRole = async (token: string) => {
+
+  const response = await axios.get(endpoints.residents.getByRole, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return response.data.data; 
+};
+
 export async function createResident(resident: Partial<IResident>, token: string) {
   try {
     const response = await axios.post(endpoints.residents.create, resident, {

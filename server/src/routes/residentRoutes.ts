@@ -6,7 +6,8 @@ import {
   createResident, 
   updateResident, 
   deleteResident,
-  activateResident
+  activateResident,
+  getResidentsByRole
 } from '../controllers/residentController';
 import { authorize, protect } from '../middleware/auth';
 
@@ -16,6 +17,7 @@ router.use(protect)
 
 router.get('/activeAndInactive', authorize('Admin'), getAllResidentsInactiveAndActive);
 router.put('/active/:id', authorize('Admin'), activateResident);  
+router.get('/by-role', getResidentsByRole);
 router.get('/', getAllResidents);
 router.get('/:id', getResidentById);
 router.post('/', authorize('Admin'), createResident);

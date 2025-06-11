@@ -230,6 +230,10 @@ const Alimentacion: React.FC = () => {
                         position: 'top',
                         });
                         fetchAlimentaciones();
+                        setIsLoading(false)
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
                     } catch (err: any) {
                         console.error('Error updating alimentacion:', err);
                         presentToast({
@@ -276,6 +280,10 @@ const Alimentacion: React.FC = () => {
                                 position: 'top',
                             });
                             fetchAlimentaciones();
+                            setIsLoading(false)
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
                         } catch (err: any) {
                             console.error('Error deleting alimentacion:', err);
                             presentToast({
@@ -433,6 +441,10 @@ const Alimentacion: React.FC = () => {
                                 position: 'top',
                             });
                             fetchAlimentaciones();
+                            setIsLoading(false)
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
                         } catch (err: any) {
                             console.error('Error adding alimentacion or finding resident:', err);
                             let errorMessage = 'Error al agregar entrada de alimentación.';
